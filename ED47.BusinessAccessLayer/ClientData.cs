@@ -1,0 +1,37 @@
+using System.Collections.Generic;
+using Omu.ValueInjecter;
+using System.Linq;
+
+namespace ED47.BusinessAccessLayer
+{
+    /// <summary>
+    /// Generic DTO for transfering data between client and business entities.
+    /// </summary>
+    public class ClientData : Dictionary<string,object>
+    {
+        public TBusinessEntity To<TBusinessEntity>(string[] whiteList = null) where TBusinessEntity : new()
+        {
+            var result = new TBusinessEntity();
+            return WriteTo(result,whiteList);
+        }
+
+        public TBusinessEntity WriteTo<TBusinessEntity>(TBusinessEntity target, string[] whiteList = null) where TBusinessEntity : new()
+        {
+            var filter = this as Dictionary<string,object>;
+
+            if(whiteList != null)
+            {
+                var dict1 = filter;
+                filter = whiteList.Where(dict1.ContainsKey).ToDictionary(el => el, el => filter[el]);
+            }
+
+            target.InjectFrom<DictionaryInjection>(filter);
+
+            var businessEntity = target as BusinessEntity;
+            if (businessEntity != null)
+                businessEntity.ClientData = this;
+
+            return target;
+        }
+    }
+}
