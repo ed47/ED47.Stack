@@ -1,0 +1,36 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="ED47.Stack.Reflector.Metadata" #>
+//Controller: <#=this.ControllerInfo.ControllerType.Name#>
+Ext.ns("ED47.Stack.Controllers.<#=this.ControllerInfo.ControllerType.Name#>");
+<#foreach(var action in this.ControllerInfo.Actions)
+{GenerateAction(action);}#>
+
+<#+
+protected void GenerateParameters(ActionInfo action)
+{
+	var parameters = action.MethodInfo.GetParameters();
+	for(int i=0; i<parameters.Length; i++)
+	{#><#=parameters[i].Name#><#+if(i < parameters.Length-1){#>,<#+}}
+
+	if(parameters.Length > 1)
+	{#>, <#+}
+}
+
+protected void GenerateParameterObject(ActionInfo action)
+{
+	var parameters = action.MethodInfo.GetParameters();
+	for(int i=0; i<parameters.Length; i++)
+	{#><#=parameters[i].Name#>: <#=parameters[i].Name#> <#+if(i < parameters.Length-1){#>,<#+}}	
+}
+
+protected void GenerateAction(ActionInfo action)
+{#>
+ED47.Stack.Controllers.<#=this.ControllerInfo.ControllerType.Name#>.<#= action.Name #> = function(<#+GenerateParameters(action);#>callBack, context){	
+	ED47.Ajax.request("<#=action.GetUrl()#>", "<#=action.Verb#>" , { <#+GenerateParameterObject(action);#> }, callBack, null, context);
+}
+<#+}#>
+
+
+
