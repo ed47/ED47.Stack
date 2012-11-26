@@ -85,10 +85,6 @@
     <Compile Include="HtmlHelper.cs" />
     <Compile Include="MimeTypeHelper.cs" />
     <Compile Include="AppDataDownloadHandler.cs" />
-    <Compile Include="Multilingual\Multilingual.cs" />
-    <Compile Include="Multilingual\MultilingualHandler.cs" />
-    <Compile Include="Multilingual\TranslationFileInfo.cs" />
-    <Compile Include="Multilingual\TranslationItem.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -107,7 +103,6 @@
     <Compile Include="Template\Template.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <EmbeddedResource Include="HelperTemplates\ClientControlScript.cshtml" />
     <EmbeddedResource Include="HelperTemplates\ClientControlView.cshtml" />
     <None Include="packages.config" />
@@ -115,6 +110,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ED47.Stack.Web.Portable\ED47.Stack.Web.Multilingual.csproj">
+      <Project>{514CDCC1-FBC1-451F-B2A9-91A18E5CA016}</Project>
+      <Name>ED47.Stack.Web.Multilingual</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

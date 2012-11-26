@@ -1,18 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
-using System.Text;
-using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using System.Xml;
 using System.Xml.Linq;
 using Ionic.Zip;
-using Newtonsoft.Json.Linq;
 
 namespace ED47.Stack.Web.Multilingual
 {

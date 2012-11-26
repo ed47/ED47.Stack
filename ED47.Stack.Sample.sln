@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ED47.Stack.Reflector", "ED4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ED47.Stack.Web", "ED47.Stack.Web\ED47.Stack.Web.csproj", "{8453CB1B-5766-4A1F-BE2C-E81F8A705BA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ED47.Stack.Web.Multilingual", "ED47.Stack.Web.Portable\ED47.Stack.Web.Multilingual.csproj", "{514CDCC1-FBC1-451F-B2A9-91A18E5CA016}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{8453CB1B-5766-4A1F-BE2C-E81F8A705BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8453CB1B-5766-4A1F-BE2C-E81F8A705BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8453CB1B-5766-4A1F-BE2C-E81F8A705BA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{514CDCC1-FBC1-451F-B2A9-91A18E5CA016}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{514CDCC1-FBC1-451F-B2A9-91A18E5CA016}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{514CDCC1-FBC1-451F-B2A9-91A18E5CA016}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{514CDCC1-FBC1-451F-B2A9-91A18E5CA016}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
