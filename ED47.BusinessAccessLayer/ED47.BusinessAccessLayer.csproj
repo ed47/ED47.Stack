@@ -53,7 +53,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\valueinjecter.2.3.3\lib\net35\Omu.ValueInjecter.dll</HintPath>
     </Reference>
-    <Reference Include="SX">
+    <Reference Include="SX, Version=2.0.5.2, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
       <HintPath>..\Shared\SX.dll</HintPath>
     </Reference>
     <Reference Include="System" />
