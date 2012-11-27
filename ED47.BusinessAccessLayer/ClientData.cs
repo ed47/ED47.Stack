@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Web.Mvc;
 using Omu.ValueInjecter;
 using System.Linq;
 
@@ -9,6 +10,18 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     public class ClientData : Dictionary<string,object>
     {
+
+        public ClientData ()
+        {
+            
+        }
+        public ClientData(FormCollection formCollection)
+        {
+            foreach (var key in formCollection.Keys)
+            {
+                Add(key.ToString(), formCollection[key.ToString()]);
+            }
+        }
         public TBusinessEntity To<TBusinessEntity>(string[] whiteList = null) where TBusinessEntity : new()
         {
             var result = new TBusinessEntity();
@@ -18,7 +31,6 @@ namespace ED47.BusinessAccessLayer
         public TBusinessEntity WriteTo<TBusinessEntity>(TBusinessEntity target, string[] whiteList = null) where TBusinessEntity : new()
         {
             var filter = this as Dictionary<string,object>;
-
             if(whiteList != null)
             {
                 var dict1 = filter;
