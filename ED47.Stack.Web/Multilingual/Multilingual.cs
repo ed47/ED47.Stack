@@ -147,7 +147,7 @@ namespace ED47.Stack.Web.Multilingual
             lock (WriteFileLock)
             {
                 var document = XDocument.Load(file);
-                AddMissingKeyPath(document.Root, splitPath, splitPath[0]);
+                AddMissingKeyPath(document.Root, splitPath, 0);
                 document.Save(file);
             }
         }
@@ -157,14 +157,15 @@ namespace ED47.Stack.Web.Multilingual
         /// </summary>
         /// <param name="parent">The parent element.</param>
         /// <param name="path">The path to the new key.</param>
-        /// <param name="currentPathItem">The current path item.</param>
-        private static void AddMissingKeyPath(XElement parent, IList<string> path, string currentPathItem)
+        /// <param name="currentPathItemIndex">The current path item index.</param>
+        private static void AddMissingKeyPath(XElement parent, IList<string> path, int currentPathItemIndex)
         {
+            var currentPathItem = path[currentPathItemIndex];
             var newElement = parent.Element(currentPathItem) ?? new XElement(currentPathItem);
             if(newElement.Parent == null)
                 parent.Add(newElement);
 
-            var nextIndex = path.IndexOf(currentPathItem) + 1;
+            var nextIndex = currentPathItemIndex + 1;
             if (nextIndex > path.Count() - 1)
             {
                 if (!String.IsNullOrWhiteSpace(newElement.Value))
@@ -174,7 +175,7 @@ namespace ED47.Stack.Web.Multilingual
                 return;
             }
 
-            AddMissingKeyPath(newElement, path, path[nextIndex]);
+            AddMissingKeyPath(newElement, path, nextIndex);
         }
 
         /// <summary>
