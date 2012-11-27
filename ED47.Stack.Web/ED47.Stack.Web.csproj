@@ -176,9 +176,9 @@
     <Content Include="Areas\Multilingual\Views\Web.config" />
     <EmbeddedResource Include="Areas\Template\Views\Template\Index.cshtml" />
     <Content Include="Areas\Template\Views\Web.config" />
-    <Content Include="HelperTemplates\ClientControlScript.cshtml" />
-    <Content Include="HelperTemplates\ClientControlView.cshtml" />
-    <Content Include="HelperTemplates\ClientPageView.cshtml" />
+    <EmbeddedResource Include="HelperTemplates\ClientControlScript.cshtml" />
+    <EmbeddedResource Include="HelperTemplates\ClientControlView.cshtml" />
+    <EmbeddedResource Include="HelperTemplates\ClientPageView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Settings.settings">
