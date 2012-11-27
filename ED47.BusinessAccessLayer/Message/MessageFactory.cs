@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ED47.Stack.Web;
+using ED47.Stack.Web.Template;
 
 namespace ED47.BusinessAccessLayer.Message
 {
@@ -179,35 +180,35 @@ namespace ED47.BusinessAccessLayer.Message
 
             f.Write(new FileInfo(filename));
 
-            Attachments.Add(new Attachment(){File = f, SpecificVersion = true});
+            Attachments.Add(new Attachment {File = f, SpecificVersion = true});
         }
 
         public void AddAttachment(BusinessEntities.File file, bool specificVersion = true)
         {
-            Attachments.Add(new Attachment() { File = file, SpecificVersion = true });
+            Attachments.Add(new Attachment { File = file, SpecificVersion = true });
         }
 
         public void AddAttachment(string businessKey)
         {
             var f = BusinessEntities.File.GetFileByKey<BusinessEntities.File>(businessKey);
             if(f != null)
-                Attachments.Add(new Attachment() { File = f, SpecificVersion = true });
+                Attachments.Add(new Attachment { File = f, SpecificVersion = true });
         }
 
 
         public void AddRecipient(string recipient, object data)
         {
-            var Address = recipient.ToLowerInvariant().Trim();
-            if (!IsEmailAddress(Address))
+            var address = recipient.ToLowerInvariant().Trim();
+            if (!IsEmailAddress(address))
                 return;
-            if (!_recipients.ContainsKey(Address))
+            if (!_recipients.ContainsKey(address))
             {
                 if(data is JsonObject)
-                    _recipients.Add(Address, new Recipient(this) { Address = Address, JsonData = data as JsonObject });
+                    _recipients.Add(address, new Recipient(this) { Address = address, JsonData = data as JsonObject });
                 else
                 {
                     JsonData = null;
-                    _recipients.Add(Address, new Recipient(this) { Address = Address, ModelData = data });
+                    _recipients.Add(address, new Recipient(this) { Address = address, ModelData = data });
 
                 }
             }

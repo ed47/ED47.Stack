@@ -14,7 +14,7 @@ namespace ED47.Stack.Web.Multilingual
     public class Multilingual
     {
         private const string CacheKey = "Translations";
-        private static object _writeFileLock = new object();
+        private static readonly object WriteFileLock = new object();
 
         public const string TranslationFilesRelativePath = "/App_Data/Translations/";
 
@@ -50,6 +50,9 @@ namespace ED47.Stack.Web.Multilingual
             foreach (var file in Directory.GetFiles(HttpContext.Current.Server.MapPath("/App_Data/Translations/"), "*.xml", SearchOption.AllDirectories))
             {
                 var document = XDocument.Load(file);
+                if (document.Root == null)
+                    continue;
+                
                 var language = document.Root.Attribute("lang").Value;
                 IDictionary<string, TranslationItem> languageTranslation;
                 if (!languages.TryGetValue(language, out languageTranslation))
@@ -59,10 +62,11 @@ namespace ED47.Stack.Web.Multilingual
                 }
 
                 LoadDocument(document, languageTranslation, new TranslationFileInfo
-                                                                {
-                                                                    FileName = Path.GetFileName(file), 
-                                                                    Language = language
-                                                                });    
+                    {
+                        FileName = Path.GetFileName(file), 
+                        Language = language
+                    });
+                
             }
 
             //Prepare fallback: inject missing keys to other languages from default language.
@@ -129,7 +133,7 @@ namespace ED47.Stack.Web.Multilingual
         /// <summary>
         /// Adds a missing key to the translation XML file.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">The path to the new key.</param>
         public static void AddMissingKey(string path)
         {
             var splitPath = path.Split('.');
@@ -139,16 +143,21 @@ namespace ED47.Stack.Web.Multilingual
 
             if (file == null)
                 return;
-
-            var document = XDocument.Load(file);
-            AddMissingKeyPath(document.Root, splitPath, splitPath[0]);
-
-            lock (_writeFileLock)
+            
+            lock (WriteFileLock)
             {
+                var document = XDocument.Load(file);
+                AddMissingKeyPath(document.Root, splitPath, splitPath[0]);
                 document.Save(file);
             }
         }
 
+        /// <summary>
+        /// Adds a missing key to the translation XML file by recursively navigating the path and adding missing elements.
+        /// </summary>
+        /// <param name="parent">The parent element.</param>
+        /// <param name="path">The path to the new key.</param>
+        /// <param name="currentPathItem">The current path item.</param>
         private static void AddMissingKeyPath(XElement parent, IList<string> path, string currentPathItem)
         {
             var newElement = parent.Element(currentPathItem) ?? new XElement(currentPathItem);
@@ -168,6 +177,12 @@ namespace ED47.Stack.Web.Multilingual
             AddMissingKeyPath(newElement, path, path[nextIndex]);
         }
 
+        /// <summary>
+        /// Loads a translation file.
+        /// </summary>
+        /// <param name="source">The XML translation source.</param>
+        /// <param name="dictionnary">The translations dictionary to load string into.</param>
+        /// <param name="file">The information of the file that contains the XML translations.</param>
         private static void LoadDocument(XDocument source, IDictionary<string, TranslationItem> dictionnary, TranslationFileInfo file)
         {
             if (source == null) return;
@@ -194,8 +209,6 @@ namespace ED47.Stack.Web.Multilingual
                 }
                 else
                 {
-                    var splitPath = nextPath.Split('.');
-                    
                     dictionnary[nextPath] = new TranslationItem
                                                 {
                                                     Text = element.Value,
@@ -206,6 +219,12 @@ namespace ED47.Stack.Web.Multilingual
             }
         }
 
+        /// <summary>
+        /// Updates a multilingual entry.
+        /// </summary>
+        /// <param name="path">The path to the entry.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="filename">The filename containing the entry.</param>
         public static void UpdateEntry(string path, string value, string filename)
         {
             var splitPath = path.Split('.');
@@ -215,18 +234,20 @@ namespace ED47.Stack.Web.Multilingual
             if (file == null)
                 return;
 
-            var document = XDocument.Load(file);
-            var currentElement = document.Root;
-
-            foreach (var node in splitPath)
+            lock (WriteFileLock)
             {
-                currentElement = currentElement.Element(node);
-            }
+                var document = XDocument.Load(file);
+                var currentElement = document.Root;
+
+// ReSharper disable LoopCanBeConvertedToQuery
+                foreach (var node in splitPath)
+// ReSharper restore LoopCanBeConvertedToQuery
+                {
+                    currentElement = currentElement.Element(node);
+                }
             
-            currentElement.SetValue(value);
-
-            lock (_writeFileLock)
-            {
+                currentElement.SetValue(value);
+            
                 document.Save(file);
             }
 
@@ -252,6 +273,11 @@ namespace ED47.Stack.Web.Multilingual
             }
         }
 
+        /// <summary>
+        /// Gets the dictionary of translation items for a specific language.
+        /// </summary>
+        /// <param name="language">The language to get the dictionary for.</param>
+        /// <returns></returns>
         public static IDictionary<string, TranslationItem> GetLanguage(string language)
         {
             if (Translations.ContainsKey(language))

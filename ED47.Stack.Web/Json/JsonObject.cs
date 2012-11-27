@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Newtonsoft.Json;
@@ -239,16 +236,21 @@ namespace ED47.Stack.Web
             foreach (var k in o._properties.Keys)
             {
                 var p = o._properties[k];
-                if (p is JsonObjectList)
+                var list = p as JsonObjectList;
+                if (list != null)
                 {
-                    foreach (JsonObject obj in (JsonObjectList)p)
+                    foreach (JsonObject obj in list)
                     {
                         FindChildren(obj, pattern, path + (!String.IsNullOrEmpty(path) ? "." : "") + k, ref result);
                     }
                 }
-                else if (p is JsonObject)
+                else
                 {
-                    FindChildren((JsonObject)p, pattern, path + (!String.IsNullOrEmpty(path) ? "." : "") + k, ref result);
+                    var jsonObject = p as JsonObject;
+                    if (jsonObject != null)
+                    {
+                        FindChildren(jsonObject, pattern, path + (!String.IsNullOrEmpty(path) ? "." : "") + k, ref result);
+                    }
                 }
             }
         }
@@ -267,7 +269,7 @@ namespace ED47.Stack.Web
        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
         public static void FindChildren(JsonObject o, string path, List<JsonObject> result)
         {
-            var i = path.IndexOf(".");
+            var i = path.IndexOf(".", System.StringComparison.Ordinal);
             if (i > 0)
             {
                 var field = path.Substring(0, i);
@@ -369,8 +371,7 @@ namespace ED47.Stack.Web
                 }
                 index++;
             }
-            var lastIdent = path[path.Length - 1];
-          
+            //var lastIdent = path[path.Length - 1];
             //Match mfunc = new Regex(_RegSimpleFunc).Match(lastIdent);
             
             return child;

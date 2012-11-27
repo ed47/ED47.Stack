@@ -23,7 +23,9 @@ namespace ED47.Stack.Web.Multilingual
 
         public void ProcessRequest(HttpContext context)
         {
+// ReSharper disable RedundantAssignment
             var callAddKey = "return;";
+// ReSharper restore RedundantAssignment
 
             #if DEBUG
             var addKey = context.Request["addkey"];
@@ -53,7 +55,7 @@ namespace ED47.Stack.Web.Multilingual
             context.Response.Write("var lang = $('html').attr('lang');var i8n = {}; i8n.n = function(s){ if(translations[s]) return translations[s].Text; else " + callAddKey + "};");
 
             context.Response.Write("var translations = ");
-            context.Response.Write((string) JsonConvert.SerializeObject(Multilingual.GetLanguage(context.Request["lang"])));
+            context.Response.Write(JsonConvert.SerializeObject(Multilingual.GetLanguage(context.Request["lang"])));
             context.Response.Write(";");
             
             context.Response.Flush();

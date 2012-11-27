@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using MvcContrib.PortableAreas;
 
-namespace ED47.Stack.Web.Multilingual.Areas.Multilingual
+namespace ED47.Stack.Web.Areas.Multilingual
 {
     public class MultilingualAreaRegistration : PortableAreaRegistration
     {
@@ -21,7 +21,7 @@ namespace ED47.Stack.Web.Multilingual.Areas.Multilingual
                 AreaName + "_default",
                 base.AreaRoutePrefix + "/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional },
-                new[] { "ED47.Stack.Web.Multilingual.Areas.Multilingual.Controllers", "MvcContrib" }
+                new[] { "ED47.Stack.Web.Areas.Multilingual.Controllers", "MvcContrib" }
             );
 
             RegisterAreaEmbeddedResources();

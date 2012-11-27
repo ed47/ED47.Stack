@@ -65,7 +65,7 @@ namespace ED47.Stack.Web
          [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public static MvcHtmlString RenderControlScript(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model)
         {
-            var tpl = Template.Get("ED47.Stack.Web.HelperTemplates.ClientControlScript.cshtml");
+            var tpl = Template.Template.Get("ED47.Stack.Web.HelperTemplates.ClientControlScript.cshtml");
             if(tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
         }
@@ -80,7 +80,7 @@ namespace ED47.Stack.Web
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public static MvcHtmlString RenderControl(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model, string templatePath = null)
         {
-            var tpl = Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientControlView.cshtml");
+            var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientControlView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
         }
@@ -95,7 +95,7 @@ namespace ED47.Stack.Web
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Extension method")]
         public static MvcHtmlString RenderPageView(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model, string templatePath = null)
         {
-            var tpl = Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientPageView.cshtml");
+            var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientPageView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
         }

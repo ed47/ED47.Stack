@@ -166,7 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ED47.Stack.Web\ED47.Stack.Web.csproj">
-      <Project>{8453CB1B-5766-4A1F-BE2C-E81F8A705BA2}</Project>
+      <Project>{57FD0F4F-4DAC-42CA-964D-39A180D714B3}</Project>
       <Name>ED47.Stack.Web</Name>
     </ProjectReference>
   </ItemGroup>

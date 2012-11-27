@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using RazorEngine;
 
-namespace ED47.Stack.Web
+namespace ED47.Stack.Web.Template
 {
     public delegate object TemplateFuncDelegate(object[] parameters);
     [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
