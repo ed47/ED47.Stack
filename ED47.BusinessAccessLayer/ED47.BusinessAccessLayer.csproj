@@ -148,7 +148,6 @@
     <Compile Include="BaseUserContext.cs" />
     <Compile Include="Message\MessageFactoryHelper.cs" />
     <Compile Include="StringKey.cs" />
-    <Compile Include="TemplateHelper.cs" />
     <Compile Include="TypeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
