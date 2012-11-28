@@ -45,6 +45,9 @@ namespace ED47.Stack.Web.Template
         private string _templateText = "";
 
         public TemplateType TplType { get; set; }
+
+        public delegate void ChangedEventHandler(object sender, TemplateChangedEventArgs e);
+        public static event ChangedEventHandler Changed;
         
         static Template()
         {
@@ -104,6 +107,12 @@ namespace ED47.Stack.Web.Template
         /// Dynamically inject this content a the end of each of tpl
         /// </summary>
         public string PostContainerContent { get; set; }
+
+        public void OnChanged(TemplateChangedEventArgs e)
+        {
+            if (Changed != null)
+                Changed(this, e);
+        }
 
         /// <summary>
         /// For debug proposes, to identify the object type passse in params

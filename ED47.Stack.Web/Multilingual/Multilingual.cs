@@ -240,12 +240,12 @@ namespace ED47.Stack.Web.Multilingual
                 var document = XDocument.Load(file);
                 var currentElement = document.Root;
 
-// ReSharper disable LoopCanBeConvertedToQuery
+                // ReSharper disable LoopCanBeConvertedToQuery
                 foreach (var node in splitPath)
-// ReSharper restore LoopCanBeConvertedToQuery
                 {
                     currentElement = currentElement.Element(node);
                 }
+                // ReSharper restore LoopCanBeConvertedToQuery
             
                 currentElement.SetValue(value);
             

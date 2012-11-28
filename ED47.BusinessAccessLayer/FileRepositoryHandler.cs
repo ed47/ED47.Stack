@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Globalization;
-using System.Security.Authentication;
 using System.Web;
-using ED47.BusinessAccessLayer;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
 
@@ -33,7 +30,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="context">The HttpContext.</param>
         public void ProcessRequest(HttpContext context)
         {
-            File file = null;
+            File file;
             var token = context.Request["token"];
 
             if (String.IsNullOrWhiteSpace(token))
