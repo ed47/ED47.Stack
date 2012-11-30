@@ -83,6 +83,18 @@ namespace ED47.BusinessAccessLayer.Excel
         public void Write(ExcelPackage excelPackage)
         {
             //Add the Content sheet
+            var nameSuffix = 1;
+            while (excelPackage.Workbook.Worksheets.Any(el => el.Name == this.Name))
+            {
+                var previousSuffix = this.Name.LastIndexOf(" " + (nameSuffix - 1).ToString(), StringComparison.Ordinal);
+
+                if (previousSuffix > 0)
+                {
+                    this.Name = this.Name.Substring(0, previousSuffix + 1);
+                }
+
+                this.Name += " " + nameSuffix++;
+            }
             var ws = excelPackage.Workbook.Worksheets.Add(this.Name);
 
             if(Columns.Count == 0 && Data.Count > 0)
