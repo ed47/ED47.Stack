@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 using ED47.Stack.Web;
 using OfficeOpenXml;
-using System.Drawing;
-using OfficeOpenXml.Style;
 
 namespace ED47.BusinessAccessLayer.Excel
 {
     public class ExcelFile
     {
-        private int sheetNameCounter = 1;
+        private int _sheetNameCounter = 1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExcelFile"/> class.
@@ -42,8 +37,8 @@ namespace ED47.BusinessAccessLayer.Excel
         {
             if (String.IsNullOrWhiteSpace(name))
             {
-                name = "Content " + sheetNameCounter.ToString(CultureInfo.InvariantCulture);
-                sheetNameCounter++;
+                name = "Content " + _sheetNameCounter.ToString(CultureInfo.InvariantCulture);
+                _sheetNameCounter++;
             }
 
             var newSheet = new ExcelSheet(name)

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using ED47.Stack.Web;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -86,7 +85,7 @@ namespace ED47.BusinessAccessLayer.Excel
             var nameSuffix = 1;
             while (excelPackage.Workbook.Worksheets.Any(el => el.Name == this.Name))
             {
-                var previousSuffix = this.Name.LastIndexOf(" " + (nameSuffix - 1).ToString(), StringComparison.Ordinal);
+                var previousSuffix = this.Name.LastIndexOf(" " + (nameSuffix - 1).ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal);
 
                 if (previousSuffix > 0)
                 {
@@ -102,8 +101,8 @@ namespace ED47.BusinessAccessLayer.Excel
             {
                 foreach (var p in Data[0].Properties)
                 {
-                    Columns.Add(new ExcelColumn()
-                                    {
+                    Columns.Add(new ExcelColumn
+                        {
                                         PropertyName = p
                                     });
                 }
