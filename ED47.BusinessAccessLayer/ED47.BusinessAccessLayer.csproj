@@ -108,6 +108,7 @@
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\File.cs" />
+    <Compile Include="BusinessEntities\IRecipient.cs" />
     <Compile Include="BusinessEntities\Lang.cs" />
     <Compile Include="BusinessEntities\Multilingual.cs" />
     <Compile Include="BusinessEntity.cs" />
