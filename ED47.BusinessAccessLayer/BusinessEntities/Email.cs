@@ -50,7 +50,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 return;
             }
 
-            var mailMessage = new MailMessage {Subject = Subject, Body = Body, IsBodyHtml = true};
+            var mailMessage = new MailMessage {
+                Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty), 
+                Body = Body, IsBodyHtml = true
+            };
 
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
