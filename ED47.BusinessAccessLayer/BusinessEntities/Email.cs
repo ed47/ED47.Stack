@@ -41,7 +41,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 }
                 return _Attachments;
             }
-        } 
+        }
+
+        public string CC { get; set; }
 
         public void Send(bool force = false)
         {
@@ -50,10 +52,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 return;
             }
 
-            var mailMessage = new MailMessage {
-                Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty), 
-                Body = Body, IsBodyHtml = true
+            var mailMessage = new MailMessage
+            {
+                Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty),
+                Body = Body,
+                IsBodyHtml = true,
             };
+            
+            if(!String.IsNullOrWhiteSpace(CC))
+                mailMessage.CC.Add(CC);
 
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
