@@ -70,6 +70,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 foreach (var testRecipient in testRecipients)
                 {
                     mailMessage.To.Add(testRecipient);    
+
+                    if(mailMessage.CC.Count > 0)
+                        mailMessage.CC.Add(testRecipient);
+
+                    if(mailMessage.Bcc.Count > 0)
+                        mailMessage.Bcc.Add(testRecipient);
                 }
             }
             else
