@@ -43,5 +43,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
             return attachement;
         }
+
+        public static EmailAttachment Get(int id)
+        {
+            return BaseUserContext.Instance.Repository.Find<Entities.EmailAttachment, EmailAttachment>(el => el.Id == id);
+        }
+
+        public void Delete()
+        {
+            BaseUserContext.Instance.Repository.Delete<Entities.EmailAttachment, EmailAttachment>(this);
+        }
     }
 }
