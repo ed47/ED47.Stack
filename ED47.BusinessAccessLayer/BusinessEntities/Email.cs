@@ -59,9 +59,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 IsBodyHtml = true,
             };
             
-            if(!String.IsNullOrWhiteSpace(CC))
-                mailMessage.CC.Add(CC);
-
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
             {
@@ -69,18 +66,24 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
                 foreach (var testRecipient in testRecipients)
                 {
-                    mailMessage.To.Add(testRecipient);    
+                    mailMessage.To.Add(testRecipient);
 
-                    if(mailMessage.CC.Count > 0)
+                    if (!String.IsNullOrWhiteSpace(CC))
                         mailMessage.CC.Add(testRecipient);
 
-                    if(mailMessage.Bcc.Count > 0)
+                    if (!String.IsNullOrWhiteSpace(Bcc))
                         mailMessage.Bcc.Add(testRecipient);
                 }
             }
             else
             {
                 mailMessage.To.Add(Recipient);
+
+                if (!String.IsNullOrWhiteSpace(CC))
+                    mailMessage.CC.Add(CC);
+
+                if (!String.IsNullOrWhiteSpace(Bcc))
+                    mailMessage.Bcc.Add(Bcc);
             }
 
             var tmp = new List<Stream>();
@@ -107,6 +110,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             }
             
         }
+
+        public string Bcc { get; set; }
 
         public virtual void Insert()
         {
