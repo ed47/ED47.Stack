@@ -64,6 +64,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 var testRecipients = emailTestSettings.Split(';');
 
+                mailMessage.To.Clear();
+                mailMessage.CC.Clear();
+                mailMessage.Bcc.Clear();
+
                 foreach (var testRecipient in testRecipients)
                 {
                     mailMessage.To.Add(testRecipient);
@@ -89,7 +93,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             var tmp = new List<Stream>();
             try
             {
-               
                 foreach (var attachment in Attachments)
                 {
                     var s = attachment.File.OpenRead();

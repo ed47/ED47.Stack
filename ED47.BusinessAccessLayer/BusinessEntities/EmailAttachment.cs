@@ -17,19 +17,31 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public virtual int FileId { get; set; }
 
-        [ForeignKey("FileId")]
-        public virtual File File { get; set; }
-
-
+        private File _file;
+        public virtual File File
+        {
+            get { return _file ?? (_file = File.Get(FileId)); }
+        }
+        
         public virtual int EmailId { get; set; }
 
-        [ForeignKey("EmailId")]
-        public virtual Email Email { get; set; }
-
-
-
-
+        private Email _email;
+        public virtual Email Email
+        {
+            get { return _email ?? (_email = Email.Get(FileId)); }
+        }
         
+        public static EmailAttachment Create(int fileId, int emailId)
+        {
+            var attachement = new EmailAttachment
+                {
+                 FileId = fileId,
+                 EmailId = emailId
+                };
 
+            BaseUserContext.Instance.Repository.Add<Entities.EmailAttachment, EmailAttachment>(attachement);
+
+            return attachement;
+        }
     }
 }
