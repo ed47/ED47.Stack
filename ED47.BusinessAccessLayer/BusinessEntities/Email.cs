@@ -133,6 +133,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public void Delete()
         {
+            foreach (var emailAttachment in Attachments)
+            {
+                emailAttachment.Delete();
+            }
+
             BaseUserContext.Instance.Repository.Delete<Entities.Email, Email>(this);
         }
     }
