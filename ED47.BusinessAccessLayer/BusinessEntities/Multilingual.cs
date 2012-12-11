@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
@@ -68,11 +65,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <returns></returns>
         internal static List<BusinessEntities.Multilingual> GetTranslations(string isoLanguageCode, IEnumerable<string> keys, IObjectContextAdapter dbContext) {
             Debug.Assert(keys != null, "keys != null");
-            if (!keys.Any())
+            var keyList = keys as string[] ?? keys.ToArray();
+            if (!keyList.Any())
                 return new List<BusinessEntities.Multilingual>(0);
 
             var set = dbContext.ObjectContext.CreateObjectSet<Entities.Multilingual>();
-            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && keys.Contains(m.Key))
+            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && keyList.Contains(m.Key))
                 .OrderBy(m => m.Key)
                 .ThenBy(m => m.PropertyName);
 
@@ -113,7 +111,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             var properties = MetadataHelper.GetMultilingualProperties<TEntity>();
 
+// ReSharper disable LoopCanBeConvertedToQuery
             foreach (var entity in entities)
+// ReSharper restore LoopCanBeConvertedToQuery
             {
                 var key = entity.GetKey(dbContext);
 
@@ -155,7 +155,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 }
                 else
                 {
-                    results.Add(new Multilingual() { Key = businessKey, PropertyName = propertyName, LanguageIsoCode = language.IsoCode});
+                    results.Add(new Multilingual { Key = businessKey, PropertyName = propertyName, LanguageIsoCode = language.IsoCode});
                 }
             }
             

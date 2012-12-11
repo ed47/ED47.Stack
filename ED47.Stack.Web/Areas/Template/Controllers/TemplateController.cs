@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Web.Mvc;
-
-//using File = ED47.BusinessAccessLayer.BusinessEntities.File;
+using ED47.Stack.Web.Template;
 
 namespace ED47.Stack.Web.Areas.Template.Controllers
 {
@@ -25,19 +24,11 @@ namespace ED47.Stack.Web.Areas.Template.Controllers
             lock (WriteFileLock)
             {
                 var template = Web.Template.Template.Get(name);
-
-                //Save to repository for versioning
-                /*var file = BusinessAccessLayer.BusinessEntities.File.CreateNewFile<File>(Path.GetFileName(template.Name), String.Format("Template[{0}]", name));
-                using (var stream = file.OpenWrite())
-                {
-                    using (var writter = new StreamWriter(stream))
-                    {
-                        writter.Write(templateText);
-                    }
-                }*/
-
+                
                 //Save to file
                 System.IO.File.WriteAllText(template.Name, templateText);
+
+                template.OnChanged(new TemplateChangedEventArgs { FileName = template.Name });
             }
 
             if(Request.IsAjaxRequest())

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ED47.BusinessAccessLayer
+﻿namespace ED47.BusinessAccessLayer
 {
     /// <summary>
     /// Represent a business domain inside a business component. 

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Web;
 using Ionic.Zip;
-using Newtonsoft.Json;
 
 namespace ED47.Stack.Web
 {
@@ -28,7 +26,7 @@ namespace ED47.Stack.Web
             using(var zip = new ZipFile())
             {
                 zip.AddDirectory(HttpContext.Current.Server.MapPath(Multilingual.Multilingual.TranslationFilesRelativePath),"Translations");
-                zip.AddFiles(Template.Template.Templates.Select(el => el.Value), "Templates");
+                zip.AddFiles(Template.Template.Templates.Select(el => el.Value), true, "Templates");
                 zip.Save(context.Response.OutputStream);
             }
             context.Response.ContentType = "application/zip";

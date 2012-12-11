@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -24,12 +21,15 @@ namespace ED47.Stack.Web
         /// <param name="initNewFunctionName">The name of the JS function used to initialize a new item.</param>
         /// <param name="deleteFunctionName">The name of the JS function called when an item is deleted.</param>
         /// <param name="deleteConfirmation">Flag indicating if a confirmation should be asked when an item is deleted.</param>
+        /// <param name="preselectedRecordId">The optional id of the pre-selected record.</param>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null)
         {
-            var formatting = Formatting.None;
+// ReSharper disable JoinDeclarationAndInitializer
+            Formatting formatting;
+// ReSharper restore JoinDeclarationAndInitializer
 
             if(model == null)
                 return new MvcHtmlString(String.Empty);

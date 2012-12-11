@@ -46,7 +46,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 if (value == null) return; 
                 _Attachments = value.ToList();
             }
-        } 
+        }
+
+        public string CC { get; set; }
 
         public void Send(bool force = false)
         {
@@ -55,27 +57,47 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 return;
             }
 
-            var mailMessage = new MailMessage {Subject = Subject, Body = Body, IsBodyHtml = true};
-
+            var mailMessage = new MailMessage
+            {
+                Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty),
+                Body = Body,
+                IsBodyHtml = true,
+            };
+            
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
             {
                 var testRecipients = emailTestSettings.Split(';');
 
+                mailMessage.To.Clear();
+                mailMessage.CC.Clear();
+                mailMessage.Bcc.Clear();
+
                 foreach (var testRecipient in testRecipients)
                 {
-                    mailMessage.To.Add(testRecipient);    
+                    mailMessage.To.Add(testRecipient);
+
+                    if (!String.IsNullOrWhiteSpace(CC))
+                        mailMessage.CC.Add(testRecipient);
+
+                    if (!String.IsNullOrWhiteSpace(Bcc))
+                        mailMessage.Bcc.Add(testRecipient);
                 }
             }
             else
             {
                 mailMessage.To.Add(Recipient);
+
+                if (!String.IsNullOrWhiteSpace(CC))
+                    mailMessage.CC.Add(CC);
+
+                if (!String.IsNullOrWhiteSpace(Bcc))
+                    mailMessage.Bcc.Add(Bcc);
             }
 
             var tmp = new List<Stream>();
             try
             {
-               
                 foreach (var attachment in Attachments)
                 {
                     var s = attachment.File.OpenRead();
@@ -97,6 +119,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             
         }
 
+        public string Bcc { get; set; }
+
         public virtual void Insert()
         {
             BaseUserContext.Instance.Repository.Add<Entities.Email, Email>(this);
@@ -114,6 +138,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public void Delete()
         {
+            foreach (var emailAttachment in Attachments)
+            {
+                emailAttachment.Delete();
+            }
+
             BaseUserContext.Instance.Repository.Delete<Entities.Email, Email>(this);
         }
     }

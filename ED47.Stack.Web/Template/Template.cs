@@ -45,6 +45,9 @@ namespace ED47.Stack.Web.Template
         private string _templateText = "";
 
         public TemplateType TplType { get; set; }
+
+        public delegate void ChangedEventHandler(object sender, TemplateChangedEventArgs e);
+        public static event ChangedEventHandler Changed;
         
         static Template()
         {
@@ -104,6 +107,12 @@ namespace ED47.Stack.Web.Template
         /// Dynamically inject this content a the end of each of tpl
         /// </summary>
         public string PostContainerContent { get; set; }
+
+        public void OnChanged(TemplateChangedEventArgs e)
+        {
+            if (Changed != null)
+                Changed(this, e);
+        }
 
         /// <summary>
         /// For debug proposes, to identify the object type passse in params
@@ -175,7 +184,7 @@ namespace ED47.Stack.Web.Template
         /// <returns></returns>
         public static Template Get(string name, Assembly assembly = null )
         {
-            Template tpl = null;
+            Template tpl;
             var originalName = name;
             name = name.ToLowerInvariant();
             
@@ -193,7 +202,7 @@ namespace ED47.Stack.Web.Template
             }
             if (File.Exists(name))
             {
-                TemplateType templateType = TemplateType.XTemplate;
+                var templateType = TemplateType.XTemplate;
                 if (Path.GetExtension(name) == ".cshtml")
                 {
                     templateType = TemplateType.Razor;
@@ -312,10 +321,10 @@ namespace ED47.Stack.Web.Template
             FindChildren(tpl, data, field1, coll);
             double sum = 0;
 
-            for (int index = 0; index < coll.Count; index++)
+            for (var index = 0; index < coll.Count; index++)
             {
                 var obj = coll[index];
-                double value = 0;
+                double value;
                 var tmp = GetValue(tpl, obj, field2);
                 var svalue = tmp != null ? tmp.ToString() : "0";
                 if (Double.TryParse(svalue, out value))
@@ -711,9 +720,10 @@ namespace ED47.Stack.Web.Template
             //Match mfunc = new Regex(_RegSimpleFunc).Match(lastIdent);
             if (scope != null && child == null)
             {
-                if (scope is Type)
+                var type = scope as Type;
+                if (type != null)
                 {
-                    var mf = ((Type)scope).GetMethod(lastIdent);
+                    var mf = type.GetMethod(lastIdent);
                     if (mf != null)
                     {
                         var mc = new MethodCall
@@ -788,7 +798,7 @@ namespace ED47.Stack.Web.Template
                 paramsObject[i] = GetValue(Current, _params[i]);
             }
 
-            TemplateFuncDelegate f = null;
+            TemplateFuncDelegate f;
             _functions.TryGetValue(fname, out f);
 
             if (f == null)
@@ -936,9 +946,9 @@ namespace ED47.Stack.Web.Template
         private string ApplyData(string fragment, IEnumerable data, int stackIndex)
         {
             var res = new StringBuilder();
-            var startIndex = fragment.IndexOf("<tpl");
+            var startIndex = fragment.IndexOf("<tpl", System.StringComparison.Ordinal);
             var start = startIndex > 0 ? fragment.Substring(0, startIndex) : "";
-            var endIndex = fragment.LastIndexOf("</tpl");
+            var endIndex = fragment.LastIndexOf("</tpl", System.StringComparison.Ordinal);
             while (endIndex > 0 && fragment[endIndex] != '>')
                 endIndex++;
             var end = endIndex > 0 ? fragment.Substring(endIndex + 1) : "";
@@ -1225,7 +1235,7 @@ namespace ED47.Stack.Web.Template
         {
             public Dictionary<string, TemplateAttribute> Attributes = new Dictionary<string, TemplateAttribute>();
             public String Name { get; set; }
-            public TemplateOccurence parent { get; set; }
+            public TemplateOccurence Parent { get; set; }
             public String Fragment { get; set; }
             public String TplText { get; set; }
             public int Index { get; set; }

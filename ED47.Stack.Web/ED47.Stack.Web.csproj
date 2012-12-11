@@ -149,6 +149,7 @@
     <Compile Include="SystemExtensions.cs" />
     <Compile Include="Template\ExpressionEvaluator.cs" />
     <Compile Include="Template\Template.cs" />
+    <Compile Include="Template\TemplateChangedEventArgs.cs" />
     <Compile Include="WebApi\CallResult.cs" />
     <Compile Include="WebApi\Message.cs" />
     <Compile Include="WebApi\ValidationItem.cs" />
