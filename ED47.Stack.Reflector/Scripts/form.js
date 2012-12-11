@@ -12,7 +12,7 @@ Ext.define("ED47.ui.Form", {
         Ext.apply(defaultConfig, config);
 
         ED47.ui.Form.superclass.constructor.call(this, defaultConfig);
-
+        
         ED47.views.current.on('startedit', this.onStartEdit, this);
     },
 
@@ -56,6 +56,7 @@ Ext.define("ED47.ui.Form", {
     onStartEdit: function () {
         // select the first form field in the child Item and set the focus on it
         if (this.items.first().getXType() == 'displayfield') return;
+        if (this.items.first().getXType() == "fieldset") return;
         this.items.first().focus(true);
     }
 });

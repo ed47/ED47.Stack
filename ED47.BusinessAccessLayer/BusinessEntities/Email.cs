@@ -29,17 +29,22 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual string Body { get; set; }
 
         public virtual DateTime?  TransmissionDate { get; set; }
-        private List<EmailAttachment> _Attachments; 
-        public IEnumerable<EmailAttachment> Attachments 
-        { 
+        private List<EmailAttachment> _Attachments;
+        public IEnumerable<EmailAttachment> Attachments
+        {
             get
             {
-                if(_Attachments == null)
+                if (_Attachments == null)
                 {
                     _Attachments = new List<EmailAttachment>();
-                    _Attachments.AddRange(BaseUserContext.Instance.Repository.Where<Entities.EmailAttachment,EmailAttachment>(el=>el.EmailId == Id));
+                    _Attachments.AddRange(BaseUserContext.Instance.Repository.Where<Entities.EmailAttachment, EmailAttachment>(el => el.EmailId == Id));
                 }
                 return _Attachments;
+            }
+            set
+            {
+                if (value == null) return; 
+                _Attachments = value.ToList();
             }
         } 
 

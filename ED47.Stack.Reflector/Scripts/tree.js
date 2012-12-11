@@ -24,9 +24,5 @@ Ext.define("ED47.ui.Tree", {
         this.on('selectionchange', function (s, rec) {
             this.store.select(s, rec);
         });
-
-        ED47.views.current.on('startedit', this.onStartEdit, this);
     }
-
-
 });
