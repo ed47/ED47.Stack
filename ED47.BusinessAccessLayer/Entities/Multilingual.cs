@@ -38,7 +38,6 @@ namespace ED47.BusinessAccessLayer.Entities
         /// <summary>
         /// The translated text.
         /// </summary>
-        [StringLength(500)]
         public virtual string Text { get; set; }
 
 

@@ -12,7 +12,7 @@ Ext.define("ED47.ui.Form", {
         Ext.apply(defaultConfig, config);
 
         ED47.ui.Form.superclass.constructor.call(this, defaultConfig);
-        
+
         ED47.views.current.on('startedit', this.onStartEdit, this);
     },
 
@@ -38,9 +38,9 @@ Ext.define("ED47.ui.Form", {
             });
             var fct = function () {
                 Ext.defer(function () {
-                    if (!store.preselectedRecordId)
-                        store.select(view, store.getAt(0));
-                    else
+                    if (!store.preselectedRecordId) {
+                        if(!view.doNotSelectFirstRecord) store.select(view, store.getAt(0));
+                    } else
                         store.select(view, store.getById(store.preselectedRecordId));
                 }, 100);
 

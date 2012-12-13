@@ -1,4 +1,5 @@
-﻿///
+﻿
+///
 /// Multilingual field translation window
 ///
 /// Required configuration : languages array, each language has a isoCode and a value (the translated text)
@@ -12,14 +13,17 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
         me.addEvents("multilingualvalidated");
 
         if (!config) throw "A configuration object is required.";
-        if (!config.modelName) throw "MultilingualFormWindow requires a modelName.";
-        if (!config.modelId) throw "MultilingualFormWindow requires a modelId.";
+        if (!config.key) throw "MultilingualFormWindow requires a key.";
+        //if (!config.modelId) throw "MultilingualFormWindow requires a modelId.";
         if (!config.fieldName) throw "MultilingualFormWindow requires a field name.";
         if (!config.mtype) throw "MultilingualFormWindow requires a field type in 'mtype' property.";
         if (!config.getLanguagesFunc) throw "MultilingualFormWindow requires a languages array.";
 
+        me.key = config.key;
+
         me.formPanel = Ext.create("Ext.form.FormPanel", {
             border: false,
+            autoScroll: true,
             bodyStyle: "padding: 10px;",
             items: [],
             buttons: [{
@@ -54,6 +58,7 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
             resizable: false,
             layout: "fit",
             width: 400,
+            height: 400, 
             modal: true,
             items: [
                 me.formPanel
@@ -66,8 +71,7 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
 
         config.getLanguagesFunc({
             PropertyName: config.fieldName,
-            BusinessEntityName: config.modelName,
-            Key: config.modelId
+            Key: config.key
         }, function (r) {
             if ((!r)) {
                 return;
@@ -77,12 +81,12 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
             me.multilingualValues = items;
             for (var i = 0, max = items.length; i < max; i++) {
                 var item = items[i];
-                me.formPanel.add({
+                me.formPanel.add(Ext.apply(config.fieldConfig,{
                     xtype: config.mtype,
                     name: item.LanguageIsoCode,
                     value: item.Text,
                     fieldLabel: config.fieldName + "[" + item.LanguageIsoCode + "]"
-                });
+                }));
             }
         }, this);
     }
