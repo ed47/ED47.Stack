@@ -108,6 +108,8 @@
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\File.cs" />
+    <Compile Include="BusinessEntities\FileBox.cs" />
+    <Compile Include="BusinessEntities\FileBoxItem.cs" />
     <Compile Include="BusinessEntities\IRecipient.cs" />
     <Compile Include="BusinessEntities\Lang.cs" />
     <Compile Include="BusinessEntities\Multilingual.cs" />
@@ -127,6 +129,8 @@
     <Compile Include="Entities\Comment.cs" />
     <Compile Include="Entities\Email.cs" />
     <Compile Include="Entities\EmailAttachment.cs" />
+    <Compile Include="Entities\FileBox.cs" />
+    <Compile Include="Entities\FileBoxItem.cs" />
     <Compile Include="Entities\Language.cs" />
     <Compile Include="Entities\Multilingual.cs" />
     <Compile Include="EventProxy.cs" />
