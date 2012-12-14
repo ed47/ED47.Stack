@@ -28,7 +28,7 @@ namespace ED47.Stack.Web
         public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null)
         {
 // ReSharper disable JoinDeclarationAndInitializer
-            Formatting formatting;
+            Formatting formatting = Formatting.None;
 // ReSharper restore JoinDeclarationAndInitializer
 
             if(model == null)

@@ -155,8 +155,9 @@ namespace ED47.BusinessAccessLayer
                 {
                     entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id);
                     if (entity == null)
-                        throw new NullReferenceException(String.Format("No entity {0} {1} found.", id,
-                                                                       typeof(TBusinessEntity).FullName));
+                        return null;
+                        //throw new NullReferenceException(String.Format("No entity {0} {1} found.", id,
+                        //                                               typeof(TBusinessEntity).FullName));
                     cache.Add(new CacheItem(key, entity), DataCacheItemPolicy);
                 }
                 return entity;
