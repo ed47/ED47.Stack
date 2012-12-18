@@ -17,6 +17,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual int? CommenterId { get; set; }
         public virtual DateTime CreationDate { get; set; }
         public virtual int? FileBoxId { get; set; }
+        public virtual bool IsReadOnly { get; set; }
+        public virtual bool IsDeleted { get; set; }
+        public virtual DateTime? DeletionDate { get; set; }
 
         /// <summary>
         /// Returns the comments by their business key.
@@ -43,7 +46,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
             newComment.AddFiles(fileIds);
 
+            Comment.MakePreviousReadOnly(newComment.Id, newComment.BusinessKey);
+
             return newComment;
+        }
+
+        private static void MakePreviousReadOnly(int currentCommentId, string businessKey)
+        {
+            BaseUserContext.Instance.Repository.MakePreviousCommentReadOnly(currentCommentId, businessKey);
         }
 
         private void AddFiles(IEnumerable<int> fileIds)
@@ -99,9 +109,21 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             get { return _fileBox ?? (_fileBox = FileBoxId.HasValue ? FileBox.Get(FileBoxId.Value) : null); }
         }
 
-        private void Save()
+        public void Save()
         {
             BaseUserContext.Instance.Repository.Update<Entities.Comment, Comment>(this);
+        }
+
+        public void Delete()
+        {
+            BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.Comment>(this.Id);
+            this.IsDeleted = true;
+        }
+
+        public void AddFile(File file)
+        {
+            var filebox = GetOrCreateFileBox();
+            FileBoxItem.CreateNew(filebox.Id, file);
         }
     }
 }

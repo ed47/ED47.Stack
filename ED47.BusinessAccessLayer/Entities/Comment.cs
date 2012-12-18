@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
 
 namespace ED47.BusinessAccessLayer.Entities
 {
+    /// <summary>
+    /// Represents a comment in the database.
+    /// </summary>
     public class Comment : BaseDbEntity
     {
         [MaxLength(250)]
