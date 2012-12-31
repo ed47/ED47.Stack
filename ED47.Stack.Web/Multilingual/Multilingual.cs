@@ -118,6 +118,43 @@ namespace ED47.Stack.Web.Multilingual
             return String.Format("[{0}]", path);
         }
 
+
+        /// <summary>
+        /// Gets a multilignual string in the current UI culture with a plurielization.
+        /// </summary>
+        /// <param name="path">The path of the translation.</param>
+        /// <param name="pluralizeCount">The pluralize count.</param>
+        /// <param name="args">Parameters to be passed to String.Format with the translated text.</param>
+        /// <returns></returns>
+        public static string Np(string path, int pluralizeCount, params object[] args)
+        {
+            var language = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
+            IDictionary<string, TranslationItem> languageTranslations;
+
+            if (Translations.TryGetValue(language, out languageTranslations))
+            {
+                TranslationItem translation;
+                path = path + (pluralizeCount <= 1 ? ".single" : ".many");
+                if (languageTranslations.TryGetValue(path, out translation))
+                    return args.Length > 0 ? String.Format(translation.Text, args) : translation.Text;
+            }
+
+#if !DEBUG
+            //Fallback to English
+            if (Translations.TryGetValue(Properties.Settings.Default.DefaultLanguage, out languageTranslations))
+            {
+                TranslationItem translation;
+                if (languageTranslations.TryGetValue(path, out translation))
+                    return translation.Text;
+            }
+#endif
+#if DEBUG
+            AddMissingKey(path);
+#endif
+
+            return String.Format("[{0}]", path);
+        }
+
         /// <summary>
         /// Gets a multilignual MvcHtmlString in the current UI culture.
         /// This is best to output HTML from the translations.
