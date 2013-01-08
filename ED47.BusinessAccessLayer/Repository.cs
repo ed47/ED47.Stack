@@ -471,6 +471,9 @@ namespace ED47.BusinessAccessLayer
           
             where TResult : class, new()
         {
+            if (source == null)
+                return null;
+
             Type sourceType = typeof (TSource);
             Type targetType = typeof (TResult);
             TResult result = null;

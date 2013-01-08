@@ -262,6 +262,18 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             }
         }
 
+
+        /// <summary>
+        /// Gets the mime type of the file.
+        /// </summary>
+        /// <returns></returns>
+        public string GetContentType()
+        {
+            if (String.IsNullOrEmpty(Name)) return "";
+            return MimeTypeHelper.GetMimeType(Name);
+        }
+
+
         /// <summary>
         /// Adds a read audit for this file.
         /// </summary>

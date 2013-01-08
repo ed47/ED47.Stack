@@ -140,8 +140,11 @@ namespace ED47.BusinessAccessLayer.Message
         {
             if (recipient != null && JsonData != null)
                 JsonData["_recipient"] = recipient.JsonData;
-            return BodyTpl == null ? "No subject" : BodyTpl.Apply(JsonData ?? ModelData);
+            string res = BodyTpl == null ? "No body" : BodyTpl.Apply(JsonData ?? ModelData);
+            //res = res.Replace("\r\n", "<br/>");
+            return res;
         }
+        
 
        
 
@@ -156,7 +159,7 @@ namespace ED47.BusinessAccessLayer.Message
         {
             if(recipient != null && JsonData != null)
                 JsonData["_recipient"] = recipient.JsonData;
-            return SubjectTpl == null ? "No body" : SubjectTpl.Apply(JsonData ?? ModelData);
+            return SubjectTpl == null ? "No subject" : SubjectTpl.Apply(JsonData ?? ModelData);
         }
 
      

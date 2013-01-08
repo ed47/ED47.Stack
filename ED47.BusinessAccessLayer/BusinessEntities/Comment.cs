@@ -16,6 +16,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual string Body { get; set; }
         public virtual int? CommenterId { get; set; }
         public virtual DateTime CreationDate { get; set; }
+        public virtual int? FileBoxId { get; set; }
+        public virtual bool IsReadOnly { get; set; }
+        public virtual bool IsDeleted { get; set; }
+        public virtual DateTime? DeletionDate { get; set; }
 
         /// <summary>
         /// Returns the comments by their business key.
@@ -29,7 +33,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     .ToList();
         }
 
-        public static void Create(string businessKey, string comment, int? commenterId = null)
+        public static Comment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null)
         {
             var newComment = new Comment
                                  {
@@ -39,6 +43,87 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                                  };
 
             BaseUserContext.Instance.Repository.Add<Entities.Comment, Comment>(newComment);
+
+            newComment.AddFiles(fileIds);
+
+            Comment.MakePreviousReadOnly(newComment.Id, newComment.BusinessKey);
+
+            return newComment;
+        }
+
+        private static void MakePreviousReadOnly(int currentCommentId, string businessKey)
+        {
+            BaseUserContext.Instance.Repository.MakePreviousCommentReadOnly(currentCommentId, businessKey);
+        }
+
+        private void AddFiles(IEnumerable<int> fileIds)
+        {
+            if (fileIds == null)
+                return;
+
+            var filebox = GetOrCreateFileBox();
+
+            foreach (var fileId in fileIds)
+            {
+                var file = File.Get(fileId);
+
+                if (file == null) 
+                    continue;
+
+                FileBoxItem.CreateNew(filebox.Id, file);
+            }
+        }
+
+        /// <summary>
+        /// Add files from an existing list of FileBoxItems to the comment.
+        /// </summary>
+        /// <param name="files">The FileBoxItems to add to the comment.</param>
+        public void AddFiles(IEnumerable<FileBoxItem> files)
+        {
+            var filebox = GetOrCreateFileBox();
+
+            foreach (var fileBoxItem in files)
+            {
+                FileBoxItem.CreateNew(filebox.Id, fileBoxItem.File);
+            }
+        }
+
+        private FileBox GetOrCreateFileBox()
+        {
+            FileBox filebox;
+
+            if (FileBoxId == null)
+            {
+                filebox = BusinessEntities.FileBox.CreateNew("Comment");
+                this.FileBoxId = filebox.Id;
+                this.Save();
+            }
+            else
+                filebox = this.FileBox;
+            return filebox;
+        }
+
+        private FileBox _fileBox;
+        public FileBox FileBox
+        {
+            get { return _fileBox ?? (_fileBox = FileBoxId.HasValue ? FileBox.Get(FileBoxId.Value) : null); }
+        }
+
+        public void Save()
+        {
+            BaseUserContext.Instance.Repository.Update<Entities.Comment, Comment>(this);
+        }
+
+        public void Delete()
+        {
+            BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.Comment>(this.Id);
+            this.IsDeleted = true;
+        }
+
+        public void AddFile(File file)
+        {
+            var filebox = GetOrCreateFileBox();
+            FileBoxItem.CreateNew(filebox.Id, file);
         }
     }
 }

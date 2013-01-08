@@ -107,6 +107,7 @@
     <Compile Include="BusinessEntities\Audit.cs" />
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
+    <Compile Include="BusinessEntities\CommentRepositoryExtension.cs" />
     <Compile Include="BusinessEntities\File.cs" />
     <Compile Include="BusinessEntities\FileBox.cs" />
     <Compile Include="BusinessEntities\FileBoxItem.cs" />

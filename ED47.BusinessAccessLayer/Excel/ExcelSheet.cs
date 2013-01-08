@@ -11,6 +11,8 @@ namespace ED47.BusinessAccessLayer.Excel
 {
     public class ExcelSheet
     {
+       
+
         /// <summary>
         /// The name of the sheet.
         /// </summary>

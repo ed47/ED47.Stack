@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Web.Mvc;
@@ -43,6 +44,12 @@ public static class StringExtensions
             return (true);
         
         return (false);
+    }
+
+
+    public static string Format(this string s, params object[] args)
+    {
+        return String.Format(s, args);
     }
 
 

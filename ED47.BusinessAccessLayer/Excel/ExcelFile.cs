@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Web.Mvc;
 using ED47.Stack.Web;
 using OfficeOpenXml;
 
@@ -51,6 +52,15 @@ namespace ED47.BusinessAccessLayer.Excel
         }
 
         /// <summary>
+        /// Adds a new sheet.
+        /// </summary>
+        /// <param name="sheet">The sheet.</param>
+        public void AddSheet(ExcelSheet sheet)
+        {
+            Sheets.Add(sheet);
+        }
+
+        /// <summary>
         /// Saves the Excel file to a file.
         /// </summary>
         /// <param name="fileInfo">The file info to save into.</param>
@@ -65,5 +75,26 @@ namespace ED47.BusinessAccessLayer.Excel
 
             excelPackage.Save();
         }
+
+        public BusinessEntities.File Write(string name, string businessKey)
+        {
+            var file = new FileInfo(Path.GetTempFileName());
+            file.Delete();
+            Write(file);
+            var f = BusinessEntities.File.CreateNewFile<BusinessEntities.File>(name, businessKey, 0);
+            f.Write(file);
+            File.Delete(file.FullName);
+            return f;
+        }
+
+        public FileResult Download(string name, string businessKey)
+        {
+            var f = Write(name, businessKey);
+            using (var s = f.OpenRead())
+            {
+                return new FileStreamResult(s,f.GetContentType());
+            }
+        }
+
     }
 }

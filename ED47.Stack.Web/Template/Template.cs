@@ -1057,7 +1057,8 @@ namespace ED47.Stack.Web.Template
         {
             if (TplType == TemplateType.Razor)
             {
-                return Razor.Parse(TemplateText, o, this.Name);
+                return Razor.Parse(TemplateText, o, Name);
+
             }
 
             IEnumerable list;
@@ -1075,7 +1076,6 @@ namespace ED47.Stack.Web.Template
             var res = new StringBuilder();
 
             res.Append(ApplyData(_templateText, list, 0));
-            
             return res.ToString();
         }
 
