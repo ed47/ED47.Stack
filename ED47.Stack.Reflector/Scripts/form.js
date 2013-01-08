@@ -55,8 +55,8 @@ Ext.define("ED47.ui.Form", {
     },
     onStartEdit: function () {
         // select the first form field in the child Item and set the focus on it
-        if (this.items.first().getXType() == 'displayfield') return;
-        if (this.items.first().getXType() == "fieldset") return;
-        this.items.first().focus(true);
+        if (this.getForm().getFields().first().getXType() == 'displayfield') return;
+        if (this.getForm().getFields().first().getXType() == "fieldset") return;
+        this.getForm().getFields().first().focus(true);
     }
 });

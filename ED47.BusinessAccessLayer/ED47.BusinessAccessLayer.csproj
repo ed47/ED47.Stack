@@ -196,6 +196,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ED47.Stack.Reflector\ED47.Stack.Reflector.csproj">
+      <Project>{32753AA0-424D-4217-BC63-35A22FB0607D}</Project>
+      <Name>ED47.Stack.Reflector</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ED47.Stack.Web\ED47.Stack.Web.csproj">
       <Project>{57FD0F4F-4DAC-42CA-964D-39A180D714B3}</Project>
       <Name>ED47.Stack.Web</Name>

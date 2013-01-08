@@ -6,11 +6,13 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Web;
+using ED47.Stack.Reflector.Attributes;
 using ED47.Stack.Web;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
-{
+{   
+    [Model]
     public class File : BusinessEntity
     {
         public virtual int Id { get; set; }
@@ -22,6 +24,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         [MaxLength(200)]
         public virtual string Name { get; set; }
+
+        [MaxLength(2)]
+        public virtual string Lang { get; set; }
 
         public virtual int Version { get; set; }
 
@@ -35,6 +40,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public static TFile GetById<TFile>(int id) where TFile : File, new()
         {
             return BaseUserContext.Instance.Repository.Find<Entities.File,TFile>(el => el.Id == id);
+        }
+
+        public static IEnumerable<File>  GetAll()
+        {
+            var context = BaseUserContext.Instance;
+            if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
+                context = BusinessComponent.Kernel.Get<BaseUserContext>();
+
+            return context.Repository.GetAll<Entities.File, File>();
         }
 
         public static File Get(int id)
@@ -103,7 +117,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="groupId">The group id.</param>
         /// <param name="requiresLogin">if set to <c>true</c> [requires login].</param>
         /// <returns></returns>
-        public static TFile CreateNewFile<TFile>(string name, string businessKey, int? groupId = 0, bool requiresLogin = true) where TFile :File, new ()
+        public static TFile CreateNewFile<TFile>(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null) where TFile :File, new ()
         {
             var previous = GetFileByKey<File>(businessKey);
             var version = previous != null ? previous.Version + 1 : 1;
@@ -117,14 +131,16 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 Version = version,
                 LoginRequired = requiresLogin,
 
-               GroupId = groupId.GetValueOrDefault(0)
+                Lang = langId,
+
+                GroupId = groupId.GetValueOrDefault(0)
             };
             BaseUserContext.Instance.Repository.Add<Entities.File,TFile>(file);
 
             return file;
         }
 
-        public static TFile Updload<TFile>(string businessKey, int groupId = 0) where TFile : File, new()
+        public static TFile Upload<TFile>(string businessKey, int groupId = 0) where TFile : File, new()
         {
             var cxt = HttpContext.Current;
             if (cxt == null) return null;
@@ -139,9 +155,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return res;
         }
 
-        public static File Updload(string businessKey, int groupId = 0)
+        public static File Upload(string businessKey, int groupId = 0)
         {
-            return Updload<File>(businessKey, groupId);
+            return Upload<File>(businessKey, groupId);
         }
 
         public void Write(string content)

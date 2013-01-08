@@ -74,7 +74,8 @@ namespace ED47.BusinessAccessLayer
         /// </returns>
         public int Commit()
         {
-            var modifiedEntities = DbContext.ChangeTracker.Entries().Where(el => el.State == EntityState.Modified).ToList();
+            var modifiedEntities = DbContext.ChangeTracker.Entries()
+                .Where(el => el.State == EntityState.Modified).ToList();
             var deletedEntities = DbContext.ChangeTracker.Entries().Where(el => el.State == EntityState.Deleted).ToList();
             
             var writtenObjectCount = DbContext.SaveChanges();

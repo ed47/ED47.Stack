@@ -17,6 +17,8 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     public abstract class BaseUserContext
     {
+        public static Func<BaseUserContext> CreateDefaultContext { get; set; } 
+
         public static string ApplicationUrl
         {
             get
@@ -195,6 +197,12 @@ namespace ED47.BusinessAccessLayer
             get
             {
                 var userContext = Retrieve(InstanceKey) as BaseUserContext;
+                if (userContext == null && CreateDefaultContext != null)
+                {
+                    userContext = CreateDefaultContext();
+                    Store(InstanceKey, userContext);
+                }
+
                 return userContext;
             }
 
