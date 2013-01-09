@@ -58,7 +58,7 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
             resizable: false,
             layout: "fit",
             width: 400,
-            height: 400, 
+            height: 400,
             modal: true,
             items: [
                 me.formPanel
@@ -79,9 +79,13 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
 
             var items = r.data.ResultData.Items;
             me.multilingualValues = items;
+
+            if (!config.fieldConfig)
+                config.fieldConfig = {};
+            
             for (var i = 0, max = items.length; i < max; i++) {
                 var item = items[i];
-                me.formPanel.add(Ext.apply(config.fieldConfig,{
+                me.formPanel.add(Ext.apply(config.fieldConfig, {
                     xtype: config.mtype,
                     name: item.LanguageIsoCode,
                     value: item.Text,

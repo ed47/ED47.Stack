@@ -78,6 +78,27 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         }
 
+        /// <summary>
+        /// Gets the translations for a set of keys.
+        /// </summary>
+        /// <param name="isoLanguageCode">The ISO 2-letter language code.</param>
+        /// <param name="dbContext">The EF DB Context.</param>
+        /// <param name="key">The translation key to fetch.</param>
+        /// <returns></returns>
+        internal static List<BusinessEntities.Multilingual> GetTranslations(string isoLanguageCode, string key, IObjectContextAdapter dbContext) {
+
+            if (string.IsNullOrWhiteSpace(key))
+                return new List<BusinessEntities.Multilingual>(0);
+
+            var set = dbContext.ObjectContext.CreateObjectSet<Entities.Multilingual>();
+            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key))
+                .OrderBy(m => m.Key)
+                .ThenBy(m => m.PropertyName);
+
+            return Repository.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(ma).ToList();
+
+        }
+       
        
         /// <summary>
         /// Applies a translation to an instance of the object.
