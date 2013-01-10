@@ -141,6 +141,7 @@
     <EmbeddedResource Include="Scripts\multilingual-form.js" />
     <EmbeddedResource Include="Scripts\tree.js" />
     <EmbeddedResource Include="Scripts\result-grid.js" />
+    <EmbeddedResource Include="Scripts\checkColumnn.js" />
     <Content Include="Scripts\linq-vsdoc.js" />
     <Content Include="Scripts\linq.min.js" />
     <EmbeddedResource Include="Scripts\tooltiper.js" />
