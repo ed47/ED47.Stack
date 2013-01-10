@@ -62,6 +62,33 @@ public static class StringExtensions
         return stream;
     }
 
+
+    public static bool IsLike(this string s, object text) {
+        if (s == null && text == null)
+            return true;
+
+        if (s == null && text != null)
+            return false;
+
+        if (text == null)
+            return false;
+
+        var textStr = text.ToString().Trim();
+        var sAux = s.Trim();
+
+        /* Turn "off" all regular expression related syntax in the pattern string. */
+        textStr = Regex.Escape(textStr);
+
+        /* Replace the SQL LIKE wildcard metacharacters with the equivalent regular expression metacharacters. */
+        textStr = textStr.Replace("%", ".*?").Replace("_", ".");
+
+        /* The previous call to Regex.Escape actually turned off too many metacharacters, i.e. 
+         * those which are recognized by bbth the regular expression engine and the SQL LIKE statement ([...] and [^...]). 
+         * Those metacharacters have to be manually unescaped here. */
+        textStr = textStr.Replace(@"\[", "[").Replace(@"\]", "]").Replace(@"\^", "^");
+
+        return Regex.IsMatch(sAux, textStr, RegexOptions.IgnoreCase);
+    }
 }
 
 
