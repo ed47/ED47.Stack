@@ -74,10 +74,22 @@ namespace ED47.Stack.Web.Multilingual
 
             foreach (var translationItem in fallback)
             {
-                foreach (var language in languages.Values)
+                foreach (var language in languages)
                 {
-                    if(!language.ContainsKey(translationItem.Key))
-                        language.Add(translationItem);
+                    if (!language.Value.ContainsKey(translationItem.Key))
+                    {
+                        language.Value.Add(new KeyValuePair<string, TranslationItem>(
+
+                                               translationItem.Key,
+                                               new TranslationItem
+                                                   {
+                                                       FileName =
+                                                           Path.GetFileNameWithoutExtension(translationItem.Value.FileName) + "." + language.Key + ".xml",
+                                                       LanguageIsoCode = language.Key,
+                                                       Text = translationItem.Value.Text
+                                                   }
+                                               ));
+                    }
                 }
             }
 
@@ -280,7 +292,16 @@ namespace ED47.Stack.Web.Multilingual
                 // ReSharper disable LoopCanBeConvertedToQuery
                 foreach (var node in splitPath)
                 {
-                    currentElement = currentElement.Element(node);
+                   var nextElement = currentElement.Element(node);
+
+                   if (nextElement == null)
+                   {
+                       var newElement = new XElement(node);
+                       currentElement.Add(newElement);
+                       nextElement = newElement;
+                   }
+
+                    currentElement = nextElement;
                 }
                 // ReSharper restore LoopCanBeConvertedToQuery
             
@@ -322,7 +343,13 @@ namespace ED47.Stack.Web.Multilingual
                 return Translations[language];
 
             if (Translations.ContainsKey(Properties.Settings.Default.DefaultLanguage))
-                return Translations[Properties.Settings.Default.DefaultLanguage];
+                return Translations[Properties.Settings.Default.DefaultLanguage]
+                            .ToDictionary(el => el.Key, el => new TranslationItem 
+                            { 
+                                FileName  = Path.GetFileNameWithoutExtension(el.Value.FileName) + "." + language + ".xml", 
+                                LanguageIsoCode = language, 
+                                Text = el.Value.Text
+                            });
 
             return new Dictionary<string, TranslationItem>();
         }
