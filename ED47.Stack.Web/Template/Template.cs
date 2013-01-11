@@ -181,9 +181,14 @@ namespace ED47.Stack.Web.Template
         /// </summary>
         /// <param name="name">The name or path of the template.</param>
         /// <param name="assembly">The optional assembly to find the template in.</param>
+        /// <param name="languageCode">The optional language code of the template.</param>
         /// <returns></returns>
-        public static Template Get(string name, Assembly assembly = null )
+        public static Template Get(string name, Assembly assembly = null, string languageCode = null)
         {
+            var nameWithoutLanguage = name;
+            if (!String.IsNullOrWhiteSpace(languageCode))
+                name += "." + languageCode.Trim();
+
             Template tpl;
             var originalName = name;
             name = name.ToLowerInvariant();
@@ -225,6 +230,9 @@ namespace ED47.Stack.Web.Template
                     return tpl;
                 }
             }
+
+            if (!String.IsNullOrWhiteSpace(languageCode)) //If searched template with language and didn't find if, fall back to culture-less template if available.
+                return Get(nameWithoutLanguage, assembly);
 
             return null;
         }

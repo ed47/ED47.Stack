@@ -20,5 +20,8 @@ namespace ED47.BusinessAccessLayer.Entities
 
         [MaxLength(500)]
         public virtual string GroupLabel { get; set; }
+
+        [MaxLength(5)]
+        public virtual string LanguageCode { get; set; }
     }
 }

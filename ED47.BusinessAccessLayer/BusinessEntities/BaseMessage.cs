@@ -26,6 +26,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual DateTime? OpenDate { get; set; }
 
         public virtual string GroupLabel { get; set; }
+
+        public virtual string LanguageCode { get; set; }
         
         [JsonIgnore]
         public Email Email
@@ -44,12 +46,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public Template GetSubjectTpl()
         {
-            return Subject != null ? new Template(Subject) : Template.Get("Email_" +  GetType().Name + "Subject");
+            return Subject != null ? new Template(Subject) : Template.Get("Email_" +  GetType().Name + "Subject", languageCode: this.LanguageCode);
         }
 
         public virtual Template GetBodyTpl()
         {
-            return Body != null ? new Template(Body) : Template.Get("Email_" + GetType().Name + "Body");
+            return Body != null ? new Template(Body) : Template.Get("Email_" + GetType().Name + "Body", languageCode: this.LanguageCode);
         }
 
         private Email _email;
