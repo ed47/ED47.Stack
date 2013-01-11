@@ -77,6 +77,12 @@ namespace ED47.BusinessAccessLayer.Excel
             return this;
         }
 
+        public ExcelSheet AddColumns(IEnumerable<ExcelColumn> columns)
+        {
+            Columns.AddRange(columns);
+            return this;
+        }
+
         /// <summary>
         /// Writes the sheet into the specified excel package.
         /// </summary>
