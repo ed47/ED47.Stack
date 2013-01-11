@@ -282,7 +282,7 @@ Ext.define("ED47.views.data.Store", {
                     Ext.Msg.alert('Delete Action not permited ', "You can't delete this item.");
                     return;
                 }
-                
+
                 Ext.each(records, function (record) {
                     me.remove(record);
                 });
@@ -300,11 +300,11 @@ Ext.define("ED47.views.data.Store", {
                             Ext.Msg.alert('Delete Action not permited ', "You can't delete this item.");
                             return;
                         }
-                        
+
                         Ext.each(records, function (record) {
                             me.remove(record);
                         });
-                        
+
                         me.select(me, me.getAt(0));
 
                     });
