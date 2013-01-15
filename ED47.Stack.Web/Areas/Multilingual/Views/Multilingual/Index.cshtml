@@ -40,10 +40,12 @@
             $(this).parents("form").find("input[type=submit]").show();
         });
 
-        $(document).on("keydown", "#search-text", function () {
+        $(document).on("keydown", "#search-text", function (eventData) {
+            if (eventData.keyCode != 13) return;
+
             var me = $(this);
             var searchValue = me.val();
-            
+
 
             $.each(window.fields, function (index, item) {
                 if (item.value.toLowerCase().indexOf(searchValue.toLowerCase()) == -1)
