@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using ED47.BusinessAccessLayer;
 using ED47.BusinessAccessLayer.Excel.Reader;
 using ED47.Stack.Web;
 using SmartXLS;
@@ -119,10 +120,22 @@ namespace DED47.BusinessAccessLayer.Excel.Reader
                     if (xlColAttr == null || xlColAttr.OutputOnly) continue;
 
                     var xlValue = workBook.getText(i, xlColAttr.Column);
-                    
-                    ExcelColumnAttribute.Validate(p, xlValue, mbrLine);
 
-                    mbrLine.CustomPropertyValidation(p, xlValue ,mbrLine);
+                    try
+                    {
+                        ExcelColumnAttribute.Validate(p, xlValue, mbrLine);
+
+                        mbrLine.CustomPropertyValidation(p, xlValue, mbrLine);
+                    }catch(Exception er)
+                    {
+
+                        var importStats = BaseImportWorker.GetImportStatus("GroupProperty", BaseUserContext.Instance.UserName);
+                        importStats.Status = new { Msg = "Errors while validating" };
+                        importStats.ImportProgres = 100;
+            
+                        mbrLine.IsValid = false;
+                        mbrLine.ErrorMessage = p.Name+ ":"+ er.Message ;                                    
+                    }
 
                     if (mbrLine.CurrentPropertyIsBlank && xlColAttr.IgnoreLineIfBlank)
                     {
