@@ -113,6 +113,7 @@
     <Compile Include="BusinessEntities\FileBoxItem.cs" />
     <Compile Include="BusinessEntities\IRecipient.cs" />
     <Compile Include="BusinessEntities\Lang.cs" />
+    <Compile Include="BusinessEntities\BaseMessage.cs" />
     <Compile Include="BusinessEntities\Multilingual.cs" />
     <Compile Include="BusinessEntity.cs" />
     <Compile Include="BusinessEntityAmendment.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Entities\FileBox.cs" />
     <Compile Include="Entities\FileBoxItem.cs" />
     <Compile Include="Entities\Language.cs" />
+    <Compile Include="Entities\BaseMessage.cs" />
     <Compile Include="Entities\Multilingual.cs" />
     <Compile Include="EventProxy.cs" />
     <Compile Include="EnumerableExtension.cs" />
