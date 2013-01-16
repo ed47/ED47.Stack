@@ -22,7 +22,7 @@ Ext.define("ED47.ui.Form", {
             store.forms.push(view.getForm());
 
             Ext.each(view.form.getFields().items, function (item) {
-                item.on("blur", function (field, context) {
+                item.on("blur", function (field, context) {                    
                     var record = view.form.getRecord();
 
                     if (!view.form.isDirty())
@@ -39,7 +39,7 @@ Ext.define("ED47.ui.Form", {
             var fct = function () {
                 Ext.defer(function () {
                     if (!store.preselectedRecordId) {
-                        if(!view.doNotSelectFirstRecord) store.select(view, store.getAt(0));
+                        if (!view.doNotSelectFirstRecord) store.select(view, store.getAt(0));
                     } else
                         store.select(view, store.getById(store.preselectedRecordId));
                 }, 100);

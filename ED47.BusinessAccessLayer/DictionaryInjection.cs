@@ -21,7 +21,7 @@ namespace ED47.BusinessAccessLayer
                 if (targetProp == null || targetProp.IsReadOnly) continue;
                 object value = prop.Value;
 
-                if (value as JObject != null) return;
+                if (value as JObject != null) continue;
 
                 if(value != null && !targetProp.PropertyType.IsNullable() && targetProp.PropertyType !=value.GetType() && targetProp.PropertyType.IsPrimitive)
                 {
