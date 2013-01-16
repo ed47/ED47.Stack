@@ -11,6 +11,37 @@ namespace ED47.BusinessAccessLayer.Multilingual
     {
 
 
+
+        /// <summary>
+        /// Translates a collection of entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entities.</typeparam>
+        /// <param name="businessEntities">The collection of entities to translate.</param>
+        /// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
+        /// <param name="dbContext">The Entity Framework DB Context.</param>
+        public static void MultiKeyTranslate<TEntity, TBusinesEntity>(this Repository repository, IEnumerable<TBusinesEntity> businessEntities, string isoLanguageCode)
+            where TEntity : DbEntity
+            where TBusinesEntity : BusinessEntity, new()
+        {
+
+            if (!businessEntities.Any())
+                return;
+
+            isoLanguageCode = isoLanguageCode.Trim().ToLower();
+            var entityName = typeof(TBusinesEntity).Name;
+
+            var keys = businessEntities.Select(b => entityName + "[" + string.Join(",", b.GetKeys<TEntity>().Select(kv => kv.Value)) + "]");
+            var translations = BusinessEntities.Multilingual.GetTranslations(isoLanguageCode, keys, repository.DbContext);
+
+            foreach (var entity in businessEntities)
+            {
+                var item = entity; //HACK: To prevent modified closure bug in .Net 4.0 
+
+                var key = entityName + "[" + string.Join(",", item.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
+                BusinessEntities.Multilingual.ApplyTranslation(item, translations.Where(t => t.Key == key));
+            }
+        }
+
         /// <summary>
         /// Translates a collection of entities.
         /// </summary>
