@@ -11,6 +11,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     public class Email : BusinessEntity
     {
+        public Email()
+        {
+            IsHtml = true;
+        }
 
         public virtual int Id { get; set; }
 
@@ -61,7 +65,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty),
                 Body = Body,
-                IsBodyHtml = true,
+                IsBodyHtml = IsHtml,
             };
             
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
@@ -120,6 +124,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         }
 
         public string Bcc { get; set; }
+
+        public bool IsHtml { get; set; }
 
         public virtual void Insert()
         {
