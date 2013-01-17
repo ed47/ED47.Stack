@@ -23,7 +23,7 @@ namespace ED47.BusinessAccessLayer
 
                 if (value as JObject != null) continue;
 
-                if(value != null && !targetProp.PropertyType.IsNullable() && targetProp.PropertyType !=value.GetType() && targetProp.PropertyType.IsPrimitive)
+                if(value != null && !targetProp.PropertyType.IsNullable() && targetProp.PropertyType !=value.GetType() && (targetProp.PropertyType.IsPrimitive || targetProp.PropertyType == typeof(decimal)))
                 {
                     value = Convert.ChangeType(value, targetProp.PropertyType);
                 }
