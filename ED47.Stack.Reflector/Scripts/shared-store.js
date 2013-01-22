@@ -8,7 +8,7 @@ Ext.define("ED47.views.data.SharedStore", {
         this.id = config.id;
         this.model = config.model;
         this.deleteConfirmation = config.deleteConfirmation;
-        
+
         try { //Attempt to create the model to make sure it exists. If not show a friendly message to the developer.
             Ext.create(this.model);
         }
@@ -122,7 +122,7 @@ Ext.define("ED47.views.data.Store", {
 
         if (this.addUpdateFunction != null)
             this.setupAutoSave();
-
+        
         this.on("select", this.onSelect);
     },
 
