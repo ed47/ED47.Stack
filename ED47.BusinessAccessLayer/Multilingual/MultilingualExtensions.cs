@@ -43,7 +43,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
         /// </summary>
         /// <typeparam name="TEntity">The type of the entities.</typeparam>
         /// <typeparam name="TBusinesEntity">The type of the entities.</typeparam>
-        /// <param name="businessEntities">The collection of entities to translate.</param>
+        /// <param name="businessEntity">The collection of entities to translate.</param>
         /// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
         /// <param name="repository">The Entity Framework DB Context.</param>
         public static void Translate<TEntity, TBusinesEntity>(this Repository repository, TBusinesEntity businessEntity, string isoLanguageCode, string key)
@@ -56,11 +56,5 @@ namespace ED47.BusinessAccessLayer.Multilingual
             var translations = BusinessEntities.Multilingual.GetTranslations(isoLanguageCode, key, repository.DbContext);
             BusinessEntities.Multilingual.ApplyTranslation(businessEntity, translations.Where(t => t.Key.Contains(key)));
         }
-
-        private static void seekex(IEnumerable<object> iEnumerable) {
-            
-        }
-
-
     }
 }
