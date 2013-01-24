@@ -5,6 +5,7 @@ using System.Text;
 using System.Web.Mvc;
 using ED47.Stack.Web.HelperTemplates;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace ED47.Stack.Web
 {
@@ -52,7 +53,7 @@ namespace ED47.Stack.Web
                 id = name.Split('.').Last().ToLowerInvariant() + "-list";
 
             var builder = new StringBuilder("<script language='javascript'>");
-            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting)));
+            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting, new JavaScriptDateTimeConverter())));
             builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0));
             builder.AppendLine("</script>");
 
