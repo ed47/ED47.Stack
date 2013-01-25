@@ -20,7 +20,10 @@ namespace ED47.BusinessAccessLayer.Multilingual
         /// <param name="dbContext">The Entity Framework DB Context.</param>
         public static void Translate<TEntity, TBusinesEntity>(this Repository repository, IEnumerable<TBusinesEntity> businessEntities, string isoLanguageCode)
             where TEntity : DbEntity
-            where TBusinesEntity : BusinessEntity, new() {
+            where TBusinesEntity : BusinessEntity, new()
+        {
+            businessEntities = businessEntities.Where(b => b != null).ToList();
+
             if (!businessEntities.Any())
                 return;
 
