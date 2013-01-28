@@ -122,7 +122,7 @@ Ext.define("ED47.views.data.Store", {
 
         if (this.addUpdateFunction != null)
             this.setupAutoSave();
-        
+
         this.on("select", this.onSelect);
     },
 
@@ -325,7 +325,7 @@ Ext.define("ED47.views.data.TreeStore", {
     extend: "Ext.data.TreeStore",
 
     constructor: function (config) {
-        
+
         var defaultConfig = {
             model: config.model,
             storeId: config.id,
@@ -425,6 +425,7 @@ Ext.define("ED47.views.data.TreeStore", {
             view._updating = true;
             view.updateRecord(store, record, callResult);
             view._updating = false;
+
             Ext.each(modifiedFieldNames, function (fiedName) {
                 Ext.each(view.forms, function (form) {
                     Ext.each(form.getFields().items, function (field) {
