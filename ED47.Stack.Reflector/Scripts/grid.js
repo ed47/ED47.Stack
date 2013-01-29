@@ -24,14 +24,15 @@ Ext.define("ED47.ui.Grid", {
         if (Math.abs(h - h2) < 5) return;
         this.un("afterlayout", this.expandHeight);
         this.setHeight(h);
-       
+
     },
 
-    bindDataStore: function (storeId, sorter) {
+    bindDataStore: function (storeId, sorter, direction) {
         var me = this;
+        if (!direction) direction = "ASC";
         ED47.Stores.get(storeId, function (store) {
             store.sorters = new Ext.util.MixedCollection();
-            store.sorters.add("sorter", { property: sorter, direction: "ASC" });
+            store.sorters.add("sorter", { property: sorter, direction: direction });
             me.reconfigure(store);
 
             var selectFirst = function () {
@@ -44,9 +45,13 @@ Ext.define("ED47.ui.Grid", {
             };
             if (!me.disableSelectFirst) {
                 if (store.count() > 0) {
+                    store.sort(sorter, direction);
                     selectFirst();
                 } else {
-                    store.on("load", selectFirst);
+                    store.on("load", function () {
+                        store.sort(sorter, direction);
+                        selectFirst();
+                    });
                 }
             }
         });
