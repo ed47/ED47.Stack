@@ -570,7 +570,7 @@ namespace ED47.Stack.Web.Template
 
         private string Inject(object[] args)
         {
-            var tplName = args[0].ToString();
+            var tplName = args[0].ToString().ToLower();
             if (args.Length == 1)
             {
                 if (Templates.ContainsKey(tplName) && File.Exists(Templates[tplName]))
@@ -650,7 +650,7 @@ namespace ED47.Stack.Web.Template
             {
                 //TODO Faire la recherche du parent plus propement
                 var i = t._stack.Select(item => item.Current).ToList().IndexOf(obj);
-                if (i > 1)
+                if (i >= 1)
                     return t._stack[i - 1].Current;
             }
 
