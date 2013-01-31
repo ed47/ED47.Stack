@@ -76,6 +76,9 @@ ED47.Stores.get = function (storeId, callback, scope) {
     listener.items.push({ id: storeId, cb: callback, scope: scope });
 };
 
+
+
+
 ED47.Stores.initialize = function () {
     if (ED47.Stores.isInitialized) return;
     ED47.Stores.isInitialized = true;
@@ -219,6 +222,19 @@ Ext.define("ED47.views.data.Store", {
             });
 
         }, this);
+    },
+    
+    updateRecords : function (data, idField) {
+        for (var i = 0, max = data.length; i < max; i++) {
+            var d = data[i];
+            var r = this.getById(d[idField]);
+            if (!r) continue;
+            for (var p in d) {
+                r.set(p, d[p]);
+            }
+            r.commit();
+
+        }
     },
 
     //Updates a record from a callResult.
