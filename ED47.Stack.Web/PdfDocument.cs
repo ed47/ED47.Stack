@@ -147,7 +147,7 @@ namespace ED47.Stack.Web
         //    return res;
         //}
 
-        public void CreateInHttpResponse(string attachName)
+        public void CreateInHttpResponse(string attachName, bool endResponse=false)
         {
             var c = System.Web.HttpContext.Current;
             if (c != null) {
@@ -155,12 +155,14 @@ namespace ED47.Stack.Web
                 byte[] pdfbyte = _Converter.GetPdfBytesFromHtmlString(Content, HttpContext.Current.Request.ApplicationPath);
                 System.Web.HttpResponse response = System.Web.HttpContext.Current.Response;
                 response.Clear();
-                response.AddHeader("Content-Type", "binary/octet-stream");
+                response.AddHeader("Content-Type", "application/pdf");
                 response.AddHeader("Content-Disposition", "attachment; filename=" + attachName + "; size=" + pdfbyte.Length.ToString());
                 response.Flush();
                 response.BinaryWrite(pdfbyte);
                 response.Flush();
-                response.End();
+                
+                if (endResponse)
+                    response.End();
             }
         }
         

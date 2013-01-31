@@ -7,6 +7,12 @@ using System.Web.Mvc;
 
 public static class StringExtensions
 {
+    public const string EmailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}"
+            + @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\"
+            + @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
+
+    public const string EmailRegexReplace = @"([A-Z0-9._%-]+)@([A-Z0-9.-]+\.[A-Z]{2,6})\(([^)]*)\)";
+
     public static string Ellipsis(this string s, int length, string showMoreText = "...")
     {
         if (s == null)
@@ -35,11 +41,8 @@ public static class StringExtensions
     }
 
     public static bool IsEmail(this string s) {
-        var strRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}"
-            + @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\"
-            + @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
-
-        var re = new Regex(strRegex);
+    
+        var re = new Regex(EmailRegex);
         if (re.IsMatch(s))
             return (true);
         
@@ -89,6 +92,15 @@ public static class StringExtensions
 
         return Regex.IsMatch(sAux, textStr, RegexOptions.IgnoreCase);
     }
+
+    public static string GetProtectedEmailFromSpam(this string text) {
+        return Regex.Replace(text, EmailRegexReplace, "<a class=\"email\" onclick=\"javascript:eml(\\'$2\\',this,\\'$3\\',\\'$1\\');\" target=\"_self\">$3</a>", RegexOptions.IgnoreCase);
+    }
+
+    public static string GetProtectedEmailFromSpam(this string text, string replacement) {
+        return Regex.Replace(text, EmailRegexReplace, replacement);
+    }
+
 }
 
 
