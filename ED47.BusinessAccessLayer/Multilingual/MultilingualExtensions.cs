@@ -37,7 +37,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 var item = entity; //HACK: To prevent modified closure bug in .Net 4.0
                 
                 var key = entityName + "[" + string.Join(",", item.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
-                BusinessEntities.Multilingual.ApplyTranslation(item, translations.Where(t => t.Key == key));
+                BusinessEntities.Multilingual.ApplyTranslation(item, translations.Where(t => t.Key.ToLower() == key.ToLower()));
             }
         }
 
