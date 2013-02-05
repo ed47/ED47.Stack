@@ -55,12 +55,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return FileBoxItem.GetByFileBoxId(Id);
         }
 
-        public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null)
+        public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true)
         {
             if(file == null || file.ContentLength == 0)
                 return null;
 
-            var newFile = File.CreateNewFile<File>(file.FileName, businessKey, groupdId, true, langId);
+            var newFile = File.CreateNewFile<File>(file.FileName, businessKey, groupdId, requireLogin, langId);
 
             using (var fileStream = newFile.OpenWrite())
             {
