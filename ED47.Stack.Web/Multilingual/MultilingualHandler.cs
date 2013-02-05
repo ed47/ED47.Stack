@@ -57,8 +57,6 @@ namespace ED47.Stack.Web.Multilingual
             context.Response.Write("var translations = ");
             context.Response.Write(JsonConvert.SerializeObject(Multilingual.GetLanguage(context.Request["lang"])));
             context.Response.Write(";");
-            
-            context.Response.Flush();
         }
     }
 }
