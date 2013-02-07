@@ -26,7 +26,7 @@ namespace ED47.Stack.Web
         /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null)
+        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null, string deleteConfirmationMessage = null)
         {
 // ReSharper disable JoinDeclarationAndInitializer
             Formatting formatting = Formatting.None;
@@ -54,7 +54,7 @@ namespace ED47.Stack.Web
 
             var builder = new StringBuilder("<script language='javascript'>");
             builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting, new JavaScriptDateTimeConverter())));
-            builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0));
+            builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}, {7}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0, deleteConfirmationMessage ?? "null"));
             builder.AppendLine("</script>");
 
             return new MvcHtmlString(builder.ToString());
