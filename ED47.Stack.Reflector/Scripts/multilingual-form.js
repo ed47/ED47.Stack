@@ -20,19 +20,19 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
         if (!config.getLanguagesFunc) throw "MultilingualFormWindow requires a languages array.";
 
         me.key = config.key;
-
+        
         me.formPanel = Ext.create("Ext.form.FormPanel", {
             border: false,
             autoScroll: true,
             bodyStyle: "padding: 10px;",
             items: [],
             buttons: [{
-                text: "Cancel",
+                text: config.fieldConfig.cancelButtonLabel || "Cancel",
                 handler: function () {
                     me.close();
                 }
             }, {
-                text: "Validate",
+                text: config.fieldConfig.saveButtonLabel || "Save",
                 handler: function () {
                     if (!me.multilingualValues || !me.multilingualValues.length) {
                         return;
@@ -55,7 +55,7 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
             border: false,
             closable: false,
             header: false,
-            resizable: false,
+            resizable: true,
             layout: "fit",
             width: 400,
             height: 400,
@@ -82,7 +82,7 @@ Ext.define("ED47.ui.MultilingualFormWindow", {
 
             if (!config.fieldConfig)
                 config.fieldConfig = {};
-            
+
             for (var i = 0, max = items.length; i < max; i++) {
                 var item = items[i];
                 me.formPanel.add(Ext.apply(config.fieldConfig, {
