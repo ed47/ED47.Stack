@@ -25,6 +25,7 @@ namespace ED47.Stack.Reflector
 
         public void ProcessRequest(HttpContext context)
         {
+
             // ReSharper disable RedundantAssignment
             var cachedStaticFilesResult = MemoryCache.Default.Get("ED47.Stack.Reflector.Static") as string;
             // ReSharper restore RedundantAssignment
@@ -37,9 +38,9 @@ namespace ED47.Stack.Reflector
             // ReSharper restore ConditionIsAlwaysTrueOrFalse
             {
                 var staticScriptBuilder = new StringBuilder();
-                staticScriptBuilder.AppendLine("/*===========  STATIC SCRIPTS ===========*/");
+                staticScriptBuilder.AppendLine("/*==================  STATIC SCRIPTS ==================*/");
                 ReflectorHandler.AppendStaticScripts(staticScriptBuilder);
-                staticScriptBuilder.AppendLine("/*=======================================================*/");
+                staticScriptBuilder.AppendLine("/*=====================================================*/");
                 cachedStaticFilesResult = staticScriptBuilder.ToString();
             }
             context.Response.Write(cachedStaticFilesResult);

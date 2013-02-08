@@ -77,12 +77,16 @@ namespace ED47.BusinessAccessLayer
 
         }
 
+        public event EventHandler Commited;
+
         /// <summary>
         /// Saves and commits data to the database.
         /// </summary>
         public virtual void Commit()
         {
             Repository.Commit();
+            if (Commited != null)
+                Commited(this, new EventArgs());
         }
 
         protected virtual string GetCurrentUserName()
