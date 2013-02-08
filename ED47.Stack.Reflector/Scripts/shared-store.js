@@ -86,7 +86,7 @@ ED47.Stores.initialize = function () {
 };
 
 //Set's up a ShareStore and triggers ready event when done.
-ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, deleteFunction, deleteConfirmation, preselectedRecordId) {
+ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, deleteFunction, deleteConfirmation, preselectedRecordId, deleteConfirmationMessage) {
     ED47.views.Render.addEvents(id);
 
     var config = {
@@ -96,7 +96,8 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
         initNewFunction : initNewFunction, 
         deleteFunction : deleteFunction,
         deleteConfirmation: deleteConfirmation,
-        preselectedRecordId: preselectedRecordId
+        preselectedRecordId: preselectedRecordId,
+        deleteConfirmationMessage: deleteConfirmationMessage
     };
     
     var ready = function () {
@@ -120,12 +121,13 @@ Ext.define("ED47.views.data.Store", {
         this.initNewFunction = config.initNewFunction;
         this.deleteFunction = config.deleteFunction;
         this.preselectedRecordId = config.preselectedRecordId;
+        this.deleteConfirmationMessage = config.deleteConfirmationMessage;
 
         ED47.views.data.Store.superclass.constructor.call(this, config);
 
         if (this.addUpdateFunction != null)
             this.setupAutoSave();
-        
+
         this.on("select", this.onSelect);
     },
 
@@ -266,7 +268,12 @@ Ext.define("ED47.views.data.Store", {
             });
             if (callback) callback.call(this, true);
         } else {
-            Ext.Msg.confirm("Management", "Remove selected item?", function (button) {
+            var confirmationMessage = "Remove selected item?";
+
+            if (this.deleteConfirmationMessage)
+                confirmationMessage = this.deleteConfirmationMessage;
+
+            Ext.Msg.confirm("", confirmationMessage, function (button) {
                 if (button === "yes") {
                     me.deleteFunction(record.data, function (callResult) {
                         var r = callResult.data.ResultData.Item;
@@ -341,7 +348,7 @@ Ext.define("ED47.views.data.TreeStore", {
     extend: "Ext.data.TreeStore",
 
     constructor: function (config) {
-        
+
         var defaultConfig = {
             model: config.model,
             storeId: config.id,
@@ -441,6 +448,7 @@ Ext.define("ED47.views.data.TreeStore", {
             view._updating = true;
             view.updateRecord(store, record, callResult);
             view._updating = false;
+
             Ext.each(modifiedFieldNames, function (fiedName) {
                 Ext.each(view.forms, function (form) {
                     Ext.each(form.getFields().items, function (field) {

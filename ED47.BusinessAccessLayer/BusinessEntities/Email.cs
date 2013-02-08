@@ -54,7 +54,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public string CC { get; set; }
 
-        public void Send(bool force = false)
+        /// <summary>
+        /// Sends the specified message.
+        /// </summary>
+        /// <param name="force">if set to <c>true</c> force sending the message.</param>
+        /// <param name="from">The optional from address.</param>
+        public void Send(bool force = false, string from = null)
         {
             if(TransmissionDate.HasValue && ! force)
             {
@@ -109,6 +114,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     mailMessage.Attachments.Add(new Attachment(s,attachment.File.Name));
                 }
                 var smtpClient = new SmtpClient();
+
+                if (!String.IsNullOrWhiteSpace(from))
+                    mailMessage.From = new MailAddress(from);
+
                 smtpClient.Send(mailMessage);
                 TransmissionDate = DateTime.Now;
                 Save();

@@ -65,9 +65,10 @@ Array.prototype.where = function (expression,value) {
 
 Array.prototype.count = function (expression, value) {
     var res = 0;
+    if (!expression) return this.length;
     var expr = Array.minilinq.getExpression(expression);
     for (var i = 0, max = this.length; i < max; i++) {
-        if (expr(this[i],i,value) == true)
+        if (expr(this[i], i, value) == true)
             res++;
     }
     return res;
