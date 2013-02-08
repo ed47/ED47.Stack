@@ -78,6 +78,9 @@ namespace ED47.BusinessAccessLayer
 
             using(var rs = file.OpenRead())
             {
+                if (rs == null)
+                    return; 
+
                 context.Response.AddHeader("Content-Disposition", String.Format("attachment;filename=\"{0}\";size={1};", file.Name, rs.Length));
 
                 if(rs.CanRead)
