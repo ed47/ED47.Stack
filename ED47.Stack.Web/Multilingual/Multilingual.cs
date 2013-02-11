@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -78,17 +79,22 @@ namespace ED47.Stack.Web.Multilingual
                 {
                     if (!language.Value.ContainsKey(translationItem.Key))
                     {
+                        var filename = Path.GetFileNameWithoutExtension(translationItem.Value.FileName) + "." + language.Key + ".xml";
                         language.Value.Add(new KeyValuePair<string, TranslationItem>(
 
                                                translationItem.Key,
                                                new TranslationItem
                                                    {
-                                                       FileName =
-                                                           Path.GetFileNameWithoutExtension(translationItem.Value.FileName) + "." + language.Key + ".xml",
+                                                       FileName = filename,
                                                        LanguageIsoCode = language.Key,
                                                        Text = translationItem.Value.Text
                                                    }
                                                ));
+
+                        #if DEBUG
+                        Debug.WriteLine(String.Format("Missing translation key in language {0}: {1}, fallback value: {2}", language.Key, translationItem.Key, translationItem.Value.Text));
+                        AddMissingKey(translationItem.Key, Path.GetFileNameWithoutExtension(filename));
+                        #endif
                     }
                 }
             }
@@ -183,10 +189,14 @@ namespace ED47.Stack.Web.Multilingual
         /// Adds a missing key to the translation XML file.
         /// </summary>
         /// <param name="path">The path to the new key.</param>
-        public static void AddMissingKey(string path)
+        /// <param name="filename">The optional filename.</param>
+        public static void AddMissingKey(string path, string filename = null)
         {
             var splitPath = path.Split('.');
-            var filename = splitPath.First();
+            
+            if(String.IsNullOrWhiteSpace(filename))
+                filename = splitPath.First();
+
             var matchingFiles = Directory.GetFiles(HttpContext.Current.Server.MapPath("/App_Data/Translations/"), filename + ".xml");
             var file = matchingFiles.FirstOrDefault();
 
