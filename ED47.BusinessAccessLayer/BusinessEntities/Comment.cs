@@ -27,15 +27,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public virtual int Id { get; set; }
         [MaxLength(250)]
-        public virtual string BusinessKey { get; set; }
-        public virtual string Body { get; set; }
-        public virtual int? CommenterId { get; set; }
-        public virtual DateTime CreationDate { get; set; }
-        public virtual int? FileBoxId { get; set; }
-        public virtual bool IsReadOnly { get; set; }
-        public virtual bool IsDeleted { get; set; }
-        public virtual DateTime? DeletionDate { get; set; }
-
+        public  string BusinessKey { get; set; }
+        public  string Body { get; set; }
+        public  int? CommenterId { get; set; }
+        public  DateTime CreationDate { get; set; }
+        public  int? FileBoxId { get; set; }
+        public  bool IsReadOnly { get; set; }
+        public  bool IsDeleted { get; set; }
+        public  DateTime? DeletionDate { get; set; }
+        public  string CommentType { get; set; }
         /// <summary>
         /// Returns the comments by their business key.
         /// </summary>
