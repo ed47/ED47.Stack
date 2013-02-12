@@ -93,7 +93,7 @@ namespace ED47.Stack.Web.Multilingual
 
                         #if DEBUG
                         Debug.WriteLine(String.Format("Missing translation key in language {0}: {1}, fallback value: {2}", language.Key, translationItem.Key, translationItem.Value.Text));
-                        AddMissingKey(translationItem.Key, Path.GetFileNameWithoutExtension(filename));
+                        AddMissingKey(translationItem.Key, Path.GetFileNameWithoutExtension(filename), "###" + translationItem.Value.Text);
                         #endif
                     }
                 }
@@ -190,7 +190,8 @@ namespace ED47.Stack.Web.Multilingual
         /// </summary>
         /// <param name="path">The path to the new key.</param>
         /// <param name="filename">The optional filename.</param>
-        public static void AddMissingKey(string path, string filename = null)
+        /// <param name="value">The value to put in the missing key.</param>
+        public static void AddMissingKey(string path, string filename = null, string value = null)
         {
             var splitPath = path.Split('.');
             
@@ -206,7 +207,7 @@ namespace ED47.Stack.Web.Multilingual
             lock (WriteFileLock)
             {
                 var document = XDocument.Load(file);
-                AddMissingKeyPath(document.Root, splitPath, 0);
+                AddMissingKeyPath(document.Root, splitPath, 0, value);
                 document.Save(file);
             }
         }
@@ -217,7 +218,8 @@ namespace ED47.Stack.Web.Multilingual
         /// <param name="parent">The parent element.</param>
         /// <param name="path">The path to the new key.</param>
         /// <param name="currentPathItemIndex">The current path item index.</param>
-        private static void AddMissingKeyPath(XElement parent, IList<string> path, int currentPathItemIndex)
+        /// <param name="value">The value to add in the missing key</param>
+        private static void AddMissingKeyPath(XElement parent, IList<string> path, int currentPathItemIndex, string value = null)
         {
             var currentPathItem = path[currentPathItemIndex];
             var newElement = parent.Element(currentPathItem) ?? new XElement(currentPathItem);
@@ -230,11 +232,14 @@ namespace ED47.Stack.Web.Multilingual
                 if (!String.IsNullOrWhiteSpace(newElement.Value))
                     return;
 
-                newElement.Value = "[" + String.Join(".", path) + "]";
+                if (String.IsNullOrWhiteSpace(value))
+                    newElement.Value = "[" + String.Join(".", path) + "]";
+                else
+                    newElement.Value = value;
                 return;
             }
 
-            AddMissingKeyPath(newElement, path, nextIndex);
+            AddMissingKeyPath(newElement, path, nextIndex, value);
         }
 
         /// <summary>
