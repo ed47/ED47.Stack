@@ -79,6 +79,10 @@ public static class StringExtensions
         var textStr = text.ToString().Trim();
         var sAux = s.Trim();
 
+
+        if (!string.IsNullOrEmpty(s) && string.IsNullOrEmpty(textStr))
+            return false;
+
         /* Turn "off" all regular expression related syntax in the pattern string. */
         textStr = Regex.Escape(textStr);
 
