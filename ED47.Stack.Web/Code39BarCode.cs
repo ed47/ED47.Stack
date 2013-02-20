@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 
 namespace ED47.Stack.Web
 {
@@ -74,14 +76,14 @@ namespace ED47.Stack.Web
         #region Constructors
         public Code39BarCode() : this(string.Empty) { }
         public Code39BarCode(string barCodeText) : this(barCodeText, 75) { }
-        public Code39BarCode(string barCodeText, int height, float textHeigth = 7.0f)
+        public Code39BarCode(string barCodeText, int height, float textHeigth = 5.0f)
         {
             this.BarCodeText = barCodeText;
             this.Height = height;
             this.BarCodePadding = 5;
             this.ShowBarCodeText = true;
             this.BarCodeWeight = BarCodeWeight.Small;
-            this.BarCodeTextFont = new Font("Arial", textHeigth);
+            this.BarCodeTextFont = new Font("Helvetica", textHeigth);
             this.ImageFormat = ImageFormat.Png;
         }
         #endregion
@@ -138,6 +140,8 @@ namespace ED47.Stack.Web
             {
                 using (var gfx = Graphics.FromImage(bmp))
                 {
+                    gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
+                    gfx.CompositingQuality = CompositingQuality.HighQuality;
                     // Start with a white background
                     gfx.FillRectangle(Brushes.White, 0, 0, bmp.Width, bmp.Height);
 
@@ -174,7 +178,9 @@ namespace ED47.Stack.Web
                     }
 
                     var output = new MemoryStream();
-                    bmp.Save(output, this.ImageFormat);
+                    var parameters = new EncoderParameters {Param = new[] {new EncoderParameter(Encoder.Quality, 100)}};
+
+                    bmp.Save(output, ImageCodecInfo.GetImageEncoders().First(el => el.MimeType == "image/png"), parameters);
                     return output.ToArray();
                 }
             }
