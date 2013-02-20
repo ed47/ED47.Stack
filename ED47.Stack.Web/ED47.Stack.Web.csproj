@@ -129,6 +129,7 @@
     <Compile Include="Areas\Multilingual\MultilingualAreaRegistration.cs" />
     <Compile Include="Areas\Template\Controllers\TemplateController.cs" />
     <Compile Include="Areas\Template\TemplateAreaRegistration.cs" />
+    <Compile Include="Code39BarCode.cs" />
     <Compile Include="Filters\ElmahHandledErrorLoggerFilter.cs" />
     <Compile Include="HelperTemplates\ClientControlModel.cs" />
     <Compile Include="HtmlHelper.cs" />
