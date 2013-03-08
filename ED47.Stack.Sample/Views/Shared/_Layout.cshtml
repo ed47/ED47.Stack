@@ -1,0 +1,21 @@
+﻿@using System.Web.Optimization
+@using ED47.Stack.Sample.Domain
+@using i18n = ED47.Stack.Web.Multilingual.Multilingual
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <meta name="author" content="www.essencedesign.com" />
+        <meta name="Copyright" content="ED47 2013. All Rights Reserved.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>@Page.Title</title>
+        <link rel="shortcut icon" href="/favicon.ico" />
+        @Styles.Render("~/cssBundle")
+        <script src="@Url.Content("~/Scripts/modernizr-2.6.2.js")" type="text/javascript"></script>
+        @Scripts.Render("~/jsBundle")
+    </head>
+    <body class="page-@ViewBag.ControlerName.ToLower()" lang="@UserContext.Instance.LanguageCode">
+        <footer>
+        </footer>
+    </body>
+</html>
