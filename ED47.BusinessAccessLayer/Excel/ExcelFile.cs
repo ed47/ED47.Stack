@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.Web.Mvc;
 using ED47.Stack.Web;
 using OfficeOpenXml;
-using System.Drawing;
-using OfficeOpenXml.Style;
 
 namespace ED47.BusinessAccessLayer.Excel
 {
     public class ExcelFile
     {
-        private int sheetNameCounter = 1;
+        private int _sheetNameCounter = 1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExcelFile"/> class.
@@ -42,8 +38,8 @@ namespace ED47.BusinessAccessLayer.Excel
         {
             if (String.IsNullOrWhiteSpace(name))
             {
-                name = "Content " + sheetNameCounter.ToString(CultureInfo.InvariantCulture);
-                sheetNameCounter++;
+                name = "Content " + _sheetNameCounter.ToString(CultureInfo.InvariantCulture);
+                _sheetNameCounter++;
             }
 
             var newSheet = new ExcelSheet(name)
@@ -53,6 +49,15 @@ namespace ED47.BusinessAccessLayer.Excel
 
             this.Sheets.Add(newSheet);
             return newSheet;
+        }
+
+        /// <summary>
+        /// Adds a new sheet.
+        /// </summary>
+        /// <param name="sheet">The sheet.</param>
+        public void AddSheet(ExcelSheet sheet)
+        {
+            Sheets.Add(sheet);
         }
 
         /// <summary>
@@ -70,5 +75,26 @@ namespace ED47.BusinessAccessLayer.Excel
 
             excelPackage.Save();
         }
+
+        public BusinessEntities.File Write(string name, string businessKey)
+        {
+            var file = new FileInfo(Path.GetTempFileName());
+            file.Delete();
+            Write(file);
+            var f = BusinessEntities.File.CreateNewFile<BusinessEntities.File>(name, businessKey, 0);
+            f.Write(file);
+            File.Delete(file.FullName);
+            return f;
+        }
+
+        public FileResult Download(string name, string businessKey)
+        {
+            var f = Write(name, businessKey);
+            using (var s = f.OpenRead())
+            {
+                return new FileStreamResult(s,f.GetContentType());
+            }
+        }
+
     }
 }

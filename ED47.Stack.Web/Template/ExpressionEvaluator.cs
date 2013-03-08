@@ -9,7 +9,7 @@ using System.Globalization;
 
 #endregion
 
-namespace ED47.Stack.Web
+namespace ED47.Stack.Web.Template
 {
     [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
     public class Evaluator

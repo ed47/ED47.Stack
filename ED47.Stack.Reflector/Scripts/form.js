@@ -22,7 +22,7 @@ Ext.define("ED47.ui.Form", {
             store.forms.push(view.getForm());
 
             Ext.each(view.form.getFields().items, function (item) {
-                item.on("blur", function (field, context) {
+                item.on("blur", function (field, context) {                    
                     var record = view.form.getRecord();
 
                     if (!view.form.isDirty())
@@ -38,9 +38,9 @@ Ext.define("ED47.ui.Form", {
             });
             var fct = function () {
                 Ext.defer(function () {
-                    if (!store.preselectedRecordId)
-                        store.select(view, store.getAt(0));
-                    else
+                    if (!store.preselectedRecordId) {
+                        if (!view.doNotSelectFirstRecord) store.select(view, store.getAt(0));
+                    } else
                         store.select(view, store.getById(store.preselectedRecordId));
                 }, 100);
 
@@ -55,7 +55,8 @@ Ext.define("ED47.ui.Form", {
     },
     onStartEdit: function () {
         // select the first form field in the child Item and set the focus on it
-        if (this.items.first().getXType() == 'displayfield') return;
-        this.items.first().focus(true);
+        if (this.getForm().getFields().first().getXType() == 'displayfield') return;
+        if (this.getForm().getFields().first().getXType() == "fieldset") return;
+        this.getForm().getFields().first().focus(true);
     }
 });

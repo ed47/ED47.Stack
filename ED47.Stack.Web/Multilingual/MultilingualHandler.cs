@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using Newtonsoft.Json;
 
@@ -23,7 +23,9 @@ namespace ED47.Stack.Web.Multilingual
 
         public void ProcessRequest(HttpContext context)
         {
+// ReSharper disable RedundantAssignment
             var callAddKey = "return;";
+// ReSharper restore RedundantAssignment
 
             #if DEBUG
             var addKey = context.Request["addkey"];
@@ -55,8 +57,6 @@ namespace ED47.Stack.Web.Multilingual
             context.Response.Write("var translations = ");
             context.Response.Write(JsonConvert.SerializeObject(Multilingual.GetLanguage(context.Request["lang"])));
             context.Response.Write(";");
-            
-            context.Response.Flush();
         }
     }
 }

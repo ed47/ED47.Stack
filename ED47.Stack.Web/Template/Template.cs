@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using RazorEngine;
 
-namespace ED47.Stack.Web
+namespace ED47.Stack.Web.Template
 {
     public delegate object TemplateFuncDelegate(object[] parameters);
     [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
@@ -45,6 +45,9 @@ namespace ED47.Stack.Web
         private string _templateText = "";
 
         public TemplateType TplType { get; set; }
+
+        public delegate void ChangedEventHandler(object sender, TemplateChangedEventArgs e);
+        public static event ChangedEventHandler Changed;
         
         static Template()
         {
@@ -104,6 +107,12 @@ namespace ED47.Stack.Web
         /// Dynamically inject this content a the end of each of tpl
         /// </summary>
         public string PostContainerContent { get; set; }
+
+        public void OnChanged(TemplateChangedEventArgs e)
+        {
+            if (Changed != null)
+                Changed(this, e);
+        }
 
         /// <summary>
         /// For debug proposes, to identify the object type passse in params
@@ -172,10 +181,15 @@ namespace ED47.Stack.Web
         /// </summary>
         /// <param name="name">The name or path of the template.</param>
         /// <param name="assembly">The optional assembly to find the template in.</param>
+        /// <param name="languageCode">The optional language code of the template.</param>
         /// <returns></returns>
-        public static Template Get(string name, Assembly assembly = null )
+        public static Template Get(string name, Assembly assembly = null, string languageCode = null)
         {
-            Template tpl = null;
+            var nameWithoutLanguage = name;
+            if (!String.IsNullOrWhiteSpace(languageCode))
+                name += "." + languageCode.Trim();
+
+            Template tpl;
             var originalName = name;
             name = name.ToLowerInvariant();
             
@@ -193,7 +207,7 @@ namespace ED47.Stack.Web
             }
             if (File.Exists(name))
             {
-                TemplateType templateType = TemplateType.XTemplate;
+                var templateType = TemplateType.XTemplate;
                 if (Path.GetExtension(name) == ".cshtml")
                 {
                     templateType = TemplateType.Razor;
@@ -216,6 +230,9 @@ namespace ED47.Stack.Web
                     return tpl;
                 }
             }
+
+            if (!String.IsNullOrWhiteSpace(languageCode)) //If searched template with language and didn't find if, fall back to culture-less template if available.
+                return Get(nameWithoutLanguage, assembly);
 
             return null;
         }
@@ -312,10 +329,10 @@ namespace ED47.Stack.Web
             FindChildren(tpl, data, field1, coll);
             double sum = 0;
 
-            for (int index = 0; index < coll.Count; index++)
+            for (var index = 0; index < coll.Count; index++)
             {
                 var obj = coll[index];
-                double value = 0;
+                double value;
                 var tmp = GetValue(tpl, obj, field2);
                 var svalue = tmp != null ? tmp.ToString() : "0";
                 if (Double.TryParse(svalue, out value))
@@ -505,10 +522,10 @@ namespace ED47.Stack.Web
         private static string IsNullOrEmpty(object[] args)
         {
             if (args.Length == 0)
-                return "false";
+                return "true";
 
             if (args[0] == null)
-                return "false";
+                return "true";
 
             return string.IsNullOrEmpty(args[0].ToString()) ? "true" : "false";
         }
@@ -553,7 +570,7 @@ namespace ED47.Stack.Web
 
         private string Inject(object[] args)
         {
-            var tplName = args[0].ToString();
+            var tplName = args[0].ToString().ToLower();
             if (args.Length == 1)
             {
                 if (Templates.ContainsKey(tplName) && File.Exists(Templates[tplName]))
@@ -633,7 +650,7 @@ namespace ED47.Stack.Web
             {
                 //TODO Faire la recherche du parent plus propement
                 var i = t._stack.Select(item => item.Current).ToList().IndexOf(obj);
-                if (i > 1)
+                if (i >= 1)
                     return t._stack[i - 1].Current;
             }
 
@@ -711,9 +728,10 @@ namespace ED47.Stack.Web
             //Match mfunc = new Regex(_RegSimpleFunc).Match(lastIdent);
             if (scope != null && child == null)
             {
-                if (scope is Type)
+                var type = scope as Type;
+                if (type != null)
                 {
-                    var mf = ((Type)scope).GetMethod(lastIdent);
+                    var mf = type.GetMethod(lastIdent);
                     if (mf != null)
                     {
                         var mc = new MethodCall
@@ -788,7 +806,7 @@ namespace ED47.Stack.Web
                 paramsObject[i] = GetValue(Current, _params[i]);
             }
 
-            TemplateFuncDelegate f = null;
+            TemplateFuncDelegate f;
             _functions.TryGetValue(fname, out f);
 
             if (f == null)
@@ -936,9 +954,9 @@ namespace ED47.Stack.Web
         private string ApplyData(string fragment, IEnumerable data, int stackIndex)
         {
             var res = new StringBuilder();
-            var startIndex = fragment.IndexOf("<tpl");
+            var startIndex = fragment.IndexOf("<tpl", System.StringComparison.Ordinal);
             var start = startIndex > 0 ? fragment.Substring(0, startIndex) : "";
-            var endIndex = fragment.LastIndexOf("</tpl");
+            var endIndex = fragment.LastIndexOf("</tpl", System.StringComparison.Ordinal);
             while (endIndex > 0 && fragment[endIndex] != '>')
                 endIndex++;
             var end = endIndex > 0 ? fragment.Substring(endIndex + 1) : "";
@@ -1047,7 +1065,8 @@ namespace ED47.Stack.Web
         {
             if (TplType == TemplateType.Razor)
             {
-                return Razor.Parse(TemplateText, o, this.Name);
+                return Razor.Parse(TemplateText, o, Name);
+
             }
 
             IEnumerable list;
@@ -1065,7 +1084,6 @@ namespace ED47.Stack.Web
             var res = new StringBuilder();
 
             res.Append(ApplyData(_templateText, list, 0));
-            
             return res.ToString();
         }
 
@@ -1225,7 +1243,7 @@ namespace ED47.Stack.Web
         {
             public Dictionary<string, TemplateAttribute> Attributes = new Dictionary<string, TemplateAttribute>();
             public String Name { get; set; }
-            public TemplateOccurence parent { get; set; }
+            public TemplateOccurence Parent { get; set; }
             public String Fragment { get; set; }
             public String TplText { get; set; }
             public int Index { get; set; }

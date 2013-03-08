@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ED47.BusinessAccessLayer.Entities
 {
@@ -17,6 +15,11 @@ namespace ED47.BusinessAccessLayer.Entities
         public virtual string Name { get; set; }
 
         public virtual int Version { get; set; }
+
+        [MaxLength(2)]
+        public virtual string Lang { get; set; }
+        [ForeignKey("Lang")]
+        public virtual Language Language { get; set; }
 
         public virtual Boolean LoginRequired { get; set; }
 

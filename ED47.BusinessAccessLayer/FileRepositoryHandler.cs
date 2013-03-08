@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Globalization;
-using System.Security.Authentication;
 using System.Web;
-using ED47.BusinessAccessLayer;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
 
@@ -33,7 +30,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="context">The HttpContext.</param>
         public void ProcessRequest(HttpContext context)
         {
-            File file = null;
+            File file;
             var token = context.Request["token"];
 
             if (String.IsNullOrWhiteSpace(token))
@@ -76,16 +73,21 @@ namespace ED47.BusinessAccessLayer
                 return;
             }
 
+            context.Response.Clear();
             context.Response.ContentType = ED47.Stack.Web.MimeTypeHelper.GetMimeType(file.Name);
-            
+
             using(var rs = file.OpenRead())
             {
-                context.Response.AddHeader("Content-Disposition", String.Format("attachment;filename=\"{0}\";size={1};", file.Name, rs.Length));
+                if (rs == null)
+                    return; 
+
+                context.Response.AddHeader("Content-Disposition", String.Format("filename=\"{0}\";size={1};", file.Name, rs.Length));
 
                 if(rs.CanRead)
                     rs.CopyTo(context.Response.OutputStream);
             }
-           
+            context.Response.OutputStream.Flush();
+            context.Response.End();
         }
 
         #endregion

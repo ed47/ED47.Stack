@@ -1,13 +1,5 @@
-﻿// ************************************
-// * Created by arie
-// * Created on 08.08.2012
-// * Last modification 08.08.2012
-// **************************************/
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Afterthought;
-using ED47.Stack.Web;
 
 namespace ED47.BusinessAccessLayer
 {

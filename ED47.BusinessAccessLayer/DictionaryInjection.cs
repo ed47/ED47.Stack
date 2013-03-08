@@ -21,9 +21,9 @@ namespace ED47.BusinessAccessLayer
                 if (targetProp == null || targetProp.IsReadOnly) continue;
                 object value = prop.Value;
 
-                if (value as JObject != null) return;
+                if (value as JObject != null) continue;
 
-                if(value != null && !targetProp.PropertyType.IsNullable() && targetProp.PropertyType !=value.GetType() && targetProp.PropertyType.IsPrimitive)
+                if(value != null && !targetProp.PropertyType.IsNullable() && targetProp.PropertyType !=value.GetType() && (targetProp.PropertyType.IsPrimitive || targetProp.PropertyType == typeof(decimal)))
                 {
                     value = Convert.ChangeType(value, targetProp.PropertyType);
                 }
@@ -35,7 +35,21 @@ namespace ED47.BusinessAccessLayer
 
                 if (value == String.Empty && targetProp.PropertyType != typeof(String))
                     value = null;
-                
+
+                if (value is JArray)
+                {
+                    var jArray = (JArray)value;
+                    
+                    if (jArray.Any())
+                    {
+                        if (jArray.First().Type == JTokenType.Integer)
+                            value = jArray.Select(el => (int)el).ToArray();
+
+                        if (jArray.First().Type == JTokenType.String)
+                            value = jArray.Select(el => (string)el).ToArray();
+                    }
+                }
+
                 targetProp.SetValue(target, value);
             }
         }

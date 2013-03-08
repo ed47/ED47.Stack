@@ -9,6 +9,7 @@ Ext.define("Ext.ux.MultilingualTrigger", {
         me.fieldName = config.name;
         me.mtype = config.mtype;
         me.getLanguagesFunc = config.getLanguagesFunc || ED47.Stack.Controllers.MultilingualController.GetTranslations;
+        me.fieldConfig = config.fieldConfig;
 
         var defaultConfig = {
             xtype: "fieldcontainer",
@@ -22,21 +23,21 @@ Ext.define("Ext.ux.MultilingualTrigger", {
                         if (!this.getValue())
                             return;
 
-                        var key = null;
-                        if (me.ownerCt.getForm) {
-                            var model = me.ownerCt.getForm().getRecord();
-                            key = model.modelName.split(".")[model.modelName.split(".").length - 1] + "[" + model.data.Id + "]";
+                        if (me.getOwnerCt().getForm) {
+                            var model = me.getOwnerCt().getForm().getRecord();
+                            me.key = model.modelName.split(".")[model.modelName.split(".").length - 1] + "[" + model.data.Id + "]";
                         } else { // grid cellEditor
-                            key = me.ownerCt.editingPlugin.activeEditor.editorId + "[" + me.ownerCt.editingPlugin.activeRecord.data.Id + "]";
+                            me.key = me.getOwnerCt().editingPlugin.activeEditor.editorId + "[" + me.getOwnerCt().editingPlugin.activeRecord.data.Id + "]";
                         }
 
-                        if (!key) return;
+                        if (!me.key && !me.definedKey)
+                            throw 'Key is not defined';
 
                         var cookieLang = Ext.util.Cookies.get("LanguageCode");
                         var lang = cookieLang ? cookieLang : "en";
 
                         var multilingualValue = {
-                            Key: key,
+                            Key: me.key,
                             PropertyName: me.fieldName,
                             LanguageIsoCode: lang,
                             Text: this.getValue()
@@ -50,7 +51,9 @@ Ext.define("Ext.ux.MultilingualTrigger", {
                 iconCls: "multilingualtrigger",
                 style: "margin-left: 5px;",
                 handler: me.displayTranslationWindow,
-                tooltip: 'Translate',
+                tooltip: me.fieldConfig.tooltip || 'Translate',
+                cancelButtonLabel: me.fieldConfig.cancelButtonLabel || 'Cancel',
+                saveButtonLabel: me.fieldConfig.saveButtonLabel || 'Save',
                 scope: this,
                 width: 24,
                 height: 24
@@ -61,6 +64,13 @@ Ext.define("Ext.ux.MultilingualTrigger", {
         ED47.ui.Button.superclass.constructor.call(this, defaultConfig);
 
     },
+    getOwnerCt: function () {
+        var me = this;
+        if (me.ownerCt.xtype == "fieldset")
+            return me.ownerCt.ownerCt;
+        else
+            return me.ownerCt;
+    },
     isValid: function () {
         return true;
     },
@@ -69,27 +79,28 @@ Ext.define("Ext.ux.MultilingualTrigger", {
     setValue: function (val) {
         this.items.items[0].setValue(val);
     },
+    setKey: function (val) {
+        this.definedKey = val;
+    },
     getValue: function () {
         return this.items.items[0].getValue();
     },
     displayTranslationWindow: function () {
-        
-        var modelName = null;
-        var modelId = null;
-        if (this.ownerCt.getForm) {
-            modelName = this.ownerCt.getForm().getRecord().modelName;
-            modelId = this.ownerCt.getForm().getRecord().data.Id;
+        var me = this;
+
+        if (me.getOwnerCt().getForm) {
+            var model = me.getOwnerCt().getForm().getRecord();
+            me.key = model.modelName.split(".")[model.modelName.split(".").length - 1] + "[" + model.data.Id + "]";
         } else { // grid cellEditor
-            modelName = this.ownerCt.editingPlugin.activeEditor.editorId;
-            modelId = this.ownerCt.editingPlugin.activeRecord.data.Id;
+            me.key = me.getOwnerCt().editingPlugin.activeEditor.editorId + "[" + me.getOwnerCt().editingPlugin.activeRecord.data.Id + "]";
         }
-        
         var multilingualFormWindow = new ED47.ui.MultilingualFormWindow({
-            fieldName: this.fieldName,
-            mtype: this.mtype,
-            modelName: modelName,
-            modelId: modelId,
-            getLanguagesFunc: this.getLanguagesFunc
+            fieldName: me.fieldName,
+            fieldConfig: this.fieldConfig,
+            mtype: me.mtype,
+            key: me.definedKey || me.key,
+            getLanguagesFunc: this.getLanguagesFunc,
+            y: 200
         });
 
         multilingualFormWindow.on('multilingualvalidated', function (mls) {
@@ -100,6 +111,7 @@ Ext.define("Ext.ux.MultilingualTrigger", {
             this.items.items[0].setValue(ml[0].Text);
             this.items.items[0].fireEvent('blur');
         }, this);
+
         multilingualFormWindow.show();
     }
 });

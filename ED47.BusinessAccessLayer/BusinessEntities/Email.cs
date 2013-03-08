@@ -11,6 +11,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     public class Email : BusinessEntity
     {
+        public Email()
+        {
+            IsHtml = true;
+        }
 
         public virtual int Id { get; set; }
 
@@ -29,48 +33,80 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual string Body { get; set; }
 
         public virtual DateTime?  TransmissionDate { get; set; }
-        private List<EmailAttachment> _Attachments; 
-        public IEnumerable<EmailAttachment> Attachments 
-        { 
+        private List<EmailAttachment> _Attachments;
+        public IEnumerable<EmailAttachment> Attachments
+        {
             get
             {
-                if(_Attachments == null)
+                if (_Attachments == null)
                 {
                     _Attachments = new List<EmailAttachment>();
-                    _Attachments.AddRange(BaseUserContext.Instance.Repository.Where<Entities.EmailAttachment,EmailAttachment>(el=>el.EmailId == Id));
+                    _Attachments.AddRange(BaseUserContext.Instance.Repository.Where<Entities.EmailAttachment, EmailAttachment>(el => el.EmailId == Id));
                 }
                 return _Attachments;
             }
-        } 
+            set
+            {
+                if (value == null) return; 
+                _Attachments = value.ToList();
+            }
+        }
 
-        public void Send(bool force = false)
+        public string CC { get; set; }
+
+        /// <summary>
+        /// Sends the specified message.
+        /// </summary>
+        /// <param name="force">if set to <c>true</c> force sending the message.</param>
+        /// <param name="from">The optional from address.</param>
+        public void Send(bool force = false, string from = null)
         {
             if(TransmissionDate.HasValue && ! force)
             {
                 return;
             }
 
-            var mailMessage = new MailMessage {Subject = Subject, Body = Body, IsBodyHtml = true};
-
+            var mailMessage = new MailMessage
+            {
+                Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty),
+                Body = Body,
+                IsBodyHtml = IsHtml,
+            };
+            
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
             {
                 var testRecipients = emailTestSettings.Split(';');
 
+                mailMessage.To.Clear();
+                mailMessage.CC.Clear();
+                mailMessage.Bcc.Clear();
+
                 foreach (var testRecipient in testRecipients)
                 {
-                    mailMessage.To.Add(testRecipient);    
+                    mailMessage.To.Add(testRecipient);
+
+                    if (!String.IsNullOrWhiteSpace(CC))
+                        mailMessage.CC.Add(testRecipient);
+
+                    if (!String.IsNullOrWhiteSpace(Bcc))
+                        mailMessage.Bcc.Add(testRecipient);
                 }
             }
             else
             {
                 mailMessage.To.Add(Recipient);
+
+                if (!String.IsNullOrWhiteSpace(CC))
+                    mailMessage.CC.Add(CC);
+
+                if (!String.IsNullOrWhiteSpace(Bcc))
+                    mailMessage.Bcc.Add(Bcc);
             }
 
             var tmp = new List<Stream>();
             try
             {
-               
                 foreach (var attachment in Attachments)
                 {
                     var s = attachment.File.OpenRead();
@@ -78,6 +114,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     mailMessage.Attachments.Add(new Attachment(s,attachment.File.Name));
                 }
                 var smtpClient = new SmtpClient();
+
+                if (!String.IsNullOrWhiteSpace(from))
+                    mailMessage.From = new MailAddress(from);
+
                 smtpClient.Send(mailMessage);
                 TransmissionDate = DateTime.Now;
                 Save();
@@ -91,6 +131,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             }
             
         }
+
+        public string Bcc { get; set; }
+
+        public bool IsHtml { get; set; }
 
         public virtual void Insert()
         {
@@ -109,6 +153,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public void Delete()
         {
+            foreach (var emailAttachment in Attachments)
+            {
+                emailAttachment.Delete();
+            }
+
             BaseUserContext.Instance.Repository.Delete<Entities.Email, Email>(this);
         }
     }

@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using ED47.Stack.Web.HelperTemplates;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace ED47.Stack.Web
 {
@@ -24,12 +22,15 @@ namespace ED47.Stack.Web
         /// <param name="initNewFunctionName">The name of the JS function used to initialize a new item.</param>
         /// <param name="deleteFunctionName">The name of the JS function called when an item is deleted.</param>
         /// <param name="deleteConfirmation">Flag indicating if a confirmation should be asked when an item is deleted.</param>
+        /// <param name="preselectedRecordId">The optional id of the pre-selected record.</param>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null)
+        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null, string deleteConfirmationMessage = null)
         {
-            var formatting = Formatting.None;
+// ReSharper disable JoinDeclarationAndInitializer
+            Formatting formatting = Formatting.None;
+// ReSharper restore JoinDeclarationAndInitializer
 
             if(model == null)
                 return new MvcHtmlString(String.Empty);
@@ -52,8 +53,8 @@ namespace ED47.Stack.Web
                 id = name.Split('.').Last().ToLowerInvariant() + "-list";
 
             var builder = new StringBuilder("<script language='javascript'>");
-            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting)));
-            builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0));
+            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting, new JavaScriptDateTimeConverter())));
+            builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}, {7}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0, deleteConfirmationMessage ?? "null"));
             builder.AppendLine("</script>");
 
             return new MvcHtmlString(builder.ToString());
@@ -65,7 +66,7 @@ namespace ED47.Stack.Web
          [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public static MvcHtmlString RenderControlScript(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model)
         {
-            var tpl = Template.Get("ED47.Stack.Web.HelperTemplates.ClientControlScript.cshtml");
+            var tpl = Template.Template.Get("ED47.Stack.Web.HelperTemplates.ClientControlScript.cshtml");
             if(tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
         }
@@ -80,7 +81,7 @@ namespace ED47.Stack.Web
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public static MvcHtmlString RenderControl(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model, string templatePath = null)
         {
-            var tpl = Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientControlView.cshtml");
+            var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientControlView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
         }
@@ -95,7 +96,7 @@ namespace ED47.Stack.Web
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Extension method")]
         public static MvcHtmlString RenderPageView(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model, string templatePath = null)
         {
-            var tpl = Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientPageView.cshtml");
+            var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientPageView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
         }

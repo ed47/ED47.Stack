@@ -3,6 +3,7 @@ using System.Web;
 using ED47.BusinessAccessLayer;
 using ED47.Stack.Sample.Domain;
 using ED47.Stack.Web;
+using ED47.Stack.Web.Template;
 
 [assembly: WebActivator.PreApplicationStartMethod(typeof(ED47.Stack.Sample.App_Start.BusinessComponentStart), "Start")]
 [assembly: WebActivator.PostApplicationStartMethod(typeof(ED47.Stack.Sample.App_Start.BusinessComponentStart), "AfterStart")]

@@ -15,7 +15,7 @@ namespace ED47.Stack.Reflector.Templates
     using System;
     
     
-    #line 1 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+    #line 1 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "10.0.0.0")]
     public partial class JsModel : JsModelBase
     {
@@ -23,56 +23,56 @@ namespace ED47.Stack.Reflector.Templates
         {
             this.Write("//Model: ");
             
-            #line 5 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 5 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ModelInfo.Name));
             
             #line default
             #line hidden
             this.Write("\r\nExt.define(\"ED47.Stack.Models.");
             
-            #line 6 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 6 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ModelInfo.Name));
             
             #line default
             #line hidden
             this.Write("\", {\r\n\textend: \"Ext.data.Model\",\r\n\t");
             
-            #line 8 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 8 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 if(!String.IsNullOrWhiteSpace(this.ModelInfo.IdPropertyName)){
             
             #line default
             #line hidden
             this.Write("\tidProperty: \"");
             
-            #line 9 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 9 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ModelInfo.IdPropertyName));
             
             #line default
             #line hidden
             this.Write("\",\r\n\t");
             
-            #line 10 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 10 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 }
             
             #line default
             #line hidden
             this.Write("\tfields: [\r\n\t\t");
             
-            #line 12 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 12 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 GenerateProperties();
             
             #line default
             #line hidden
             this.Write("\t],\r\n\r\n\tvalidations: [\r\n\t\t/*validation*/\r\n\t\t");
             
-            #line 17 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 17 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 GenerateValidations();
             
             #line default
             #line hidden
             this.Write("\t]\r\n});\r\n\r\nED47.Stack.Models.");
             
-            #line 21 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 21 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ModelInfo.Name));
             
             #line default
@@ -80,14 +80,14 @@ GenerateValidations();
             this.Write(".getStore = function(id){\r\n\treturn new ED47.views.data.SharedStore({\r\n\t\tmodel: \"E" +
                     "D47.Stack.Models.");
             
-            #line 23 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 23 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ModelInfo.Name));
             
             #line default
             #line hidden
             this.Write("\",\r\n\t\tid: id\r\n\t});\r\n};\r\n\r\n");
             
-            #line 28 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+            #line 28 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 GenerateFields();
             
             #line default
@@ -96,7 +96,7 @@ GenerateFields();
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 
 //Generates the Model properties.
 protected void GenerateProperties()
@@ -108,98 +108,112 @@ protected void GenerateProperties()
         #line default
         #line hidden
         
-        #line 36 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 36 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\t\r\n\t\t");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(first));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\t{ name: \"");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\", type: \"");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.PropertyInfo.Name));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\", xtype: \"");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.ExtXType));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\", allowBlank: ");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture((!property.IsRequired).ToString().ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(", fieldLabel: \"");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Label));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
-this.Write("\"\t}");
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
+this.Write("\"\t");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
+this.Write(this.ToStringHelper.ToStringWithCulture(string.IsNullOrEmpty(property.Mapping)?"": ", mapping:\""+ property.Mapping+"\""));
+
+        
+        #line default
+        #line hidden
+        
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
+this.Write(" \t}");
+
+        
+        #line default
+        #line hidden
+        
+        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 
 		first = ","; 
 	}
@@ -220,42 +234,42 @@ protected void GenerateValidations()
         #line default
         #line hidden
         
-        #line 52 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 52 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\t");
 
         
         #line default
         #line hidden
         
-        #line 52 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 52 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(first));
 
         
         #line default
         #line hidden
         
-        #line 52 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 52 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("{ field: \"");
 
         
         #line default
         #line hidden
         
-        #line 52 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 52 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
 
         
         #line default
         #line hidden
         
-        #line 52 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 52 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\", type: \"presence\" }\t\t\t\r\n\t\t");
 
         
         #line default
         #line hidden
         
-        #line 53 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 53 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 
 			first = ",";
 		}
@@ -265,96 +279,96 @@ this.Write("\", type: \"presence\" }\t\t\t\r\n\t\t");
         #line default
         #line hidden
         
-        #line 57 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 57 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\t");
 
         
         #line default
         #line hidden
         
-        #line 57 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 57 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(first));
 
         
         #line default
         #line hidden
         
-        #line 57 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 57 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("{ \r\n\t\t\t\ttype: \"length\", field: \"");
 
         
         #line default
         #line hidden
         
-        #line 58 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 58 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
 
         
         #line default
         #line hidden
         
-        #line 58 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 58 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\", \r\n\t\t\t\t");
 
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 if(property.Length.MinimumLength>0){
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(" min: ");
 
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Length.MinimumLength));
 
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(",");
 
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 }
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(" max: ");
 
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Length.MaximumLength));
 
         
         #line default
         #line hidden
         
-        #line 59 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 59 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\t\t\t\t\r\n\t\t\t}\r\n\t\t");
 
         
         #line default
         #line hidden
         
-        #line 61 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 61 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 
 			first = ",";
 		}*/ 
@@ -371,124 +385,124 @@ protected void GenerateFields()
         #line default
         #line hidden
         
-        #line 72 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 72 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("ED47.Stack.Models.");
 
         
         #line default
         #line hidden
         
-        #line 72 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 72 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(this.ModelInfo.Name));
 
         
         #line default
         #line hidden
         
-        #line 72 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 72 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(".get");
 
         
         #line default
         #line hidden
         
-        #line 72 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 72 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
 
         
         #line default
         #line hidden
         
-        #line 72 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 72 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("Field = function(){\r\n\t\treturn {\t\t\r\n\t\t\tname: \"");
 
         
         #line default
         #line hidden
         
-        #line 74 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 74 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
 
         
         #line default
         #line hidden
         
-        #line 74 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 74 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\",\r\n\t\t\txtype: \"");
 
         
         #line default
         #line hidden
         
-        #line 75 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 75 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.ExtXType));
 
         
         #line default
         #line hidden
         
-        #line 75 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 75 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\",\r\n\t\t\tallowBlank: ");
 
         
         #line default
         #line hidden
         
-        #line 76 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 76 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture((!property.IsRequired).ToString().ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 76 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 76 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(",\r\n\t\t\tfieldLabel: \"");
 
         
         #line default
         #line hidden
         
-        #line 77 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 77 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Label));
 
         
         #line default
         #line hidden
         
-        #line 77 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 77 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\"");
 
         
         #line default
         #line hidden
         
-        #line 77 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 77 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 GenerateComboBoxFieldConfiguration(property.DropDownSourceProperty, property.Name);
         
         #line default
         #line hidden
         
-        #line 77 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 77 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\t};\r\n\t};\t\r\n\t");
 
         
         #line default
         #line hidden
         
-        #line 80 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 80 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 GenerateComboBoxStore(property);
         
         #line default
         #line hidden
         
-        #line 80 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 80 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\t");
 
         
         #line default
         #line hidden
         
-        #line 81 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 81 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 }
 }
 
@@ -501,56 +515,56 @@ protected void GenerateComboBoxFieldConfiguration(ModelPropertyInfo property, st
         #line default
         #line hidden
         
-        #line 88 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 88 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(",\r\n\t\t\tstore: ED47.Stack.Models.");
 
         
         #line default
         #line hidden
         
-        #line 89 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 89 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(fieldName));
 
         
         #line default
         #line hidden
         
-        #line 89 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 89 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("Store,\r\n\t\t\tqueryMode: \"local\",\t\t\t\r\n\t\t\tdisplayField: \"");
 
         
         #line default
         #line hidden
         
-        #line 91 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 91 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.DisplayField));
 
         
         #line default
         #line hidden
         
-        #line 91 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 91 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\",\r\n\t\t\tvalueField: \"");
 
         
         #line default
         #line hidden
         
-        #line 92 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 92 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.ValueField));
 
         
         #line default
         #line hidden
         
-        #line 92 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 92 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\",\r\n\t\t\tforceSelection: true\r\n\t");
 
         
         #line default
         #line hidden
         
-        #line 94 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 94 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 }
 }
 
@@ -563,56 +577,56 @@ protected void GenerateComboBoxStore(ModelPropertyInfo property)
         #line default
         #line hidden
         
-        #line 101 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 101 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("ED47.Stack.Models.");
 
         
         #line default
         #line hidden
         
-        #line 101 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 101 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
 
         
         #line default
         #line hidden
         
-        #line 101 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 101 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("Store = Ext.create(\"Ext.data.Store\"){\t\t\r\n\t\tfields: [\"");
 
         
         #line default
         #line hidden
         
-        #line 102 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 102 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.DropDownSourceProperty.ValueField));
 
         
         #line default
         #line hidden
         
-        #line 102 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 102 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\", \"");
 
         
         #line default
         #line hidden
         
-        #line 102 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 102 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(property.DropDownSourceProperty.DisplayField));
 
         
         #line default
         #line hidden
         
-        #line 102 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 102 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 this.Write("\"]\r\n\t};\r\n\t");
 
         
         #line default
         #line hidden
         
-        #line 104 "D:\projets\Grc.Tool\ED47.Stack.Reflector\Templates\JsModel.tt"
+        #line 104 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsModel.tt"
 }
 }
 

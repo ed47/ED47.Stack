@@ -17,6 +17,8 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     public abstract class BaseUserContext
     {
+        public static Func<BaseUserContext> CreateDefaultContext { get; set; } 
+
         public static string ApplicationUrl
         {
             get
@@ -75,12 +77,16 @@ namespace ED47.BusinessAccessLayer
 
         }
 
+        public event EventHandler Commited;
+
         /// <summary>
         /// Saves and commits data to the database.
         /// </summary>
         public virtual void Commit()
         {
             Repository.Commit();
+            if (Commited != null)
+                Commited(this, new EventArgs());
         }
 
         protected virtual string GetCurrentUserName()
@@ -155,8 +161,9 @@ namespace ED47.BusinessAccessLayer
                 {
                     entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id);
                     if (entity == null)
-                        throw new NullReferenceException(String.Format("No entity {0} {1} found.", id,
-                                                                       typeof(TBusinessEntity).FullName));
+                        return null;
+                        //throw new NullReferenceException(String.Format("No entity {0} {1} found.", id,
+                        //                                               typeof(TBusinessEntity).FullName));
                     cache.Add(new CacheItem(key, entity), DataCacheItemPolicy);
                 }
                 return entity;
@@ -195,6 +202,12 @@ namespace ED47.BusinessAccessLayer
             get
             {
                 var userContext = Retrieve(InstanceKey) as BaseUserContext;
+                if (userContext == null && CreateDefaultContext != null)
+                {
+                    userContext = CreateDefaultContext();
+                    Store(InstanceKey, userContext);
+                }
+
                 return userContext;
             }
 

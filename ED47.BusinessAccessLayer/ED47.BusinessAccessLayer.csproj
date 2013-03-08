@@ -43,8 +43,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EPPlus.3.1.2\lib\net35\EPPlus.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
@@ -65,7 +70,30 @@
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,8 +107,15 @@
     <Compile Include="BusinessEntities\Audit.cs" />
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
+    <Compile Include="BusinessEntities\CommentNotifier.cs" />
+    <Compile Include="BusinessEntities\CommentRepositoryExtension.cs" />
     <Compile Include="BusinessEntities\File.cs" />
+    <Compile Include="BusinessEntities\FileBox.cs" />
+    <Compile Include="BusinessEntities\FileBoxItem.cs" />
+    <Compile Include="BusinessEntities\ICommentItem.cs" />
+    <Compile Include="BusinessEntities\IRecipient.cs" />
     <Compile Include="BusinessEntities\Lang.cs" />
+    <Compile Include="BusinessEntities\BaseMessage.cs" />
     <Compile Include="BusinessEntities\Multilingual.cs" />
     <Compile Include="BusinessEntity.cs" />
     <Compile Include="BusinessEntityAmendment.cs" />
@@ -98,7 +133,10 @@
     <Compile Include="Entities\Comment.cs" />
     <Compile Include="Entities\Email.cs" />
     <Compile Include="Entities\EmailAttachment.cs" />
+    <Compile Include="Entities\FileBox.cs" />
+    <Compile Include="Entities\FileBoxItem.cs" />
     <Compile Include="Entities\Language.cs" />
+    <Compile Include="Entities\BaseMessage.cs" />
     <Compile Include="Entities\Multilingual.cs" />
     <Compile Include="EventProxy.cs" />
     <Compile Include="EnumerableExtension.cs" />
@@ -147,7 +185,6 @@
     <Compile Include="BaseUserContext.cs" />
     <Compile Include="Message\MessageFactoryHelper.cs" />
     <Compile Include="StringKey.cs" />
-    <Compile Include="TemplateHelper.cs" />
     <Compile Include="TypeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -164,8 +201,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ED47.Stack.Reflector\ED47.Stack.Reflector.csproj">
+      <Project>{32753AA0-424D-4217-BC63-35A22FB0607D}</Project>
+      <Name>ED47.Stack.Reflector</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ED47.Stack.Web\ED47.Stack.Web.csproj">
-      <Project>{8453CB1B-5766-4A1F-BE2C-E81F8A705BA2}</Project>
+      <Project>{57FD0F4F-4DAC-42CA-964D-39A180D714B3}</Project>
       <Name>ED47.Stack.Web</Name>
     </ProjectReference>
   </ItemGroup>

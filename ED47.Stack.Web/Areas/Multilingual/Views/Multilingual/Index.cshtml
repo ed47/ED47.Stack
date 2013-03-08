@@ -1,0 +1,69 @@
+﻿@model IDictionary<string, ED47.Stack.Web.Multilingual.TranslationItem>
+
+@{
+    Layout = null;
+    Page.Title = "Labels";
+    var itemCounter = 0;
+}
+
+<div style="padding-bottom: 20px;">
+    @Html.Label("search-text", "Search:") <input type="text" name="search-text" id="search-text"/>
+</div>
+
+@foreach (var translation in Model)
+{
+    var formId = "form-" + itemCounter++;
+    using (Ajax.BeginForm("Update", "Multilingual", new { area = "Multilingual" }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "saveSuccess(data, '#" + formId + "' )" }, new { id = formId }))
+    {
+        @Html.Hidden("key", translation.Key)
+        @Html.Hidden("fileName", translation.Value.FileName)
+        <div>
+            <b>@Html.Label(translation.Key, translation.Key)</b>
+        </div>    
+        <div class="w90">
+            <textarea name="value" cols="150" rows="1">@Html.Raw(translation.Value.Text)</textarea>
+        </div>
+        <div class="w10"><input type="submit" value="Save" class="btn btn-normal" /></div>
+        <div class="clear"></div>
+    }
+}
+
+<script>
+    $(function () {
+        window.fields = $("textarea");
+        window.keys = $("input[type=hidden][name=key]");
+
+        window.fields.autoGrow();
+        $("input[type=submit]").hide();
+
+        $(document).on("keydown", "textarea", function () {
+            $(this).parents("form").find("input[type=submit]").show();
+        });
+
+        $(document).on("keydown", "#search-text", function (eventData) {
+            if (eventData.keyCode != 13) return;
+
+            var me = $(this);
+            var searchValue = me.val();
+
+
+            $.each(window.fields, function (index, item) {
+                if (item.value.toLowerCase().indexOf(searchValue.toLowerCase()) == -1)
+                    $(item).parents("form").hide();
+                else
+                    $(item).parents("form").show();
+            });
+
+            $.each(window.keys, function (index, item) {
+                if (item.value.toLowerCase().indexOf(searchValue.toLowerCase()) == -1)
+                    $(item).parents("form").hide();
+                else
+                    $(item).parents("form").show();
+            });
+        });
+    });
+    
+    function saveSuccess(data, formId) {
+        $(formId).find("input[type=submit]").hide();
+    }
+</script>
