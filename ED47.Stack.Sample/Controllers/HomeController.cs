@@ -6,12 +6,11 @@ using System.Web.Mvc;
 
 namespace ED47.Stack.Sample.Controllers
 {
-    public class DemoController : Controller
+    public class HomeController : Controller
     {
         public ActionResult Index()
         {
             return View();
         }
-
     }
 }
