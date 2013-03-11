@@ -17,7 +17,6 @@
         <title>@Page.Title</title>
         <link rel="shortcut icon" href="/favicon.ico" />
         @Styles.Render("~/cssBundle")
-        <script src="@Url.Content("~/Scripts/modernizr-2.6.2.js")" type="text/javascript"></script>
         @Scripts.Render("~/jsBundle")
     </head>
     <body class="page-@ViewContext.RouteData.GetRequiredString("Controller").ToLowerInvariant()-@ViewContext.RouteData.GetRequiredString("Action").ToLowerInvariant()" lang="@UserContext.Instance.LanguageCode">

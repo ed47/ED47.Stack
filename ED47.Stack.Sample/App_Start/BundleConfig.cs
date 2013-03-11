@@ -11,7 +11,8 @@ namespace ED47.Stack.Sample.App_Start
             BundleTable.Bundles.Add(new ScriptBundle("~/jsBundle")
                 .Include(
                     "~/Scripts/jquery-*",
-                    "~/Scripts/jquery.*"
+                    "~/Scripts/jquery.*",
+                    "~/Scripts/modernizr-*"
                     //TODO: Add your general scripts here
                 )
             );
