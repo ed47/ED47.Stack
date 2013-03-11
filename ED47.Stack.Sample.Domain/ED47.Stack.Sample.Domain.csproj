@@ -54,10 +54,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="SampleDomainBusinessComponent.cs" />
+    <Compile Include="SampleModule\SampleMessage.cs" />
     <Compile Include="UserContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="BusinessEntities\ReadMe.txt" />
+    <Content Include="SampleModule\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ED47.BusinessAccessLayer\ED47.BusinessAccessLayer.csproj">

@@ -8,7 +8,7 @@
     <ProjectGuid>{9239C567-CE16-4E36-BDE8-D7A838C699C1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ED47.Stack.Sample.Shared</RootNamespace>
+    <RootNamespace>ED47.Stack.Sample</RootNamespace>
     <AssemblyName>ED47.Stack.Sample.Shared</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessEntities\Message.cs" />
     <Compile Include="UserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -53,6 +54,10 @@
     <ProjectReference Include="..\ED47.BusinessAccessLayer\ED47.BusinessAccessLayer.csproj">
       <Project>{AD6A51D1-0608-49C9-8993-4AC20D32141C}</Project>
       <Name>ED47.BusinessAccessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ED47.Stack.Sample.Entities\ED47.Stack.Sample.Entities.csproj">
+      <Project>{749E46D6-CA63-4BF6-82F2-A076783F54DF}</Project>
+      <Name>ED47.Stack.Sample.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

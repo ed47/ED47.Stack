@@ -12,14 +12,16 @@ namespace ED47.Stack.Sample.App_Start
                 .Include(
                     "~/Scripts/jquery-*",
                     "~/Scripts/jquery.*",
-                    "~/Scripts/modernizr-*"
+                    "~/Scripts/modernizr-*",
+                    "~/Scripts/bootstrap*"
                     //TODO: Add your general scripts here
                 )
             );
 
             BundleTable.Bundles.Add(new StyleBundle("~/cssBundle")
                 .Include(
-                    "~/Content/Styles/html5reset*"
+                    "~/Content/bootstrap.*",
+                    "~/Content/bootstrap-*"
                     //TODO: Add your styles here
                )
             );
