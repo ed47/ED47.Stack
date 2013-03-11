@@ -35,6 +35,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual bool IsReadOnly { get; set; }
         public virtual bool IsDeleted { get; set; }
         public virtual DateTime? DeletionDate { get; set; }
+        public virtual string CommentType { get; set; }
 
         /// <summary>
         /// Returns the comments by their business key.

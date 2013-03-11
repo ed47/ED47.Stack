@@ -59,93 +59,97 @@ NOTE: We Must integrate this style in order to view the checkbox
 
 
 */
-Ext.define('Ext.ux.CheckColumn', {
-    extend: 'Ext.grid.column.Column',
-    alias: 'widget.checkcolumn',
 
-    /**
-    * @cfg {Boolean} [stopSelection=true]
-    * Prevent grid selection upon mousedown.
-    */
-    stopSelection: true,
+if (window.Ext) {
 
-    tdCls: Ext.baseCSSPrefix + 'grid-cell-checkcolumn',
+    Ext.define('Ext.ux.CheckColumn', {
+        extend: 'Ext.grid.column.Column',
+        alias: 'widget.checkcolumn',
 
-    constructor: function () {
-        this.addEvents(
         /**
-        * @event beforecheckchange
-        * Fires when before checked state of a row changes.
-        * The change may be vetoed by returning `false` from a listener.
-        * @param {Ext.ux.CheckColumn} this CheckColumn
-        * @param {Number} rowIndex The row index
-        * @param {Boolean} checked True if the box is to be checked
+        * @cfg {Boolean} [stopSelection=true]
+        * Prevent grid selection upon mousedown.
         */
-            'beforecheckchange',
+        stopSelection: true,
+
+        tdCls: Ext.baseCSSPrefix + 'grid-cell-checkcolumn',
+
+        constructor: function() {
+            this.addEvents(
+                /**
+            * @event beforecheckchange
+            * Fires when before checked state of a row changes.
+            * The change may be vetoed by returning `false` from a listener.
+            * @param {Ext.ux.CheckColumn} this CheckColumn
+            * @param {Number} rowIndex The row index
+            * @param {Boolean} checked True if the box is to be checked
+            */
+                'beforecheckchange',
+                /**
+            * @event checkchange
+            * Fires when the checked state of a row changes
+            * @param {Ext.ux.CheckColumn} this CheckColumn
+            * @param {Number} rowIndex The row index
+            * @param {Boolean} checked True if the box is now checked
+            */
+                'checkchange'
+            );
+            this.callParent(arguments);
+        },
+
         /**
-        * @event checkchange
-        * Fires when the checked state of a row changes
-        * @param {Ext.ux.CheckColumn} this CheckColumn
-        * @param {Number} rowIndex The row index
-        * @param {Boolean} checked True if the box is now checked
+        * @private
+        * Process and refire events routed from the GridView's processEvent method.
         */
-            'checkchange'
-        );
-        this.callParent(arguments);
-    },
+        processEvent: function(type, view, cell, recordIndex, cellIndex, e, record, row) {
+            var me = this,
+                key = type === 'keydown' && e.getKey(),
+                mousedown = type == 'mousedown';
 
-    /**
-    * @private
-    * Process and refire events routed from the GridView's processEvent method.
-    */
-    processEvent: function (type, view, cell, recordIndex, cellIndex, e, record, row) {
-        var me = this,
-            key = type === 'keydown' && e.getKey(),
-            mousedown = type == 'mousedown';
+            if (mousedown || (key == e.ENTER || key == e.SPACE)) {
+                var dataIndex = me.dataIndex,
+                    checked = !record.get(dataIndex);
 
-        if (mousedown || (key == e.ENTER || key == e.SPACE)) {
-            var dataIndex = me.dataIndex,
-                checked = !record.get(dataIndex);
+                // Allow apps to hook beforecheckchange
+                if (me.fireEvent('beforecheckchange', me, recordIndex, checked) !== false) {
+                    record.set(dataIndex, checked);
+                    me.fireEvent('checkchange', me, recordIndex, checked);
 
-            // Allow apps to hook beforecheckchange
-            if (me.fireEvent('beforecheckchange', me, recordIndex, checked) !== false) {
-                record.set(dataIndex, checked);
-                me.fireEvent('checkchange', me, recordIndex, checked);
+                    // Mousedown on the now nonexistent cell causes the view to blur, so stop it continuing.
+                    if (mousedown) {
+                        e.stopEvent();
+                    }
 
-                // Mousedown on the now nonexistent cell causes the view to blur, so stop it continuing.
-                if (mousedown) {
-                    e.stopEvent();
+                    // Selection will not proceed after this because of the DOM update caused by the record modification
+                    // Invoke the SelectionModel unless configured not to do so
+                    if (!me.stopSelection) {
+                        view.selModel.selectByPosition({
+                            row: recordIndex,
+                            column: cellIndex
+                        });
+                    }
+
+                    // Prevent the view from propagating the event to the selection model - we have done that job.
+                    return false;
+                } else {
+                    // Prevent the view from propagating the event to the selection model if configured to do so.
+                    return !me.stopSelection;
                 }
-
-                // Selection will not proceed after this because of the DOM update caused by the record modification
-                // Invoke the SelectionModel unless configured not to do so
-                if (!me.stopSelection) {
-                    view.selModel.selectByPosition({
-                        row: recordIndex,
-                        column: cellIndex
-                    });
-                }
-
-                // Prevent the view from propagating the event to the selection model - we have done that job.
-                return false;
             } else {
-                // Prevent the view from propagating the event to the selection model if configured to do so.
-                return !me.stopSelection;
+                return me.callParent(arguments);
             }
-        } else {
-            return me.callParent(arguments);
-        }
-    },
+        },
 
-    // Note: class names are not placed on the prototype bc renderer scope
-    // is not in the header.
-    renderer: function (value) {
-        var cssPrefix = Ext.baseCSSPrefix,
-            cls = [cssPrefix + 'grid-checkheader'];
+        // Note: class names are not placed on the prototype bc renderer scope
+        // is not in the header.
+        renderer: function(value) {
+            var cssPrefix = Ext.baseCSSPrefix,
+                cls = [cssPrefix + 'grid-checkheader'];
 
-        if (value) {
-            cls.push(cssPrefix + 'grid-checkheader-checked');
+            if (value) {
+                cls.push(cssPrefix + 'grid-checkheader-checked');
+            }
+            return '<div class="' + cls.join(' ') + '">&#160;</div>';
         }
-        return '<div class="' + cls.join(' ') + '">&#160;</div>';
-    }
-});
+    });
+}
