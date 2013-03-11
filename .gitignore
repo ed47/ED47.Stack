@@ -34,3 +34,4 @@ test.txt
 Elmah.sdf
 *.psd
 Thumbs.db
+.DS_Store
