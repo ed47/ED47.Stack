@@ -1,0 +1,106 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="ED47.Stack.Reflector.Metadata" #>
+//Model: <#=this.ModelInfo.Name#>
+Ext.define("ED47.Stack.Models.<#=this.ModelInfo.Name#>", {
+	extend: "Ext.data.Model",
+	<#if(!String.IsNullOrWhiteSpace(this.ModelInfo.IdPropertyName)){#>
+	idProperty: "<#=this.ModelInfo.IdPropertyName#>",
+	<#}#>
+	fields: [
+		<#GenerateProperties();#>
+	],
+
+	validations: [
+		/*validation*/
+		<#GenerateValidations();#>
+	]
+});
+
+ED47.Stack.Models.<#=this.ModelInfo.Name#>.getStore = function(id){
+	return new ED47.views.data.SharedStore({
+		model: "ED47.Stack.Models.<#=this.ModelInfo.Name#>",
+		id: id
+	});
+};
+
+<#GenerateFields();#>
+
+<#+
+//Generates the Model properties.
+protected void GenerateProperties()
+{
+	string first = ""; 
+	foreach(var property in this.ModelInfo.ModelProperties)
+	{#>	
+		<#=first#>	{ name: "<#=property.Name#>", type: "<#=property.PropertyInfo.Name#>", xtype: "<#=property.ExtXType#>", allowBlank: <#=(!property.IsRequired).ToString().ToLower()#>, fieldLabel: "<#=property.Label#>"	<#=string.IsNullOrEmpty(property.Mapping)?"": ", mapping:\""+ property.Mapping+"\""#> 	}<#+
+		first = ","; 
+	}
+}
+
+//Generates the Model validations.
+protected void GenerateValidations()
+{
+	string first = "";
+	for(int i=0; i<this.ModelInfo.ModelProperties.Count; i++)
+	{
+		
+		var property = this.ModelInfo.ModelProperties[i];
+		var hasValidation = false;
+		if(property.IsRequired)
+		{#>	<#=first#>{ field: "<#=property.Name#>", type: "presence" }			
+		<#+
+			first = ",";
+		}
+		/*if(property.Length != null)
+		{#>	<#=first#>{ 
+				type: "length", field: "<#=property.Name#>", 
+				<#+if(property.Length.MinimumLength>0){#> min: <#=property.Length.MinimumLength#>,<#+}#> max: <#=property.Length.MaximumLength#>				
+			}
+		<#+
+			first = ",";
+		}*/ 
+		
+	}
+}
+
+//Generates the Form fields.
+protected void GenerateFields()
+{		
+	foreach(var property in this.ModelInfo.ModelProperties.Where(p => p.DropDownForProperty == null))
+	{#>ED47.Stack.Models.<#=this.ModelInfo.Name#>.get<#=property.Name#>Field = function(){
+		return {		
+			name: "<#=property.Name#>",
+			xtype: "<#=property.ExtXType#>",
+			allowBlank: <#=(!property.IsRequired).ToString().ToLower()#>,
+			fieldLabel: "<#=property.Label#>"<#+GenerateComboBoxFieldConfiguration(property.DropDownSourceProperty, property.Name);#>
+	};
+	};	
+	<#+GenerateComboBoxStore(property);#>
+	<#+}
+}
+
+//Generates the field configuration for combo boxes
+protected void GenerateComboBoxFieldConfiguration(ModelPropertyInfo property, string fieldName)
+{
+	if(property != null)
+	{#>,
+			store: ED47.Stack.Models.<#=fieldName#>Store,
+			queryMode: "local",			
+			displayField: "<#=property.DisplayField#>",
+			valueField: "<#=property.ValueField#>",
+			forceSelection: true
+	<#+}
+}
+
+//Generates the store for a combo box
+protected void GenerateComboBoxStore(ModelPropertyInfo property)
+{
+	if(property.DropDownSourceProperty != null)
+	{#>ED47.Stack.Models.<#=property.Name#>Store = Ext.create("Ext.data.Store"){		
+		fields: ["<#=property.DropDownSourceProperty.ValueField#>", "<#=property.DropDownSourceProperty.DisplayField#>"]
+	};
+	<#+}
+}
+#>

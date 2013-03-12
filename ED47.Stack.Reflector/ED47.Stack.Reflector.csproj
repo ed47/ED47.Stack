@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{32753AA0-424D-4217-BC63-35A22FB0607D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ED47.Stack.Reflector</RootNamespace>
+    <AssemblyName>ED47.Stack.Reflector</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Omu.ValueInjecter, Version=2.3.3.0, Culture=neutral, PublicKeyToken=c7694541b0ac80e4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\valueinjecter.2.3.3\lib\net35\Omu.ValueInjecter.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\EnableClientCacheAttribute.cs" />
+    <Compile Include="Attributes\GenerateJavascriptAttribute.cs" />
+    <Compile Include="Attributes\MappingAttribute.cs" />
+    <Compile Include="Attributes\ShowDropDownAttribute.cs" />
+    <Compile Include="Attributes\SkipJavascriptGenerationAttribute.cs" />
+    <Compile Include="Attributes\UseNamespaceInJSAttribute.cs" />
+    <Compile Include="ControllerItem.cs" />
+    <Compile Include="ExtJsXTypes.cs" />
+    <Compile Include="Metadata\ActionInfo.cs" />
+    <Compile Include="ApiReflector.cs" />
+    <Compile Include="ModelReflectionHelper.cs" />
+    <Compile Include="Metadata\ControllerInfo.cs" />
+    <EmbeddedResource Include="Scripts\ajaxlink.js" />
+    <Compile Include="Templates\JsApiController.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>JsApiController.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Attributes\ModelAttribute.cs" />
+    <Compile Include="Metadata\ModelInfo.cs" />
+    <Compile Include="Metadata\ModelPropertyInfo.cs" />
+    <Compile Include="ModelReflector.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ReflectorHandler.cs" />
+    <Compile Include="Templates\JsApiControllerPartial.cs" />
+    <Compile Include="Templates\JsModel1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>JsModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Templates\JsModel.cs" />
+    <Compile Include="Templates\JsMvcController.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>JsMvcController.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Templates\JsMvcControllerPartial.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Templates\JsApiController.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>JsApiController.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Templates\JsModel.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>JsModel1.cs</LastGenOutput>
+    </None>
+    <None Include="Templates\JsMvcController.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>JsMvcController.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\page-view.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\legacy-support.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\ajax.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\shared-store.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\multilingual-field.js" />
+    <EmbeddedResource Include="Scripts\multilingual-form.js" />
+    <EmbeddedResource Include="Scripts\tree.js" />
+    <EmbeddedResource Include="Scripts\result-grid.js" />
+    <EmbeddedResource Include="Scripts\checkColumnn.js" />
+    <Content Include="Scripts\filebox.js" />
+    <Content Include="Scripts\linq-vsdoc.js" />
+    <Content Include="Scripts\linq.min.js" />
+    <EmbeddedResource Include="Scripts\tooltiper.js" />
+    <EmbeddedResource Include="Scripts\minilinq.js" />
+    <EmbeddedResource Include="Scripts\menu.js" />
+    <EmbeddedResource Include="Scripts\panel.js" />
+    <EmbeddedResource Include="Scripts\textbox.js" />
+    <EmbeddedResource Include="Scripts\window.js" />
+    <EmbeddedResource Include="Scripts\dataview.js" />
+    <EmbeddedResource Include="Scripts\application.js" />
+    <EmbeddedResource Include="Scripts\grid.js" />
+    <EmbeddedResource Include="Scripts\client-control.js" />
+    <EmbeddedResource Include="Scripts\combobox.js" />
+    <EmbeddedResource Include="Scripts\button.js" />
+    <EmbeddedResource Include="Scripts\form.js" />
+    <EmbeddedResource Include="Scripts\toolbar.js" />
+    <EmbeddedResource Include="Scripts\linq.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

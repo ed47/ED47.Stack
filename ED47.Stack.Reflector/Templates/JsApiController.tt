@@ -1,0 +1,49 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="ED47.Stack.Reflector.Metadata" #>
+//Controller: <#=this.ControllerInfo.ControllerType.Name#>
+Ext.ns("ED47.Stack.Controllers<#=this.ControllerInfo.GetNamespace()#>.<#=this.ControllerInfo.ControllerType.Name#>");
+<#foreach(var action in this.ControllerInfo.Actions)
+{
+	GenerateParameterDocumentation(action);#>
+
+	<#
+	GenerateAction(action);
+}#>
+
+<#+
+protected void GenerateParameters(ActionInfo action)
+{
+	var parameters = action.MethodInfo.GetParameters();
+	for(int i=0; i<parameters.Length; i++)
+	{#><#=parameters[i].Name#><#+if(i < parameters.Length-1){#>,<#+}}
+
+	if(parameters.Length > 0)
+	{#>, <#+}	
+}
+
+/*protected void GenerateParameterObject(ActionInfo action)
+{
+	var parameters = action.MethodInfo.GetParameters();
+	for(int i=0; i<parameters.Length; i++)
+	{#><#=parameters[i].Name#>: <#=parameters[i].Name#> <#+if(i < parameters.Length-1){#>,<#+}}	
+}*/
+
+protected void GenerateParameterDocumentation(ActionInfo action)
+{
+	var parameters = action.MethodInfo.GetParameters();
+	for(int i=0; i<parameters.Length; i++)
+	{#>///<param name="<#=parameters[i].Name#>" type="<#=parameters[i].ParameterType#>"></param>
+	<#+}	
+}
+
+protected void GenerateAction(ActionInfo action)
+{#>
+ED47.Stack.Controllers.<#=this.ControllerInfo.ControllerType.Name#>.<#= action.Name #> = function(parameters, callBack, context){
+	window.ajaxRequest.request("<#=action.GetUrl()#>", "<#=action.Verb#>" , parameters, callBack, null, context, <#=action.EnableClientCaching.ToString().ToLower()#>);	
+}
+<#+}#>
+
+
+

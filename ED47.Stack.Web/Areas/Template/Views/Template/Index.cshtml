@@ -1,0 +1,42 @@
+﻿@model System.Collections.Generic.Dictionary<string,string>
+
+@{
+    Page.Title = "Templates";
+    var itemCounter = 0;
+}
+
+@foreach (var templateInfo in Model)
+{
+    var formId = "form-" + itemCounter++;
+    var template = ED47.Stack.Web.Template.Template.Get(templateInfo.Key);
+    <div>
+        <b>@templateInfo.Key</b>
+    </div>
+    using (Ajax.BeginForm("Update", "Template", new { area = "Template"}, new AjaxOptions { HttpMethod = "POST", OnSuccess = "saveSuccess(data, '#" + formId + "' )" }, new { id = formId }))
+    {
+        @Html.Hidden("name", templateInfo.Key)
+        <div class="w80">
+            <textarea name="templateText" cols="150">@Html.Raw(template.TemplateText)</textarea>
+        </div>
+        <div class="w10 right">
+            <input type="submit" class="btn btn-normal" value="Save"/>
+        </div>
+        <div class="clear"></div>
+    }
+}
+
+<script>
+    $(function() {
+        $("textarea").autoGrow();
+
+        $("input[type=submit]").hide();
+
+        $(document).on("keydown", "textarea", function() {
+            $(this).parents("form").find("input[type=submit]").show();
+        });
+    });
+
+    function saveSuccess(data, formId) {
+        $(formId).find("input[type=submit]").hide();
+    }
+</script>

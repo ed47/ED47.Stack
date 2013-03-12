@@ -1,0 +1,8 @@
+﻿@using Newtonsoft.Json
+@model ED47.Stack.Web.HelperTemplates.ClientControlModel
+<script type="text/javascript">
+    @this.Raw("ED47.views.Models[\"" + Model.Id + "\"] = " + JsonConvert.SerializeObject(Model) + ";")
+    Ext.onReady(function() {
+        ED47.Stack.ClientControl.create("@Model.Id", "@Model.FullName");
+    });
+</script>

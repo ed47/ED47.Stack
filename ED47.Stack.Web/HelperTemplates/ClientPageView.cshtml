@@ -1,0 +1,7 @@
+﻿@using Newtonsoft.Json
+@model ED47.Stack.Web.HelperTemplates.ClientControlModel
+<script type="text/javascript">
+    Ext.onReady(function() {
+        ED47.ui.RenderPage.render("@Model.FullName");
+    });
+</script>
