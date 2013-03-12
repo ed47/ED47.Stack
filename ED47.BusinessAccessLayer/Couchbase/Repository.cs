@@ -22,10 +22,10 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return false;
         }
 
-        public static TDocument Get<TDocument>(string id) where TDocument : class, IDocument, new()
+        public static TDocument Get<TDocument>(string key) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
-            var res = new TDocument {Key = id};
+            var res = new TDocument {Key = key};
             var op = client.ExecuteGet(res.GetKey());
 
             if (op.Success)
@@ -36,6 +36,23 @@ namespace ED47.BusinessAccessLayer.Couchbase
             }
             return null;
         }
+
+        public static TDocument Get<TDocument>(object data) where TDocument : class, IDocument, new()
+        {
+            var client = CouchbaseManager.Instance;
+            var res = new TDocument();
+            res.InjectFrom(data);
+            var op = client.ExecuteGet(res.GetKey());
+
+            if (op.Success)
+            {
+                var o = JsonConvert.DeserializeObject<TDocument>(op.Value.ToString());
+                o.Init();
+                return o;
+            }
+            return null;
+        }
+
 
         public static TDocument GetBy<TDocument>(string viewName, object value)
             where TDocument : class, IDocument, new()

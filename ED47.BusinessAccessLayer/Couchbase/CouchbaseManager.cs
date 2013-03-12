@@ -13,10 +13,10 @@ public static class CouchbaseManager
        
        var conf = new CouchbaseClientConfiguration()
                       {
-                          Bucket = "",
-                          Password = "",
-                          Username = "",
-                          BucketPassword = "",
+                          Bucket = "Communicator",
+                          Password = "essence",
+                          Username = "Administrator",
+                          BucketPassword = "essence",
                           
                       };
        conf.Urls.Add(new Uri("http://127.0.0.1:8091/pools"));
