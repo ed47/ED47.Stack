@@ -156,6 +156,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     form.reset();
                 }
             });
+
             this.fireEvent("select", sender, record, this);
         },
         onSelect: function (sender, record, context) {
@@ -172,6 +173,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     form.owner.setDisabled(true);
                 }
             });
+
             this.fireEvent("selectMulti", sender, records, this);
         },
         onSelectMulti: function (sender, records, context) {
@@ -282,7 +284,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     }
                     me.remove(record);
                     me.select(me, me.getAt(0));
-                    me.selectMulti(this, [me.getAt(0)]);
+                    me.selectMulti(me, [me.getAt(0)]);
                 });
                 if (callback) callback.call(this, true);
             } else {
@@ -301,7 +303,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                             }
                             me.remove(record);
                             me.select(me, me.getAt(0));
-                            me.selectMulti(this, [me.getAt(0)]);
+                            me.selectMulti(me, [me.getAt(0)]);
                         });
                     }
                     if (callback) callback.call(this, (button == "yes"));
@@ -329,7 +331,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     });
 
                     me.select(me, me.getAt(0));
-                    me.selectMulti(this, [me.getAt(0)]);
+                    me.selectMulti(me, [me.getAt(0)]);
                 });
                 if (callback) callback.call(this, true);
             } else {
@@ -347,7 +349,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                             });
 
                             me.select(me, me.getAt(0));
-                            me.selectMulti(this, [me.getAt(0)]);
+                            me.selectMulti(me, [me.getAt(0)]);
                         });
                     }
                     if (callback) callback.call(this, (button == "yes"));
