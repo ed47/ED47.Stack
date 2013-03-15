@@ -1,0 +1,30 @@
+﻿@using System.Threading
+@using System.Web.Optimization
+@using ED47.Stack.Sample.Domain
+@using i18n = ED47.Stack.Web.Multilingual.Multilingual
+@model dynamic
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <meta name="author" content="www.essencedesign.com" />
+        <meta name="Copyright" content="ED47 2013. All Rights Reserved.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>@Page.Title</title>
+        <link rel="shortcut icon" href="/favicon.ico" />
+        @Styles.Render("~/cssBundle")
+        @Scripts.Render("~/jsBundle")
+    </head>
+    <body class="page-@ViewContext.RouteData.GetRequiredString("Controller").ToLowerInvariant()-@ViewContext.RouteData.GetRequiredString("Action").ToLowerInvariant()" lang="@UserContext.Instance.LanguageCode">
+        @RenderSection("Main")
+        <footer>
+        </footer>
+        <script src="/MultilingualHandler.axd?lang=@Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName"></script>
+        <script src="/ED47StackJS.axd?ED47.Stack.Sample" type="text/javascript"></script>
+        @RenderSection("Scripts", false)
+    </body>
+</html>

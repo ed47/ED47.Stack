@@ -85,7 +85,7 @@ if (window.Ext) {
     };
 
     //Set's up a ShareStore and triggers ready event when done.
-    ED47.Stores.setup = function(id, name, addUpdateFunction, initNewFunction, deleteFunction, deleteConfirmation, preselectedRecordId) {
+ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, deleteFunction, deleteConfirmation, preselectedRecordId, deleteConfirmationMessage) {
         ED47.views.Render.addEvents(id);
 
         var config = {
@@ -95,7 +95,8 @@ if (window.Ext) {
             initNewFunction: initNewFunction,
             deleteFunction: deleteFunction,
             deleteConfirmation: deleteConfirmation,
-            preselectedRecordId: preselectedRecordId
+        preselectedRecordId: preselectedRecordId,
+        deleteConfirmationMessage: deleteConfirmationMessage
         };
 
         var ready = function() {
@@ -120,6 +121,7 @@ if (window.Ext) {
             this.initNewFunction = config.initNewFunction;
             this.deleteFunction = config.deleteFunction;
             this.preselectedRecordId = config.preselectedRecordId;
+        this.deleteConfirmationMessage = config.deleteConfirmationMessage;
 
             ED47.views.data.Store.superclass.constructor.call(this, config);
 
@@ -282,7 +284,12 @@ if (window.Ext) {
                 });
                 if (callback) callback.call(this, true);
             } else {
-                Ext.Msg.confirm("Management", "Remove selected item?", function (button) {
+            var confirmationMessage = "Remove selected item?";
+
+            if (this.deleteConfirmationMessage)
+                confirmationMessage = this.deleteConfirmationMessage;
+
+            Ext.Msg.confirm("", confirmationMessage, function (button) {
                     if (button === "yes") {
                         me.deleteFunction(record.data, function (callResult) {
                             var r = callResult.data.ResultData.Item;
@@ -456,6 +463,7 @@ if (window.Ext) {
                 view._updating = true;
                 view.updateRecord(store, record, callResult);
                 view._updating = false;
+
                 Ext.each(modifiedFieldNames, function(fiedName) {
                     Ext.each(view.forms, function(form) {
                         Ext.each(form.getFields().items, function(field) {

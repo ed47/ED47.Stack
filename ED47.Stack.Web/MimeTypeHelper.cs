@@ -205,7 +205,7 @@ namespace ED47.Stack.Web
 
             var ext = Path.GetExtension(fileName);
             if (ext == null) return "unknown/unknown";
-            ext = ext.Remove(0, 1);
+            ext = ext.Remove(0, 1).ToLowerInvariant();
             if (MimeTypesDictionary.ContainsKey(ext))
             {
                 return MimeTypesDictionary[ext];

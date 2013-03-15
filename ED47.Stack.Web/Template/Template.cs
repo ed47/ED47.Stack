@@ -522,10 +522,10 @@ namespace ED47.Stack.Web.Template
         private static string IsNullOrEmpty(object[] args)
         {
             if (args.Length == 0)
-                return "false";
+                return "true";
 
             if (args[0] == null)
-                return "false";
+                return "true";
 
             return string.IsNullOrEmpty(args[0].ToString()) ? "true" : "false";
         }

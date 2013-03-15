@@ -52,7 +52,9 @@
                         iconCls: "multilingualtrigger",
                         style: "margin-left: 5px;",
                         handler: me.displayTranslationWindow,
-                        tooltip: 'Translate',
+                tooltip: me.fieldConfig.tooltip || 'Translate',
+                cancelButtonLabel: me.fieldConfig.cancelButtonLabel || 'Cancel',
+                saveButtonLabel: me.fieldConfig.saveButtonLabel || 'Save',
                         scope: this,
                         width: 24,
                         height: 24
