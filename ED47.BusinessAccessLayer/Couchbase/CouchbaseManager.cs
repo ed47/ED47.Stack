@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using Couchbase;
 using Couchbase.Configuration;
 
@@ -13,15 +14,16 @@ public static class CouchbaseManager
        
        var conf = new CouchbaseClientConfiguration()
                       {
-                          Bucket = "Communicator",
-                          Password = "essence",
-                          Username = "Administrator",
-                          BucketPassword = "essence",
+                          Bucket = ConfigurationManager.AppSettings["CouchbaseBucket"],
+                          Password = ConfigurationManager.AppSettings["CouchbasePassword"],
+                          Username = ConfigurationManager.AppSettings["CouchbaseUsername"],
+                          BucketPassword = ConfigurationManager.AppSettings["CouchbaseBucketPassword"],
                           
                       };
        conf.Urls.Add(new Uri("http://127.0.0.1:8091/pools"));
        
-       _instance = new CouchbaseClient(conf);
+//       _instance = new CouchbaseClient((CouchbaseClientSection)ConfigurationManager.GetSection("couchbase"));
+       _instance = new CouchbaseClient(conf); // TODO: change to config section
    }
 
    public static CouchbaseClient Instance { get { return _instance; } }
