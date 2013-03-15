@@ -24,6 +24,11 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return Repository.Store(this);
         }
 
+        public bool Delete()
+        {
+            return Repository.Delete(this);
+        }
+
         private bool _loaded = false;
         
         public virtual bool Load(bool force = false)

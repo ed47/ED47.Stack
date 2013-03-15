@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Enyim.Caching.Memcached;
 using Newtonsoft.Json;
@@ -93,5 +94,21 @@ namespace ED47.BusinessAccessLayer.Couchbase
             var client = CouchbaseManager.Instance;
             return Convert.ToInt32(client.Increment(type, 1, 1));
         }
+
+        public static bool Delete(IDocument document)
+        {
+            var client = CouchbaseManager.Instance;
+            return client.ExecuteRemove(document.Key).Success;
+        }
+
+        public static IEnumerable<T> GetAllBy<T>(string designName, string viewName, int start = 0,  int count = 0)
+        {
+            var client = CouchbaseManager.Instance;
+            var res= client.GetView<T>(designName, viewName).Skip(start);
+            if (count > 0)
+                res = res.Limit(count);
+            return res;
+        }
+
     }
 }
