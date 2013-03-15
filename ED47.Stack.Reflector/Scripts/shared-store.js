@@ -121,7 +121,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             this.initNewFunction = config.initNewFunction;
             this.deleteFunction = config.deleteFunction;
             this.preselectedRecordId = config.preselectedRecordId;
-        this.deleteConfirmationMessage = config.deleteConfirmationMessage;
+            this.deleteConfirmationMessage = config.deleteConfirmationMessage;
 
             ED47.views.data.Store.superclass.constructor.call(this, config);
 
@@ -265,6 +265,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             store.insert(index, callResult.data.ResultData.Item);
             this._updating = false;
             this.select(this, store.getAt(index));
+            this.selectMulti(this, [store.getAt(index)]);
         },
 
         deleteRecord: function (record, callback) {
@@ -284,12 +285,12 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 });
                 if (callback) callback.call(this, true);
             } else {
-            var confirmationMessage = "Remove selected item?";
+                var confirmationMessage = "Remove selected item?";
 
-            if (this.deleteConfirmationMessage)
-                confirmationMessage = this.deleteConfirmationMessage;
+                if (this.deleteConfirmationMessage)
+                    confirmationMessage = this.deleteConfirmationMessage;
 
-            Ext.Msg.confirm("", confirmationMessage, function (button) {
+                Ext.Msg.confirm("", confirmationMessage, function (button) {
                     if (button === "yes") {
                         me.deleteFunction(record.data, function (callResult) {
                             var r = callResult.data.ResultData.Item;
