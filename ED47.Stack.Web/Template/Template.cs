@@ -1002,7 +1002,7 @@ namespace ED47.Stack.Web.Template
                             continue;
                         }
                         content = PreTplContent + content + PostTplContent;
-                        if (tplName == "." || tplName == "")
+                        if (tplName == "." || String.IsNullOrEmpty(tplName))
                         {
                             if (CurrentStackItem != null)
                                 CurrentStackItem.Name = ".";
@@ -1078,7 +1078,7 @@ namespace ED47.Stack.Web.Template
             else
                 list = o as IEnumerable;
 
-            if (TemplateText == "")
+            if (String.IsNullOrEmpty(TemplateText))
                 return PreTplContent + PostTplContent;
 
             var res = new StringBuilder();

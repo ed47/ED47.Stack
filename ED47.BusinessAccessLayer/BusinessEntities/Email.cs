@@ -73,6 +73,46 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 IsBodyHtml = IsHtml,
             };
             
+            AddRecipients(mailMessage);
+
+            IEnumerable<Stream> streams = null;
+            try
+            {
+                streams = AddAttachments(mailMessage);
+                var smtpClient = new SmtpClient();
+                smtpClient.Send(mailMessage);
+                TransmissionDate = DateTime.Now;
+                Save();
+            }
+            finally
+            {
+                if (streams != null)
+                {
+                    foreach (var stream in streams)
+                    {
+                        stream.Dispose();
+                    }
+                }
+            }
+            
+        }
+
+        private IEnumerable<Stream> AddAttachments(MailMessage mailMessage)
+        {
+            var streams = new List<Stream>();
+            
+            foreach (var attachment in Attachments)
+            {
+                var s = attachment.File.OpenRead();
+                streams.Add(s);
+                mailMessage.Attachments.Add(new Attachment(s, attachment.File.Name));
+            }
+
+            return streams;
+        }
+
+        private void AddRecipients(MailMessage mailMessage)
+        {
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
             {
@@ -104,32 +144,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     mailMessage.Bcc.Add(Bcc);
             }
 
-            var tmp = new List<Stream>();
-            try
-            {
-                foreach (var attachment in Attachments)
-                {
-                    var s = attachment.File.OpenRead();
-                    tmp.Add(s);
-                    mailMessage.Attachments.Add(new Attachment(s,attachment.File.Name));
-                }
-                var smtpClient = new SmtpClient();
-
                 if (!String.IsNullOrWhiteSpace(from))
                     mailMessage.From = new MailAddress(from);
 
-                smtpClient.Send(mailMessage);
-                TransmissionDate = DateTime.Now;
-                Save();
-            }
-            finally
-            {
-                foreach (var stream in tmp)
-                {
-                    stream.Dispose();
-                }
-            }
-            
         }
 
         public string Bcc { get; set; }
