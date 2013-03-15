@@ -144,9 +144,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     mailMessage.Bcc.Add(Bcc);
             }
 
-                if (!String.IsNullOrWhiteSpace(from))
-                    mailMessage.From = new MailAddress(from);
-
+            if (!String.IsNullOrWhiteSpace(FromAddress))
+                mailMessage.From = new MailAddress(FromAddress);
         }
 
         public string Bcc { get; set; }
