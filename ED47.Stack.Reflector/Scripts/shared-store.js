@@ -142,6 +142,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 me.insert(0, r);
                 me._updating = false;
                 me.select(me, me.getAt(0));
+                me.selectMulti(me, [me.getAt(0)]);
                 ED47.views.current.fireEvent("startedit");
             });
         },
@@ -281,7 +282,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     }
                     me.remove(record);
                     me.select(me, me.getAt(0));
-
+                    me.selectMulti(this, [me.getAt(0)]);
                 });
                 if (callback) callback.call(this, true);
             } else {
@@ -300,7 +301,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                             }
                             me.remove(record);
                             me.select(me, me.getAt(0));
-
+                            me.selectMulti(this, [me.getAt(0)]);
                         });
                     }
                     if (callback) callback.call(this, (button == "yes"));
@@ -328,7 +329,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     });
 
                     me.select(me, me.getAt(0));
-
+                    me.selectMulti(this, [me.getAt(0)]);
                 });
                 if (callback) callback.call(this, true);
             } else {
@@ -346,7 +347,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                             });
 
                             me.select(me, me.getAt(0));
-
+                            me.selectMulti(this, [me.getAt(0)]);
                         });
                     }
                     if (callback) callback.call(this, (button == "yes"));
