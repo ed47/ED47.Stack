@@ -50,7 +50,6 @@ namespace ED47.Stack.Reflector
             if (String.IsNullOrWhiteSpace(assemblyNames))
             {
                 context.Response.ContentType = "text/javascript";
-                context.Response.Flush();
                 return;
             }
 
@@ -79,7 +78,6 @@ namespace ED47.Stack.Reflector
             }
             
             context.Response.ContentType = "text/javascript";
-            context.Response.Flush();
         }
 
         /// <summary>

@@ -38,7 +38,21 @@ namespace ED47.BusinessAccessLayer
 
                 if (value == String.Empty && targetProp.PropertyType != typeof(String))
                     value = null;
-                
+
+                if (value is JArray)
+                {
+                    var jArray = (JArray)value;
+                    
+                    if (jArray.Any())
+                    {
+                        if (jArray.First().Type == JTokenType.Integer)
+                            value = jArray.Select(el => (int)el).ToArray();
+
+                        if (jArray.First().Type == JTokenType.String)
+                            value = jArray.Select(el => (string)el).ToArray();
+                    }
+                }
+
                 targetProp.SetValue(target, value);
             }
         }

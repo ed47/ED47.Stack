@@ -31,6 +31,7 @@ test.txt
 [Ss]andbox*/
 *.dbmdl
 [Mm]aquette*/
-ED47.GrcTool.Web/App_Data/Elmah.sdf
+Elmah.sdf
 *.psd
 Thumbs.db
+.DS_Store

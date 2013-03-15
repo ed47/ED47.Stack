@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<translations lang="en">
+  <sample>
+    <title>Sample</title>
+    <message>Hello world!</message>
+  </sample>
+</translations>
