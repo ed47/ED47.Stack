@@ -97,11 +97,17 @@ public static class StringExtensions
         return Regex.IsMatch(sAux, textStr, RegexOptions.IgnoreCase);
     }
 
-    public static string GetProtectedEmailFromSpam(this string text) {
-        return Regex.Replace(text, EmailRegexReplace, "<a class=\"email\" onclick=\"javascript:eml(\\'$2\\',this,\\'$3\\',\\'$1\\');\" target=\"_self\">$3</a>", RegexOptions.IgnoreCase);
+    public static string GetProtectedEmailFromSpam(this string text)
+    {
+        return GetProtectedEmailFromSpam("email");
+        //Regex.Replace(text, EmailRegexReplace, "<a class=\"email\" onclick=\"javascript:eml(\\'$2\\',this,\\'$3\\',\\'$1\\');\" target=\"_self\">$3</a>", RegexOptions.IgnoreCase);
     }
 
-    public static string GetProtectedEmailFromSpam(this string text, string replacement) {
+    public static string GetProtectedEmailFromSpam(this string text, string cssclass) {
+        return Regex.Replace(text, EmailRegexReplace, "<a class=\"" + cssclass + "\" onclick=\"javascript:eml(\\'$2\\',this,\\'$3\\',\\'$1\\');\" target=\"_self\">$3</a>", RegexOptions.IgnoreCase);
+    }
+
+    public static string GetProtectedEmailFromSpam(this string text, string cssClass, string replacement) {
         return Regex.Replace(text, EmailRegexReplace, replacement);
     }
 
