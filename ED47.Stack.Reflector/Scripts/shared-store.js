@@ -149,10 +149,10 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
         select: function (sender, record) {
             var view = this;
             Ext.each(view.forms, function (form) {
-                form.owner.setDisabled(false);
-                if (record)
+                if (record) {
+                    form.owner.setDisabled(false);
                     form.loadRecord(record);
-                else {
+                } else {
                     form.reset();
                 }
             });
