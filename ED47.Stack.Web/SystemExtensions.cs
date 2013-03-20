@@ -99,7 +99,7 @@ public static class StringExtensions
 
     public static string GetProtectedEmailFromSpam(this string text)
     {
-        return GetProtectedEmailFromSpam("email");
+        return text.GetProtectedEmailFromSpam("email");
         //Regex.Replace(text, EmailRegexReplace, "<a class=\"email\" onclick=\"javascript:eml(\\'$2\\',this,\\'$3\\',\\'$1\\');\" target=\"_self\">$3</a>", RegexOptions.IgnoreCase);
     }
 
