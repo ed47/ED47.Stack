@@ -1,10 +1,10 @@
 /*! Copyright 
  *  (c) 2010, Brandon Aaron (http://brandonaaron.net)
- *  (c) 2012, Alexander Zaytsev (http://hazzik.ru/en)
+ *  (c) 2012 - 2013, Alexander Zaytsev (http://hazzik.ru/en)
  * Dual licensed under the MIT (MIT_LICENSE.txt)
  * and GPL Version 2 (GPL_LICENSE.txt) licenses.
  *
- * Version: 1.3.2
+ * Version: 1.3.4
  * Requires jQuery 1.3+
  * Docs: http://docs.jquery.com/Plugins/livequery
  */
@@ -122,6 +122,7 @@ $.extend($jQlq, {
 	queue: [],
 	running: false,
 	timeout: null,
+	registered: [],
 
 	checkQueue: function() {
 		if ( $jQlq.running && $jQlq.queue.length ) {
@@ -147,7 +148,7 @@ $.extend($jQlq, {
 	registerPlugin: function() {
 		$.each( arguments, function(i,n) {
 			// Short-circuit if the method doesn't exist
-			if (!$.fn[n]) return;
+			if (!$.fn[n] || $jQlq.registered.indexOf(n) > 0) return;
 
 			// Save a reference to the original method
 			var old = $.fn[n];
@@ -163,6 +164,8 @@ $.extend($jQlq, {
 				// Return the original methods result
 				return r;
 			}
+
+			$jQlq.registered.push(n);
 		});
 	},
 
