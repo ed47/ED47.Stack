@@ -306,6 +306,12 @@ namespace ED47.Stack.Web.Template
         }
 
 
+        private static string Translate(object[] param)
+        {
+            
+            return Multilingual.Multilingual.N(param[0].ToString(), param[1].ToString(), param.Skip(2).ToArray());
+        }
+
         private void InitChildTemplate(Template t)
         {
             foreach (var obj in _stack)

@@ -137,6 +137,59 @@ namespace ED47.Stack.Web.Multilingual
         }
 
 
+        public static string N(string path, string language, params object[] args)
+        {
+            IDictionary<string, TranslationItem> languageTranslations;
+
+            if (Translations.TryGetValue(language, out languageTranslations))
+            {
+                TranslationItem translation;
+                if (languageTranslations.TryGetValue(path, out translation))
+                    return args.Length > 0 ? String.Format(translation.Text, args) : translation.Text;
+            }
+
+            #if !DEBUG
+                //Fallback to English
+                        if (Translations.TryGetValue(Properties.Settings.Default.DefaultLanguage, out languageTranslations))
+                        {
+                            TranslationItem translation;
+                            if (languageTranslations.TryGetValue(path, out translation))
+                                return translation.Text;
+                        }
+            #endif
+            #if DEBUG
+                 AddMissingKey(path);
+            #endif
+
+            return String.Format("[{0}]", path);
+        }
+     public static string N2(string path, string language, params object[] args)
+        {
+            IDictionary<string, TranslationItem> languageTranslations;
+
+            if (Translations.TryGetValue(language, out languageTranslations))
+            {
+                TranslationItem translation;
+                if (languageTranslations.TryGetValue(path, out translation))
+                    return args.Length > 0 ? String.Format(translation.Text, args) : translation.Text;
+            }
+
+#if !DEBUG
+    //Fallback to English
+                        if (Translations.TryGetValue(Properties.Settings.Default.DefaultLanguage, out languageTranslations))
+                        {
+                            TranslationItem translation;
+                            if (languageTranslations.TryGetValue(path, out translation))
+                                return translation.Text;
+                        }
+#endif
+#if DEBUG
+            AddMissingKey(path);
+#endif
+
+            return String.Format("[{0}]", path);
+        }
+
         /// <summary>
         /// Gets a multilignual string in the current UI culture with a plurielization.
         /// </summary>
