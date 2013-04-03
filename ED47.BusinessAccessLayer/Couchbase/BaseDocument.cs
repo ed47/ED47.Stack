@@ -71,7 +71,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
 
         protected string CalcKey(int id)
         {
-            return Type + "?id=" + Id;
+            return (Type + "?id=" + Id).ToLower();
         }
 
         public string Key
