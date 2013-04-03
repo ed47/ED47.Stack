@@ -21,12 +21,12 @@ namespace ED47.BusinessAccessLayer.Couchbase
        
         public bool Save()
         {
-            return Repository.Store(this);
+            return CouchbaseRepository.Store(this);
         }
 
         public bool Delete()
         {
-            return Repository.Delete(this);
+            return CouchbaseRepository.Delete(this);
         }
 
         private bool _loaded = false;
@@ -34,7 +34,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         public virtual bool Load(bool force = false)
         {
             if(!_loaded || force )
-                _loaded = Repository.Load(this);
+                _loaded = CouchbaseRepository.Load(this);
 
             return _loaded;
         }
@@ -59,7 +59,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
             {
                 if (!_id.HasValue)
                 {
-                    _id = Repository.GetNewId(Type);
+                    _id = CouchbaseRepository.GetNewId(Type);
                 }
                 return _id.Value;
 

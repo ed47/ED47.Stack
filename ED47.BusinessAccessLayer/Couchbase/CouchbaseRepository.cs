@@ -7,7 +7,10 @@ using Omu.ValueInjecter;
 
 namespace ED47.BusinessAccessLayer.Couchbase
 {
-    public class Repository
+    
+    
+    
+    public class CouchbaseRepository
     {
         public static bool Load(IDocument document)
         {
@@ -28,7 +31,6 @@ namespace ED47.BusinessAccessLayer.Couchbase
             var client = CouchbaseManager.Instance;
             var res = new TDocument {Key = key};
             var op = client.ExecuteGet(res.GetKey());
-
             if (op.Success)
             {
                 var o = JsonConvert.DeserializeObject<TDocument>(op.Value.ToString());
@@ -41,6 +43,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         public static TDocument Get<TDocument>(object data) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
+           
             var res = new TDocument();
             res.InjectFrom(data);
             var op = client.ExecuteGet(res.GetKey());
@@ -67,7 +70,6 @@ namespace ED47.BusinessAccessLayer.Couchbase
         {
             var client = CouchbaseManager.Instance;
             var view = client.GetView(designName, viewName).Key(value);
-
             var item = view.FirstOrDefault();
             if (item == null) return null;
             var o = Get<TDocument>(item.ItemId);
@@ -87,6 +89,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
             if (res)
                 document.AfterSave();
             return res;
+            
         }
 
         public static int GetNewId(string type)

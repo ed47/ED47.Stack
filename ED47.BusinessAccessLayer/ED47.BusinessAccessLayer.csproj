@@ -37,19 +37,19 @@
       <HintPath>..\packages\Afterthought.1.0.8\lib\Afterthought.dll</HintPath>
     </Reference>
     <Reference Include="Couchbase">
-      <HintPath>..\..\packages\CouchbaseNetClient.1.2.3\lib\net40\Couchbase.dll</HintPath>
+      <HintPath>..\..\packages\CouchbaseNetClient.1.2.4\lib\net40\Couchbase.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Enyim.Caching">
-      <HintPath>..\..\packages\CouchbaseNetClient.1.2.3\lib\net40\Enyim.Caching.dll</HintPath>
+      <HintPath>..\..\packages\CouchbaseNetClient.1.2.4\lib\net40\Enyim.Caching.dll</HintPath>
     </Reference>
     <Reference Include="Enyim.Caching.Log4NetAdapter">
-      <HintPath>..\..\packages\CouchbaseNetClient.1.2.3\lib\net40\Enyim.Caching.Log4NetAdapter.dll</HintPath>
+      <HintPath>..\..\packages\CouchbaseNetClient.1.2.4\lib\net40\Enyim.Caching.Log4NetAdapter.dll</HintPath>
     </Reference>
     <Reference Include="Enyim.Caching.NLogAdapter">
-      <HintPath>..\..\packages\CouchbaseNetClient.1.2.3\lib\net40\Enyim.Caching.NLogAdapter.dll</HintPath>
+      <HintPath>..\..\packages\CouchbaseNetClient.1.2.4\lib\net40\Enyim.Caching.NLogAdapter.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus, Version=3.1.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -62,7 +62,7 @@
       <HintPath>..\..\packages\Hammock.1.2.9\lib\4.0\Hammock.ClientProfile.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\..\packages\CouchbaseNetClient.1.2.3\lib\net40\log4net.dll</HintPath>
+      <HintPath>..\..\packages\CouchbaseNetClient.1.2.4\lib\net40\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -76,14 +76,14 @@
       <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="NLog">
-      <HintPath>..\..\packages\CouchbaseNetClient.1.2.3\lib\net40\NLog.dll</HintPath>
+      <HintPath>..\..\packages\CouchbaseNetClient.1.2.4\lib\net40\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Omu.ValueInjecter, Version=2.3.3.0, Culture=neutral, PublicKeyToken=c7694541b0ac80e4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\valueinjecter.2.3.3\lib\net35\Omu.ValueInjecter.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp">
-      <HintPath>..\..\packages\CouchbaseNetClient.1.2.3\lib\net40\RestSharp.dll</HintPath>
+      <HintPath>..\..\packages\CouchbaseNetClient.1.2.4\lib\net40\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SX, Version=2.0.5.2, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
       <HintPath>..\Shared\SX.dll</HintPath>
@@ -155,7 +155,7 @@
     <Compile Include="Couchbase\CouchbaseManager.cs" />
     <Compile Include="Couchbase\DocumentAttribute.cs" />
     <Compile Include="Couchbase\IDocument.cs" />
-    <Compile Include="Couchbase\Repository.cs" />
+    <Compile Include="Couchbase\CouchbaseRepository.cs" />
     <Compile Include="DictionaryInjection.cs" />
     <Compile Include="CustomFlatLoopValueInjection.cs" />
     <Compile Include="BusinessEntities\Email.cs" />
@@ -241,6 +241,9 @@
       <Project>{57FD0F4F-4DAC-42CA-964D-39A180D714B3}</Project>
       <Name>ED47.Stack.Web</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
