@@ -103,12 +103,18 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return client.ExecuteRemove(document.Key).Success;
         }
 
-        public static IEnumerable<T> GetAllBy<T>(string designName, string viewName, int start = 0,  int count = 0)
+        public static IEnumerable<TDocument> GetAllBy<TDocument>(string designName, string viewName, int start = 0,  int count = 0) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
-            var res= client.GetView<T>(designName, viewName).Skip(start);
+            var view= client.GetView(designName, viewName).Skip(start);
             if (count > 0)
-                res = res.Limit(count);
+                view = view.Limit(count);
+            var res = new List<TDocument>();
+            foreach (var viewRow in view)
+            {
+                res.Add(Get<TDocument>(viewRow.ItemId));
+            }
+            
             return res;
         }
 
