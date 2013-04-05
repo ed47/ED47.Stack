@@ -29,8 +29,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         public static TDocument Get<TDocument>(string key) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
-            var res = new TDocument {Key = key};
-            var op = client.ExecuteGet(res.GetKey());
+            var op = client.ExecuteGet(key);
             if (op.Success)
             {
                 var o = JsonConvert.DeserializeObject<TDocument>(op.Value.ToString());
