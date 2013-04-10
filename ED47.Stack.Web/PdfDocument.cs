@@ -81,6 +81,32 @@ namespace ED47.Stack.Web
 
         }
 
+        public PdfDocument(string header, string content, string footer, string url) {
+            this.Content = content;
+
+            PdfConverter pdf = new PdfConverter();
+            pdf.LicenseKey = "0vng8uHh8uPi5fLg/OLy4eP84+D86+vr6w==";
+
+            pdf.PdfDocumentOptions.PdfPageSize = PdfPageSize.A4;
+            pdf.PdfDocumentOptions.PdfCompressionLevel = PdfCompressionLevel.Normal;
+            pdf.PdfDocumentOptions.PdfPageOrientation = PdfPageOrientation.Portrait;
+            pdf.PdfDocumentOptions.FitWidth = false;
+            pdf.PdfDocumentOptions.ShowHeader = header != "";
+            pdf.PdfDocumentOptions.ShowFooter = footer != "";
+
+            pdf.PdfHeaderOptions.AddHtmlToPdfArea(new HtmlToPdfArea(header, url));
+            pdf.PdfHeaderOptions.DrawHeaderLine = false;
+
+            pdf.PdfFooterOptions.AddHtmlToPdfArea(new HtmlToPdfArea(footer, url));
+            pdf.PdfFooterOptions.DrawFooterLine = false;
+
+            pdf.AvoidTextBreak = true;
+            pdf.AvoidImageBreak = true;
+            _Converter = pdf;
+
+
+        }
+
         private string _Filename = null;
         public string Filename
         {
