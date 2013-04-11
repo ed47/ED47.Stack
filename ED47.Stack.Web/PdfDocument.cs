@@ -86,6 +86,7 @@ namespace ED47.Stack.Web
 
             PdfConverter pdf = new PdfConverter();
             pdf.LicenseKey = "0vng8uHh8uPi5fLg/OLy4eP84+D86+vr6w==";
+             
 
             pdf.PdfDocumentOptions.PdfPageSize = PdfPageSize.A4;
             pdf.PdfDocumentOptions.PdfCompressionLevel = PdfCompressionLevel.Normal;
