@@ -40,6 +40,9 @@
     <Reference Include="Elmah">
       <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
     </Reference>
+    <Reference Include="FluentValidation">
+      <HintPath>..\..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -131,6 +134,8 @@
     <Compile Include="Areas\Template\TemplateAreaRegistration.cs" />
     <Compile Include="Code39BarCode.cs" />
     <Compile Include="Filters\ElmahHandledErrorLoggerFilter.cs" />
+    <Compile Include="FluentValidation\Class1.cs" />
+    <Compile Include="FluentValidation\i18nValidationSource.cs" />
     <Compile Include="HelperTemplates\ClientControlModel.cs" />
     <Compile Include="HtmlHelper.cs" />
     <Compile Include="Json\JsonObject.cs" />
