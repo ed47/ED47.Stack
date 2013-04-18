@@ -100,8 +100,5 @@ namespace ED47.BusinessAccessLayer
             var keyMembers = MetadataHelper.GetKeyMembers<TEntity>(BaseUserContext.Instance.Repository.DbContext);
             return keyMembers.Select(k => new KeyValuePair<string, object>(k, entityType.GetProperty(k).GetValue(this, null)));
         }
-
-
-       
     }
 }

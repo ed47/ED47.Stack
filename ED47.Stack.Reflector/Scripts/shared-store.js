@@ -121,7 +121,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             this.initNewFunction = config.initNewFunction;
             this.deleteFunction = config.deleteFunction;
             this.preselectedRecordId = config.preselectedRecordId;
-        this.deleteConfirmationMessage = config.deleteConfirmationMessage;
+            this.deleteConfirmationMessage = config.deleteConfirmationMessage;
 
             ED47.views.data.Store.superclass.constructor.call(this, config);
 
@@ -142,19 +142,21 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 me.insert(0, r);
                 me._updating = false;
                 me.select(me, me.getAt(0));
+                me.selectMulti(me, [me.getAt(0)]);
                 ED47.views.current.fireEvent("startedit");
             });
         },
         select: function (sender, record) {
             var view = this;
             Ext.each(view.forms, function (form) {
-                form.owner.setDisabled(false);
-                if (record)
+                if (record) {
+                    form.owner.setDisabled(false);
                     form.loadRecord(record);
-                else {
+                } else {
                     form.reset();
                 }
             });
+
             this.fireEvent("select", sender, record, this);
         },
         onSelect: function (sender, record, context) {
@@ -171,6 +173,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     form.owner.setDisabled(true);
                 }
             });
+
             this.fireEvent("selectMulti", sender, records, this);
         },
         onSelectMulti: function (sender, records, context) {
@@ -265,6 +268,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             store.insert(index, callResult.data.ResultData.Item);
             this._updating = false;
             this.select(this, store.getAt(index));
+            this.selectMulti(this, [store.getAt(index)]);
         },
 
         deleteRecord: function (record, callback) {
@@ -280,16 +284,16 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     }
                     me.remove(record);
                     me.select(me, me.getAt(0));
-
+                    me.selectMulti(me, [me.getAt(0)]);
                 });
                 if (callback) callback.call(this, true);
             } else {
-            var confirmationMessage = "Remove selected item?";
+                var confirmationMessage = "Remove selected item?";
 
-            if (this.deleteConfirmationMessage)
-                confirmationMessage = this.deleteConfirmationMessage;
+                if (this.deleteConfirmationMessage)
+                    confirmationMessage = this.deleteConfirmationMessage;
 
-            Ext.Msg.confirm("", confirmationMessage, function (button) {
+                Ext.Msg.confirm("", confirmationMessage, function (button) {
                     if (button === "yes") {
                         me.deleteFunction(record.data, function (callResult) {
                             var r = callResult.data.ResultData.Item;
@@ -299,7 +303,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                             }
                             me.remove(record);
                             me.select(me, me.getAt(0));
-
+                            me.selectMulti(me, [me.getAt(0)]);
                         });
                     }
                     if (callback) callback.call(this, (button == "yes"));
@@ -327,7 +331,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     });
 
                     me.select(me, me.getAt(0));
-
+                    me.selectMulti(me, [me.getAt(0)]);
                 });
                 if (callback) callback.call(this, true);
             } else {
@@ -345,7 +349,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                             });
 
                             me.select(me, me.getAt(0));
-
+                            me.selectMulti(me, [me.getAt(0)]);
                         });
                     }
                     if (callback) callback.call(this, (button == "yes"));
