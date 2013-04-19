@@ -7,7 +7,7 @@ namespace ED47.Stack.Web.FluentValidation
 {
     public static class i18nValidationExtension
     {
-        public static IRuleBuilderOptions<T, TProperty> WithMessage<T, TProperty>(this IRuleBuilderOptions<T, TProperty> rule, string key, params Func<T, object>[] funcs)
+        public static IRuleBuilderOptions<T, TProperty> WithMultilingualMessage<T, TProperty>(this IRuleBuilderOptions<T, TProperty> rule, string key, params Func<T, object>[] funcs)
         {
             return rule.Configure(config =>
             {
