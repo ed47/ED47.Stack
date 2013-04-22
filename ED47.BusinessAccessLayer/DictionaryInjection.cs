@@ -30,7 +30,10 @@ namespace ED47.BusinessAccessLayer
 
                 if (targetProp.PropertyType.IsNullable() && (value != null && Nullable.GetUnderlyingType(targetProp.PropertyType) != value.GetType()))
                 {
-                    value = Convert.ChangeType(value, Nullable.GetUnderlyingType(targetProp.PropertyType));
+                    if (value.GetType().Name == "String" && String.IsNullOrWhiteSpace(value.ToString()))
+                        value = null;
+                    else
+                        value = Convert.ChangeType(value, Nullable.GetUnderlyingType(targetProp.PropertyType));
                 }
 
                 if (value == String.Empty && targetProp.PropertyType != typeof(String))

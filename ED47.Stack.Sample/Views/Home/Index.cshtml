@@ -1,0 +1,23 @@
+﻿@using i18n = ED47.Stack.Web.Multilingual.Multilingual
+
+@{
+    Page.Title = i18n.N("sample.title");
+}
+
+@section Main
+{
+    <div>
+        <p>
+            @i18n.N("sample.message")</p>
+    </div>
+    <button id="testi18n">Click me!</button>
+}
+
+@section Scripts
+{
+    <script>
+        $(document).on("click", "#testi18n", function () {
+            alert(i8n.n("sample.message"));
+        });
+    </script>
+}

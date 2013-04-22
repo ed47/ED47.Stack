@@ -5,7 +5,8 @@ using Elmah;
 namespace ED47.Stack.Web.Filters
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class ElmahHandledErrorLoggerFilter : ExceptionFilterAttribute
+    [Obsolete("No longuer required thanks to Elmah.Mvc")]
+    public sealed class ElmahHandledErrorLoggerFilter : ExceptionFilterAttribute
     {
         public override void OnException(HttpActionExecutedContext actionExecutedContext)
         {

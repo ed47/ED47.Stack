@@ -1,14 +1,17 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ED47.BusinessAccessLayer
 {
     /// <summary>
-    /// Base class for GrcTool Entities.
+    /// Base class for GrcTool Entities with soft-delete, a single pre-defined key and timestamp fields.
+    /// For simpler or more custom classes inherit directly from DbEntity.
     /// </summary>
     public abstract class BaseDbEntity : DbEntity
     {
         [Key]
+        [Column(Order = 0)]
         public virtual int Id { get; set; }
 
         /// <summary>

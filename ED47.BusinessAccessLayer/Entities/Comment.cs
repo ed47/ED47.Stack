@@ -13,6 +13,8 @@ namespace ED47.BusinessAccessLayer.Entities
         public virtual string Body { get; set; }
         public virtual int? CommenterId { get; set; }
         public virtual int? FileBoxId { get; set; }
+        [MaxLength(50)]
+        public virtual string CommentType { get; set; }
         [ForeignKey("FileBoxId")]
         public FileBox FileBox { get; set; }
     }
