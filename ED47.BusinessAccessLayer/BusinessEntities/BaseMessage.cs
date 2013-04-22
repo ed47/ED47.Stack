@@ -44,7 +44,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             set { _email = value; }
         }
 
-        public Template GetSubjectTpl()
+        public virtual Template GetSubjectTpl()
         {
             return Subject != null ? new Template(Subject) : Template.Get("Email_" +  GetType().Name + "Subject", languageCode: this.LanguageCode);
         }
