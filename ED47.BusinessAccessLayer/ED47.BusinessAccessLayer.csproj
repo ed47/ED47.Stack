@@ -68,6 +68,7 @@
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -106,6 +107,7 @@
     <Compile Include="BusinessDomain.cs" />
     <Compile Include="BusinessEntities\Audit.cs" />
     <Compile Include="BusinessEntities\AuditFilter.cs" />
+    <Compile Include="BusinessEntityJson.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
     <Compile Include="BusinessEntities\CommentRepositoryExtension.cs" />
