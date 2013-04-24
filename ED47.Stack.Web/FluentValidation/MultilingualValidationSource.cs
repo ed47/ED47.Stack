@@ -3,9 +3,9 @@ using FluentValidation.Resources;
 
 namespace ED47.Stack.Web.FluentValidation
 {
-    public class i18nValidationSource : IStringSource
+    public class MultilingualValidationSource : IStringSource
     {
-        public i18nValidationSource(string key)
+        public MultilingualValidationSource(string key)
         {
             this.TranslationKey = key;
         }
