@@ -110,7 +110,7 @@
     <Compile Include="BusinessDomain.cs" />
     <Compile Include="BusinessEntities\Audit.cs" />
     <Compile Include="BusinessEntities\AuditFilter.cs" />
-    <Compile Include="BusinessEntityJson.cs" />
+    <Compile Include="BusinessEntityHelper.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
     <Compile Include="BusinessEntities\CommentRepositoryExtension.cs" />

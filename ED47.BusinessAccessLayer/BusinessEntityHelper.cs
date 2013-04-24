@@ -7,7 +7,7 @@ using FluentValidation.Results;
 
 namespace ED47.BusinessAccessLayer
 {
-    public static class BusinessEntityJson
+    public static class BusinessEntityHelper
     {
         public static UpdateResult Differences(this BusinessEntity original, BusinessEntity updatedObject)
         {
