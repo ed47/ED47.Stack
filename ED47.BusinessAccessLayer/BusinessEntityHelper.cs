@@ -15,16 +15,31 @@ namespace ED47.BusinessAccessLayer
             var type = original.GetType();
             var properties = type
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(el => el.Name != "ClientData" && !el.GetCustomAttributes(typeof(IgnoreDataMemberAttribute), true).Any());
+                .Where(el => !el.GetCustomAttributes(typeof(IgnoreDataMemberAttribute), true).Any());
             
             foreach (var propertyInfo in properties)
             {
                 var originalValue = propertyInfo.GetValue(original, null);
                 var updatedValue = propertyInfo.GetValue(updatedObject, null);
 
-                if (Object.Equals(originalValue, updatedValue))
-                    continue;
+                if (propertyInfo.PropertyType.IsInterface && propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof (ICollection<>))
+                {
 
+                    var sequenceEqualMethodInfo = typeof(Enumerable)
+                                                        .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                                                        .First(el => el.Name == "SequenceEqual" && el.GetParameters().Count() == 2);
+                    sequenceEqualMethodInfo = sequenceEqualMethodInfo.MakeGenericMethod(propertyInfo.PropertyType.GetGenericArguments());
+                    var areEqual = (bool)sequenceEqualMethodInfo.Invoke(null, new[] { originalValue, updatedValue });
+
+                    if(areEqual)
+                        continue;
+                }
+                else
+                {
+                    if (Object.Equals(originalValue, updatedValue))
+                        continue;
+                }
+                
                 results.Values.Add(propertyInfo.Name, updatedValue);
             }
 

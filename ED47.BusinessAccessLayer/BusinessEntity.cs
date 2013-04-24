@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -7,7 +8,11 @@ namespace ED47.BusinessAccessLayer
     public abstract class BusinessEntity
     {
         private BusinessEntityTracker _Tracker;
+
+        [IgnoreDataMember]
         public  EventProxy Events { get; set; }
+
+        [IgnoreDataMember]
         public ClientData ClientData { get; set; }
         /// <summary>
         ///   Inits this instance. This method is executed after the database load and instance creation.
