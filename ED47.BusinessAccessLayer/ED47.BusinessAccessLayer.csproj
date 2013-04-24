@@ -153,6 +153,10 @@
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
     <Compile Include="BusinessEntities\CommentRepositoryExtension.cs" />
+    <Compile Include="BusinessEntities\CouchBase\BaseMessage.cs" />
+    <Compile Include="BusinessEntities\CouchBase\Email.cs" />
+    <Compile Include="BusinessEntities\CouchBase\EmailAttachment.cs" />
+    <Compile Include="BusinessEntities\CouchBase\File.cs" />
     <Compile Include="BusinessEntities\File.cs" />
     <Compile Include="BusinessEntities\FileBox.cs" />
     <Compile Include="BusinessEntities\FileBoxItem.cs" />
