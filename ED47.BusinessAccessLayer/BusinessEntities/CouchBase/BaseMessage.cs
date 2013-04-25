@@ -12,8 +12,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
 {
     public class BaseMessage : BaseDocument
     {
-        public virtual int Id { get; set; }
-
+        public virtual string BusinessKey { get; set; }
         public virtual DateTime CreationDate { get; set; }
 
         [MaxLength(60)]
@@ -26,6 +25,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
         public virtual string GroupLabel { get; set; }
 
         public virtual string LanguageCode { get; set; }
+
+        public virtual string CreatorUserName { get; set; }
 
         [JsonIgnore]
         public Email Email
@@ -53,16 +54,17 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
         }
 
         private Email _email;
-
+        [JsonIgnore]
         public string Body { get; set; }
+        [JsonIgnore]
         public string Subject { get; set; }
-
+        [JsonIgnore]
         public object Data { get; set; }
 
         private string _cc;
         private string _bcc;
         private IEnumerable _fileBoxItemMessages;
-
+        [JsonIgnore]
         public string CC
         {
             get { return _cc; }
@@ -75,7 +77,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
                 Email.CC = _cc;
             }
         }
-
+        [JsonIgnore]
         public string Bcc
         {
             get { return _bcc; }
