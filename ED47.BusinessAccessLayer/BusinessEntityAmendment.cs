@@ -1,4 +1,6 @@
-﻿using Afterthought;
+﻿using System;
+using System.IO;
+using Afterthought;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -6,12 +8,13 @@ namespace ED47.BusinessAccessLayer
     /// <summary>
     /// The business entity admender attribute. It injects property change events.
     /// </summary>
-    public class BusinessEntityAmendmentAttribute : AmendmentAttribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public sealed class BusinessEntityAmendmentAttribute : AmendmentAttribute
     {
         public BusinessEntityAmendmentAttribute()
             : base(typeof(BusinessEntityAmendment<>))
         {
-            
+
         }
     }
 
@@ -22,10 +25,25 @@ namespace ED47.BusinessAccessLayer
     {
         public override void Amend<TProperty>(Property<TProperty> property)
         {
-            if (property.Type.IsPrimitive) return;
+            if (!property.Type.IsPrimitive && property.Type != typeof(String) && property.Type != typeof(DateTime) && property.Type != typeof(DateTime?))
+            {
+                if (property.Type.IsGenericType)
+                {
+                    var generic = property.Type.GetGenericArguments();
+
+                    if (generic.Length == 0 || generic.Length > 1)
+                        return;
+
+                    if (!generic[0].IsPrimitive)
+                        return;
+                }
+                else
+                    return;
+            }
 
             property.BeforeSet = OnPropertyChange<TProperty>;
             property.AfterSet = OnPropertyChanged<TProperty>;
+
         }
 
 

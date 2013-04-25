@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -51,6 +52,28 @@ namespace ED47.BusinessAccessLayer
                         if (jArray.First().Type == JTokenType.String)
                             value = jArray.Select(el => (string)el).ToArray();
                     }
+                }
+
+                if (targetProp.PropertyType.IsGenericType && targetProp.PropertyType.IsInterface && targetProp.PropertyType.GetGenericTypeDefinition() == typeof(ICollection<>))
+                {
+                    if (targetProp.GetValue(target) == null)
+                    {
+                        var collection = typeof (Collection<>);
+                        var typeArgs = targetProp.PropertyType.GetGenericArguments();
+                        targetProp.SetValue(target, Activator.CreateInstance(collection.MakeGenericType(typeArgs)));
+                    }
+
+                    if (value == null)
+                        continue;
+
+                    var values = ((string) value).Split(',');
+
+                    foreach (var collectionValues in values)
+                    {
+                        targetProp.PropertyType.GetMethod("Add").Invoke(targetProp.GetValue(target), new object[] { collectionValues });   
+                    }
+                    
+                    continue;
                 }
 
                 targetProp.SetValue(target, value);
