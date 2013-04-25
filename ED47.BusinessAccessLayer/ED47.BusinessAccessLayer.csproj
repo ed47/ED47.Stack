@@ -161,6 +161,7 @@
     <Compile Include="BusinessEntities\FileBox.cs" />
     <Compile Include="BusinessEntities\FileBoxItem.cs" />
     <Compile Include="BusinessEntities\ICommentItem.cs" />
+    <Compile Include="BusinessEntities\IFile.cs" />
     <Compile Include="BusinessEntities\IRecipient.cs" />
     <Compile Include="BusinessEntities\Lang.cs" />
     <Compile Include="BusinessEntities\BaseMessage.cs" />
