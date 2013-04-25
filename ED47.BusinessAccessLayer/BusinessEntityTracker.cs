@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #endregion
 
@@ -132,6 +133,14 @@ namespace ED47.BusinessAccessLayer
         internal void Reset()
         {
             _Values.Clear();
+        }
+
+        /// <summary>
+        /// Returns a dictionary with a copy of all the changes.
+        /// </summary>
+        public Dictionary<string, object> GetAllChanges()
+        {
+            return _Values.ToDictionary(el => el.Key, el => el.Value);
         }
     }
 }
