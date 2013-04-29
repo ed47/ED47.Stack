@@ -691,7 +691,7 @@ namespace ED47.BusinessAccessLayer
 
         }
 
-        protected internal int ExecuteNonQuery(string storedProcedure, params SqlParameter[] parameters)
+        public int ExecuteNonQuery(string storedProcedure, params SqlParameter[] parameters)
         {
             using (var conn = new SqlConnection(ConnectionString))
             {

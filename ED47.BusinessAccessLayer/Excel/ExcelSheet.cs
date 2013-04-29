@@ -89,8 +89,20 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <param name="excelPackage">The excel package.</param>
         public void Write(ExcelPackage excelPackage)
         {
-            //Add the Content sheet
+            var ws = CreateSheet(excelPackage);
+            var cell = CreateColumns(ws);
+            WriteCellData(ws, cell);
+        }
+
+        /// <summary>
+        /// Creates a sheet on an ExcelPackage.
+        /// </summary>
+        /// <param name="excelPackage">The ExcelPackage to create a sheet in.</param>
+        /// <returns>The created ExcelWorksheet.</returns>
+        private ExcelWorksheet CreateSheet(ExcelPackage excelPackage)
+        {
             var nameSuffix = 1;
+
             while (excelPackage.Workbook.Worksheets.Any(el => el.Name == this.Name))
             {
                 var previousSuffix = this.Name.LastIndexOf(" " + (nameSuffix - 1).ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal);
@@ -102,21 +114,33 @@ namespace ED47.BusinessAccessLayer.Excel
 
                 this.Name += " " + nameSuffix++;
             }
-            var ws = excelPackage.Workbook.Worksheets.Add(this.Name);
 
-            if(Columns.Count == 0 && Data.Count > 0)
+            return excelPackage.Workbook.Worksheets.Add(this.Name);
+        }
 
+        /// <summary>
+        /// Creates the columns in a package sheet using the current sheet's configuration.
+        /// </summary>
+        /// <param name="worksheet">The worksheet to add columns on.</param>
+        /// <returns>The cell coordinates.</returns>
+        private CellCoordinate CreateColumns(ExcelWorksheet worksheet)
+        {
+            if (Columns.Count == 0 && Data.Count > 0)
             {
                 foreach (var p in Data[0].Properties)
                 {
                     Columns.Add(new ExcelColumn
-                        {
-                                        PropertyName = p
-                                    });
+                    {
+                        PropertyName = p
+                    });
                 }
             }
 
-            int i = 1, j = 1;
+            var cell = new CellCoordinate
+                {
+                    Row = 1,
+                    Column = 1
+                };
 
             if (HeaderColumns.Any())
             {
@@ -126,24 +150,24 @@ namespace ED47.BusinessAccessLayer.Excel
 
                     if (colSpan.HasValue)
                     {
-                        var cells = ws.Cells[i, j, i, j + colSpan.Value];
+                        var cells = worksheet.Cells[cell.Row, cell.Column, cell.Row, cell.Column + colSpan.Value];
                         cells.Merge = true;
-                        j += colSpan.Value;
+                        cell.Column += colSpan.Value;
                         HeaderRenderer(headerColumn.DisplayName, cells);
                     }
                     else
-                        HeaderRenderer(headerColumn.DisplayName, ws.Cells[i, j]);
+                        HeaderRenderer(headerColumn.DisplayName, worksheet.Cells[cell.Row, cell.Column]);
 
-                    j++;
+                    cell.Column++;
                 }
 
-                j = 1;
-                i++;
+                cell.Column = 1;
+                cell.Row++;
             }
 
             var hasHeader = Columns.Any(el => !String.IsNullOrEmpty(el.DisplayName));
-            
-            if(hasHeader)
+
+            if (hasHeader)
             {
                 foreach (var c in Columns)
                 {
@@ -151,45 +175,55 @@ namespace ED47.BusinessAccessLayer.Excel
 
                     if (colSpan.HasValue)
                     {
-                        var cells = ws.Cells[i, j, i, j + colSpan.Value];
+                        var cells = worksheet.Cells[cell.Row, cell.Column, cell.Row, cell.Column + colSpan.Value];
                         cells.Merge = true;
-                        j += colSpan.Value;
+                        cell.Column += colSpan.Value;
                         HeaderRenderer(c.DisplayName, cells);
                     }
                     else
-                        HeaderRenderer(c.DisplayName, ws.Cells[i, j]);
+                        HeaderRenderer(c.DisplayName, worksheet.Cells[cell.Row, cell.Column]);
 
-                    j++;
+                    cell.Column++;
                 }
-                j = 1;
-                i++;
+                cell.Column = 1;
+                cell.Row++;
             }
-           
+
+            return cell;
+        }
+
+        /// <summary>
+        /// Writes data to the cells of a worksheet.
+        /// </summary>
+        /// <param name="worksheet">The worksheet to write into.</param>
+        /// <param name="cellCoordinate">The cell coordinates to start writting to.</param>
+        private void WriteCellData(ExcelWorksheet worksheet, CellCoordinate cellCoordinate)
+        {
             foreach (var d in Data.Items)
             {
                 foreach (var c in Columns)
                 {
                     var value = d.GetValue(c.PropertyName);
-                    
-                    if(c.Format == null && value is DateTime)
-                        ws.Cells[i, j].Style.Numberformat.Format = "dd.mm.yyyy";
-                    
-                    if(c.Format != null)
-                        ws.Cells[i, j].Style.Numberformat.Format = c.Format;
-                    
+
+                    if (c.Format == null && value is DateTime)
+                        worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column].Style.Numberformat.Format = "dd.mm.yyyy";
+
+                    if (c.Format != null)
+                        worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column].Style.Numberformat.Format = c.Format;
+
                     if (c.ColSpan.HasValue)
                     {
-                        var cells = ws.Cells[i, j, i, j + c.ColSpan.Value];
+                        var cells = worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column, cellCoordinate.Row, cellCoordinate.Column + c.ColSpan.Value];
                         cells.Merge = true;
-                        j += c.ColSpan.Value;
+                        cellCoordinate.Column += c.ColSpan.Value;
                         c.Render(value, cells);
                     }
                     else
-                        c.Render(value, ws.Cells[i,j]);
-                    j++;
+                        c.Render(value, worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column]);
+                    cellCoordinate.Column++;
                 }
-                j = 1;
-                i++;
+                cellCoordinate.Column = 1;
+                cellCoordinate.Row++;
             }
         }
 
@@ -202,6 +236,12 @@ namespace ED47.BusinessAccessLayer.Excel
         {
             HeaderColumns.AddRange(columns);
             return this;
+        }
+
+        private class CellCoordinate
+        {
+            public int Column { get; set; }
+            public int Row { get; set; }
         }
     }
 }

@@ -3,7 +3,7 @@ if (window.Ext) {
     Ext.define("ED47.ui.Form", {
         extend: "Ext.form.Panel",
 
-        constructor: function(config) {
+        constructor: function (config) {
             var defaultConfig = {
                 defaultType: "textfield",
                 border: false,
@@ -17,13 +17,13 @@ if (window.Ext) {
             ED47.views.current.on('startedit', this.onStartEdit, this);
         },
 
-        bindStore: function(storeId) {
+        bindStore: function (storeId) {
             var view = this;
-            ED47.Stores.get(storeId, function(store) {
+            ED47.Stores.get(storeId, function (store) {
                 store.forms.push(view.getForm());
 
-                Ext.each(view.form.getFields().items, function(item) {
-                    item.on("blur", function(field, context) {
+                Ext.each(view.form.getFields().items, function (item) {
+                    item.on("blur", function (field, context) {
                         var record = view.form.getRecord();
 
                         if (!view.form.isDirty())
@@ -37,8 +37,8 @@ if (window.Ext) {
                         view.form.updateRecord();
                     }, view);
                 });
-                var fct = function() {
-                    Ext.defer(function() {
+                var fct = function () {
+                    Ext.defer(function () {
                         if (!store.preselectedRecordId) {
                             if (!view.doNotSelectFirstRecord) store.select(view, store.getAt(0));
                         } else
@@ -54,11 +54,13 @@ if (window.Ext) {
 
             });
         },
-        onStartEdit: function() {
+        onStartEdit: function () {
             // select the first form field in the child Item and set the focus on it
-            if (this.getForm().getFields().first().getXType() == 'displayfield') return;
-            if (this.getForm().getFields().first().getXType() == "fieldset") return;
-            this.getForm().getFields().first().focus(true);
+            var firstField = this.getForm().getFields().first();
+            var firstFieldXType = firstField.getXType();
+            if (firstFieldXType == 'displayfield') return;
+            if (firstFieldXType == "fieldset") return;
+            firstField.focus(true);
         }
     });
 }

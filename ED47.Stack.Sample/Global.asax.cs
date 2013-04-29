@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using FluentValidation;
 using FluentValidation.Mvc;
 
 namespace ED47.Stack.Sample
@@ -22,6 +23,10 @@ namespace ED47.Stack.Sample
 
             //Register fluent validations
             FluentValidationModelValidatorProvider.Configure();
+
+            //Register default error messages
+            //TODO: Add you default error messages to the translation file of your choice.
+            ValidatorOptions.ResourceProviderType = typeof(DefaultValidationMessages);
         }
     }
 }
