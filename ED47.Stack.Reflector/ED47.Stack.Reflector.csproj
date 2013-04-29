@@ -145,6 +145,7 @@
     <EmbeddedResource Include="Scripts\result-grid.js" />
     <EmbeddedResource Include="Scripts\checkColumnn.js" />
     <Content Include="Scripts\filebox.js" />
+    <EmbeddedResource Include="Scripts\jquery-autosave.js" />
     <Content Include="Scripts\linq-vsdoc.js" />
     <Content Include="Scripts\linq.min.js" />
     <EmbeddedResource Include="Scripts\tooltiper.js" />
