@@ -139,6 +139,7 @@
     <EmbeddedResource Include="Scripts\shared-store.js" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\objectdiff.js" />
     <EmbeddedResource Include="Scripts\multilingual-field.js" />
     <EmbeddedResource Include="Scripts\multilingual-form.js" />
     <EmbeddedResource Include="Scripts\tree.js" />
