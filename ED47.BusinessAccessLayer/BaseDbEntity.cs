@@ -11,7 +11,6 @@ namespace ED47.BusinessAccessLayer
     public abstract class BaseDbEntity : DbEntity
     {
         [Key]
-        [Column(Order = 0)]
         public virtual int Id { get; set; }
 
         /// <summary>
