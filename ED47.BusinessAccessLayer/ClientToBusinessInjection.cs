@@ -26,5 +26,11 @@ namespace ED47.BusinessAccessLayer
         {
             return this.AllowedFields == null || this.AllowedFields.Contains(sourcePropName);
         }
+
+        protected override bool TypesMatch(Type sourceType, Type targetType)
+        {
+            return sourceType == targetType ||
+                   (sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() == typeof(Nullable<>) && sourceType.GetGenericArguments().First() == targetType);
+        }
     }
 }
