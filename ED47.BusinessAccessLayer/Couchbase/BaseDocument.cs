@@ -18,7 +18,6 @@ namespace ED47.BusinessAccessLayer.Couchbase
            
         }
 
-       
         public bool Save()
         {
             return CouchbaseRepository.Store(this);
@@ -67,16 +66,16 @@ namespace ED47.BusinessAccessLayer.Couchbase
             set { _id = value; }
         }
 
-        private string _key = null;
+       
 
-        protected string CalcKey(int id)
+        protected virtual string CalcKey()
         {
             return (Type + "?id=" + Id).ToLower();
         }
-
+        private string _key = null;
         public string Key
         {
-            get { return _key ?? (_key = Type + "?id=" + Id); }
+            get { return _key ?? (_key = CalcKey()); }
             set { _key = value; }
         }
 
