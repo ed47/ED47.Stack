@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ED47.BusinessAccessLayer.BusinessEntities;
 using File = ED47.BusinessAccessLayer.BusinessEntities.File;
 
 
@@ -14,7 +15,7 @@ namespace ED47.BusinessAccessLayer
     {
         public static string LocalFileRepositoryPath { get; set; }
 
-        private static DirectoryInfo GetFileDirectoryInfo(File file)
+        private static DirectoryInfo GetFileDirectoryInfo(IFile file)
         {
             var autoDir = Math.Floor(Convert.ToDouble(file.Id / 1000))+1;
             var di = new DirectoryInfo(Path.Combine(LocalFileRepositoryPath, autoDir.ToString(CultureInfo.InvariantCulture)));
@@ -25,14 +26,14 @@ namespace ED47.BusinessAccessLayer
             return di;
         }
 
-        private static FileInfo GetFileInfo(File file)
+        private static FileInfo GetFileInfo(IFile file)
         {
             var di = GetFileDirectoryInfo(file);
             return new FileInfo(Path.Combine(di.FullName, file.Id.ToString(CultureInfo.InvariantCulture)));
         }
 
     
-        public bool Write(File file, Byte[] content = null)
+        public bool Write(IFile file, Byte[] content = null)
         {
             var fi = GetFileInfo(file);
             if (content != null)
@@ -46,7 +47,7 @@ namespace ED47.BusinessAccessLayer
             return true;
         }
 
-        public bool Append(File file, byte[] content)
+        public bool Append(IFile file, byte[] content)
         {
             var fi = GetFileInfo(file);
             if (content != null)
@@ -60,27 +61,27 @@ namespace ED47.BusinessAccessLayer
             return true;
         }
 
-        public bool Delete(File file)
+        public bool Delete(IFile file)
         {
             var fi = GetFileInfo(file);
             if (fi.Exists) fi.Delete();
             return !fi.Exists;
         }
 
-        public bool Exist(File file)
+        public bool Exist(IFile file)
         {
             var fi = GetFileInfo(file);
             return fi.Exists;
         }
 
-        public Stream OpenWrite(File file)
+        public Stream OpenWrite(IFile file)
         {
             var fi = GetFileInfo(file);
             return fi.OpenWrite() ;
 
         }
 
-        public Stream OpenRead(File file)
+        public Stream OpenRead(IFile file)
         {
             var fi = GetFileInfo(file);
             return fi.Exists ? fi.OpenRead() : null;
