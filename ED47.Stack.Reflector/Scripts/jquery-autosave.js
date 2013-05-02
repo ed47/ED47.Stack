@@ -69,9 +69,10 @@
                             var currentPropety = this.value.name;
 
                             values = $("[name='" + currentPropety + "']").val();
-                            if (values)
-                                values = values.join(",");
-                            else
+                            if (values) {
+                                if(values.join)
+                                    values = values.join(",");
+                            } else
                                 values = "";
 
                             update[currentPropety] = values;
@@ -116,7 +117,7 @@
                 
             });
 
-            form.find("select, textarea").on("change", function() {
+            form.find("select, textarea, input[type='text'], input[type='hidden'], input[type='file']").on("change", function() {
                 form.submit();
             });
         }
