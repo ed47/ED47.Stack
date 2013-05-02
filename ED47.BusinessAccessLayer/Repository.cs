@@ -232,7 +232,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filter predicate.</param>
         /// <param name="selector">The selector function to select the field to sum.</param>
         /// <returns></returns>
-        public decimal? Count<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, decimal?>> selector)
+        public decimal? Sum<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, decimal?>> selector)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -254,7 +254,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filter predicate.</param>
         /// <param name="selector">The selector function to select the field to sum.</param>
         /// <returns></returns>
-        public int? Count<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, int?>> selector)
+        public int? Sum<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, int?>> selector)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -266,6 +266,28 @@ namespace ED47.BusinessAccessLayer
                 query = query.Where(businessPredicate);
 
             return query.Where(predicate).Sum(selector);
+        }
+
+        /// <summary>
+        /// Gets the maximum value for a entity property.
+        /// </summary>
+        /// <typeparam name="TEntity">The Entity type.</typeparam>
+        /// <typeparam name="TBusinessEntity">The business entity type. Its business predicate will also be applied if available,</typeparam>
+        /// <param name="predicate">The filter predicate.</param>
+        /// <param name="selector">The selector function to select the field to get the maximum for.</param>
+        /// <returns></returns>
+        public int? Max<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, int?>> selector)
+            where TEntity : DbEntity
+            where TBusinessEntity : class, new()
+        {
+            var query = DbContext.Set<TEntity>().AsQueryable();
+
+            var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
+
+            if (businessPredicate != null)
+                query = query.Where(businessPredicate);
+
+            return query.Where(predicate).Max(selector);
         }
 
         /// <summary>
