@@ -10,7 +10,7 @@
             me.fieldName = config.name;
             me.mtype = config.mtype;
             me.getLanguagesFunc = config.getLanguagesFunc || ED47.Stack.Controllers.MultilingualController.GetTranslations;
-            me.fieldConfig = config.fieldConfig;
+            me.fieldConfig = config.fieldConfig || {};
 
             var defaultConfig = {
                 xtype: "fieldcontainer",
