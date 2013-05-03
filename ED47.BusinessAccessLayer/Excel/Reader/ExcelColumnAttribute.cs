@@ -62,7 +62,12 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
             if (attr.AllowBlank && string.IsNullOrEmpty(value.Trim()))
             {
                 line.CurrentPropertyIsBlank = true;
-                prop.SetValue(line, attr.DefaultValue,null);
+                
+                if (prop.PropertyType.Name == "Decimal" )
+                    prop.SetValue(line, 0M, null);
+                else
+                    prop.SetValue(line, attr.DefaultValue, null);
+
                 line.IsValid = true;
                 line.ValidValue = value; 
                 return;
