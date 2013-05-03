@@ -47,6 +47,7 @@
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,6 +67,7 @@
     <Compile Include="ApiReflector.cs" />
     <Compile Include="ModelReflectionHelper.cs" />
     <Compile Include="Metadata\ControllerInfo.cs" />
+    <EmbeddedResource Include="Scripts\ajaxlink.js" />
     <Compile Include="Templates\JsApiController.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -137,11 +139,14 @@
     <EmbeddedResource Include="Scripts\shared-store.js" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\objectdiff.js" />
     <EmbeddedResource Include="Scripts\multilingual-field.js" />
     <EmbeddedResource Include="Scripts\multilingual-form.js" />
     <EmbeddedResource Include="Scripts\tree.js" />
     <EmbeddedResource Include="Scripts\result-grid.js" />
     <EmbeddedResource Include="Scripts\checkColumnn.js" />
+    <Content Include="Scripts\filebox.js" />
+    <EmbeddedResource Include="Scripts\jquery-autosave.js" />
     <Content Include="Scripts\linq-vsdoc.js" />
     <Content Include="Scripts\linq.min.js" />
     <EmbeddedResource Include="Scripts\tooltiper.js" />

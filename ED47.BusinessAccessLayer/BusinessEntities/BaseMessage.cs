@@ -44,7 +44,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             set { _email = value; }
         }
 
-        public Template GetSubjectTpl()
+        public virtual Template GetSubjectTpl()
         {
             return Subject != null ? new Template(Subject) : Template.Get("Email_" +  GetType().Name + "Subject", languageCode: this.LanguageCode);
         }
@@ -115,12 +115,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// Sends the specified message.
         /// </summary>
         /// <param name="force">if set to <c>true</c> [force] the sending even if the message has been already sent..</param>
-        public void Send(bool force = false)
+        /// <param name="from">The option from address.</param>
+        public void Send(bool force = false, string from = null)
         {
             SetBody();
             SetSubject();
             Email.Save();
-            Email.Send(force);
+            Email.Send(force, from);
         }
         
         public void Delete(bool deleteEmail = false)

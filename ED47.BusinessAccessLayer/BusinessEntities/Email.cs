@@ -11,6 +11,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     public class Email : BusinessEntity
     {
+        public Email()
+        {
+            IsHtml = true;
+        }
 
         public virtual int Id { get; set; }
 
@@ -50,7 +54,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public string CC { get; set; }
 
-        public void Send(bool force = false)
+        /// <summary>
+        /// Sends the specified message.
+        /// </summary>
+        /// <param name="force">if set to <c>true</c> force sending the message.</param>
+        /// <param name="from">The optional from address.</param>
+        public void Send(bool force = false, string from = null)
         {
             if(TransmissionDate.HasValue && ! force)
             {
@@ -61,9 +70,49 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty),
                 Body = Body,
-                IsBodyHtml = true,
+                IsBodyHtml = IsHtml,
             };
             
+            AddRecipients(mailMessage);
+
+            IEnumerable<Stream> streams = null;
+            try
+            {
+                streams = AddAttachments(mailMessage);
+                var smtpClient = new SmtpClient();
+                smtpClient.Send(mailMessage);
+                TransmissionDate = DateTime.Now;
+                Save();
+            }
+            finally
+            {
+                if (streams != null)
+                {
+                    foreach (var stream in streams)
+                    {
+                        stream.Dispose();
+                    }
+                }
+            }
+            
+        }
+
+        private IEnumerable<Stream> AddAttachments(MailMessage mailMessage)
+        {
+            var streams = new List<Stream>();
+            
+            foreach (var attachment in Attachments)
+            {
+                var s = attachment.File.OpenRead();
+                streams.Add(s);
+                mailMessage.Attachments.Add(new Attachment(s, attachment.File.Name));
+            }
+
+            return streams;
+        }
+
+        private void AddRecipients(MailMessage mailMessage)
+        {
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
             {
@@ -95,31 +144,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     mailMessage.Bcc.Add(Bcc);
             }
 
-            var tmp = new List<Stream>();
-            try
-            {
-                foreach (var attachment in Attachments)
-                {
-                    var s = attachment.File.OpenRead();
-                    tmp.Add(s);
-                    mailMessage.Attachments.Add(new Attachment(s,attachment.File.Name));
-                }
-                var smtpClient = new SmtpClient();
-                smtpClient.Send(mailMessage);
-                TransmissionDate = DateTime.Now;
-                Save();
-            }
-            finally
-            {
-                foreach (var stream in tmp)
-                {
-                    stream.Dispose();
-                }
-            }
-            
+            if (!String.IsNullOrWhiteSpace(FromAddress))
+                mailMessage.From = new MailAddress(FromAddress);
         }
 
         public string Bcc { get; set; }
+
+        public bool IsHtml { get; set; }
 
         public virtual void Insert()
         {

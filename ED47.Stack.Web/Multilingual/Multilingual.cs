@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -78,17 +79,22 @@ namespace ED47.Stack.Web.Multilingual
                 {
                     if (!language.Value.ContainsKey(translationItem.Key))
                     {
+                        var filename = Path.GetFileNameWithoutExtension(translationItem.Value.FileName) + "." + language.Key + ".xml";
                         language.Value.Add(new KeyValuePair<string, TranslationItem>(
 
                                                translationItem.Key,
                                                new TranslationItem
                                                    {
-                                                       FileName =
-                                                           Path.GetFileNameWithoutExtension(translationItem.Value.FileName) + "." + language.Key + ".xml",
+                                                       FileName = filename,
                                                        LanguageIsoCode = language.Key,
                                                        Text = translationItem.Value.Text
                                                    }
                                                ));
+
+                        #if DEBUG
+                        Debug.WriteLine(String.Format("Missing translation key in language {0}: {1}, fallback value: {2}", language.Key, translationItem.Key, translationItem.Value.Text));
+                        AddMissingKey(translationItem.Key, Path.GetFileNameWithoutExtension(filename), "###" + translationItem.Value.Text);
+                        #endif
                     }
                 }
             }
@@ -187,7 +193,7 @@ namespace ED47.Stack.Web.Multilingual
         //}
 
         /// <summary>
-        /// Gets a multilignual string in the current UI culture with a plurielization.
+        /// Gets a multilignual string in the current UI culture with a pluralization.
         /// </summary>
         /// <param name="path">The path of the translation.</param>
         /// <param name="pluralizeCount">The pluralize count.</param>
@@ -238,10 +244,15 @@ namespace ED47.Stack.Web.Multilingual
         /// Adds a missing key to the translation XML file.
         /// </summary>
         /// <param name="path">The path to the new key.</param>
-        public static void AddMissingKey(string path)
+        /// <param name="filename">The optional filename.</param>
+        /// <param name="value">The value to put in the missing key.</param>
+        public static void AddMissingKey(string path, string filename = null, string value = null)
         {
             var splitPath = path.Split('.');
-            var filename = splitPath.First();
+            
+            if(String.IsNullOrWhiteSpace(filename))
+                filename = splitPath.First();
+
             var matchingFiles = Directory.GetFiles(HttpContext.Current.Server.MapPath("/App_Data/Translations/"), filename + ".xml");
             var file = matchingFiles.FirstOrDefault();
 
@@ -251,7 +262,7 @@ namespace ED47.Stack.Web.Multilingual
             lock (WriteFileLock)
             {
                 var document = XDocument.Load(file);
-                AddMissingKeyPath(document.Root, splitPath, 0);
+                AddMissingKeyPath(document.Root, splitPath, 0, value);
                 document.Save(file);
             }
         }
@@ -262,7 +273,8 @@ namespace ED47.Stack.Web.Multilingual
         /// <param name="parent">The parent element.</param>
         /// <param name="path">The path to the new key.</param>
         /// <param name="currentPathItemIndex">The current path item index.</param>
-        private static void AddMissingKeyPath(XElement parent, IList<string> path, int currentPathItemIndex)
+        /// <param name="value">The value to add in the missing key</param>
+        private static void AddMissingKeyPath(XElement parent, IList<string> path, int currentPathItemIndex, string value = null)
         {
             var currentPathItem = path[currentPathItemIndex];
             var newElement = parent.Element(currentPathItem) ?? new XElement(currentPathItem);
@@ -275,11 +287,14 @@ namespace ED47.Stack.Web.Multilingual
                 if (!String.IsNullOrWhiteSpace(newElement.Value))
                     return;
 
-                newElement.Value = "[" + String.Join(".", path) + "]";
+                if (String.IsNullOrWhiteSpace(value))
+                    newElement.Value = "[" + String.Join(".", path) + "]";
+                else
+                    newElement.Value = value;
                 return;
             }
 
-            AddMissingKeyPath(newElement, path, nextIndex);
+            AddMissingKeyPath(newElement, path, nextIndex, value);
         }
 
         /// <summary>

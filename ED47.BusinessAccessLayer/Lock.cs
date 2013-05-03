@@ -26,12 +26,13 @@ namespace ED47.BusinessAccessLayer
             lock (AccessLock)
             {
                 var cacheKey = "Lock?key=" + key;
-                var currentLock = MemoryCache.Default.Get(cacheKey) as Lock;
+                var cache = BaseUserContext.GetDataCache();
+                var currentLock = cache.Get(cacheKey) as Lock;
 
                 if (currentLock == null)
                 {
                     currentLock = new Lock();
-                    MemoryCache.Default.Add(cacheKey, currentLock, 
+                    cache.Add(cacheKey, currentLock, 
                         new CacheItemPolicy 
                         { 
                             SlidingExpiration = new TimeSpan(0, 15, 0), 

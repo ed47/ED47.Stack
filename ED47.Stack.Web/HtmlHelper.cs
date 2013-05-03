@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using ED47.Stack.Web.HelperTemplates;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace ED47.Stack.Web
 {
@@ -25,7 +27,7 @@ namespace ED47.Stack.Web
         /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null)
+        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null, string deleteConfirmationMessage = null)
         {
 // ReSharper disable JoinDeclarationAndInitializer
             Formatting formatting = Formatting.None;
@@ -52,8 +54,8 @@ namespace ED47.Stack.Web
                 id = name.Split('.').Last().ToLowerInvariant() + "-list";
 
             var builder = new StringBuilder("<script language='javascript'>");
-            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting)));
-            builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0));
+            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting, new JavaScriptDateTimeConverter())));
+            builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}, {7}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0, deleteConfirmationMessage ?? "null"));
             builder.AppendLine("</script>");
 
             return new MvcHtmlString(builder.ToString());
@@ -98,6 +100,24 @@ namespace ED47.Stack.Web
             var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientPageView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
+        }
+
+        /// <summary>
+        /// Create a select list from an enumeration.
+        /// </summary>
+        /// <param name="enumerationType">The Type of the enumeration.</param>
+        /// <param name="partialKeyName">The partial i18n translation key. Each enumeration value name will be appended to it to get the select item text.</param>
+        /// <param name="selectedValue">The optional selected value.</param>
+        /// <returns></returns>
+        public static SelectList CreateSelectListFromEnum(Type enumerationType, string partialKeyName, object selectedValue = null)
+        {
+            return new SelectList(Enum.GetNames(enumerationType)
+                                      .Select(el => new SelectListItem
+                                          {
+                                              Text = Multilingual.Multilingual.N(partialKeyName + el),
+                                              Value = ((int)Enum.Parse(enumerationType, el)).ToString(CultureInfo.InvariantCulture)
+                                          }).ToList()
+                                  , "Value", "Text", selectedValue);
         }
     }
 }

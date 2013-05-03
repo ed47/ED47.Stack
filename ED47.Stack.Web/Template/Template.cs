@@ -529,10 +529,10 @@ namespace ED47.Stack.Web.Template
         private static string IsNullOrEmpty(object[] args)
         {
             if (args.Length == 0)
-                return "false";
+                return "true";
 
             if (args[0] == null)
-                return "false";
+                return "true";
 
             return string.IsNullOrEmpty(args[0].ToString()) ? "true" : "false";
         }
@@ -577,7 +577,7 @@ namespace ED47.Stack.Web.Template
 
         private string Inject(object[] args)
         {
-            var tplName = args[0].ToString();
+            var tplName = args[0].ToString().ToLower();
             if (args.Length == 1)
             {
                 if (Templates.ContainsKey(tplName) && File.Exists(Templates[tplName]))
@@ -657,7 +657,7 @@ namespace ED47.Stack.Web.Template
             {
                 //TODO Faire la recherche du parent plus propement
                 var i = t._stack.Select(item => item.Current).ToList().IndexOf(obj);
-                if (i > 1)
+                if (i >= 1)
                     return t._stack[i - 1].Current;
             }
 
@@ -1009,7 +1009,7 @@ namespace ED47.Stack.Web.Template
                             continue;
                         }
                         content = PreTplContent + content + PostTplContent;
-                        if (tplName == "." || tplName == "")
+                        if (tplName == "." || String.IsNullOrEmpty(tplName))
                         {
                             if (CurrentStackItem != null)
                                 CurrentStackItem.Name = ".";
@@ -1085,7 +1085,7 @@ namespace ED47.Stack.Web.Template
             else
                 list = o as IEnumerable;
 
-            if (TemplateText == "")
+            if (String.IsNullOrEmpty(TemplateText))
                 return PreTplContent + PostTplContent;
 
             var res = new StringBuilder();

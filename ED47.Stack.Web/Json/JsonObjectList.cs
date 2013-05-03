@@ -386,7 +386,7 @@ namespace ED47.Stack.Web
         }
 
        
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("data",Items);
         }

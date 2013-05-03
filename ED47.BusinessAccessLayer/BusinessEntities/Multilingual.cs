@@ -70,7 +70,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 return new List<BusinessEntities.Multilingual>(0);
 
             var set = dbContext.ObjectContext.CreateObjectSet<Entities.Multilingual>();
-            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && keyList.Contains(m.Key))
+            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode.ToLower() && keyList.Contains(m.Key))
                 .OrderBy(m => m.Key)
                 .ThenBy(m => m.PropertyName);
 
