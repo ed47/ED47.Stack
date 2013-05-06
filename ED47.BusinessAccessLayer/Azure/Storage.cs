@@ -94,8 +94,26 @@ namespace ED47.BusinessAccessLayer.Azure
             {
                 return StoreFile(containerName, virtualFilename, fs);
             }
-
-
         }
+
+        public static bool StoreDirectory(string containerName, DirectoryInfo directory, bool rootAsContainer = true)
+        {
+            if (!directory.Exists) return false;
+            var dirName = directory.Name;
+            var removePath = directory.FullName.Substring(0, directory.FullName.Length - dirName.Length);
+            if (rootAsContainer)
+                removePath = directory.FullName;
+
+            var files = directory.GetFiles("*.*", SearchOption.AllDirectories);
+
+
+            foreach (var fileInfo in files)
+            {
+                var virtualPath = fileInfo.FullName.Substring(removePath.Length+1).ToLower();
+                StoreFile(containerName.ToLower(), virtualPath, fileInfo);
+            }
+            return true;
+        }
+
     }
 }
