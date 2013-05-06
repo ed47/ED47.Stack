@@ -63,7 +63,7 @@ namespace ED47.BusinessAccessLayer.Azure
 
         }
 
-        public static Uri StoreFile(string containerName, string virtualFilename, Stream fileStream)
+        public static Uri StoreFile(string containerName, string virtualFilename, Stream fileStream, bool replace = true)
         {
             var client = StorageAccount.CreateCloudBlobClient();
             var container = client.GetContainerReference(containerName.ToLower());
@@ -81,6 +81,9 @@ namespace ED47.BusinessAccessLayer.Azure
 
             var blockBlob = container.GetBlockBlobReference(correctedPath.ToLower());
 
+            if(!replace && blockBlob.Exists())
+                return blockBlob.Uri;
+
             using (fileStream)
             {
                 blockBlob.UploadFromStream(fileStream);
@@ -88,15 +91,15 @@ namespace ED47.BusinessAccessLayer.Azure
             return blockBlob.Uri;
         }
 
-        public static Uri StoreFile(string containerName, string virtualFilename, FileInfo file)
+        public static Uri StoreFile(string containerName, string virtualFilename, FileInfo file,bool  replace = true)
         {
             using (var fs = file.OpenRead())
             {
-                return StoreFile(containerName, virtualFilename, fs);
+                return StoreFile(containerName, virtualFilename, fs, replace);
             }
         }
 
-        public static bool StoreDirectory(string containerName, DirectoryInfo directory, bool rootAsContainer = true)
+        public static bool StoreDirectory(string containerName, DirectoryInfo directory, bool replace = true, bool rootAsContainer = true)
         {
             if (!directory.Exists) return false;
             var dirName = directory.Name;
@@ -110,7 +113,7 @@ namespace ED47.BusinessAccessLayer.Azure
             foreach (var fileInfo in files)
             {
                 var virtualPath = fileInfo.FullName.Substring(removePath.Length+1).ToLower();
-                StoreFile(containerName.ToLower(), virtualPath, fileInfo);
+                StoreFile(containerName.ToLower(), virtualPath, fileInfo, replace);
             }
             return true;
         }
