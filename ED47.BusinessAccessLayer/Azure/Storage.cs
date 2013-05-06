@@ -32,7 +32,7 @@ namespace ED47.BusinessAccessLayer.Azure
         public static Uri StoreBlob(string containerName, string blobName, Stream fileStream)
         {
             var client = StorageAccount.CreateCloudBlobClient();
-            var container = client.GetContainerReference(containerName);
+            var container = client.GetContainerReference(containerName.ToLower());
             if (container.CreateIfNotExists())
             {
 
@@ -53,11 +53,30 @@ namespace ED47.BusinessAccessLayer.Azure
             return blockBlob.Uri;
         }
 
+        public static Uri StoreBlob(string containerName, string blobName, FileInfo file)
+        {
+            using (var fs = file.OpenRead())
+            {
+                return StoreBlob(containerName, blobName, fs);
+            }
+
+
+        }
+
         public static Uri StoreFile(string containerName, string virtualFilename, Stream fileStream)
         {
             var client = StorageAccount.CreateCloudBlobClient();
-            var container = client.GetContainerReference(containerName);
-           
+            var container = client.GetContainerReference(containerName.ToLower());
+            if (container.CreateIfNotExists())
+            {
+
+                container.SetPermissions(
+                    new BlobContainerPermissions
+                    {
+                        PublicAccess =
+                            BlobContainerPublicAccessType.Blob
+                    });
+            }
             var correctedPath = String.Join(client.DefaultDelimiter, virtualFilename.Split(new[] { '/', '\\' }));
 
             var blockBlob = container.GetBlockBlobReference(correctedPath.ToLower());
@@ -78,10 +97,5 @@ namespace ED47.BusinessAccessLayer.Azure
 
 
         }
-
-
-
-
-
     }
 }

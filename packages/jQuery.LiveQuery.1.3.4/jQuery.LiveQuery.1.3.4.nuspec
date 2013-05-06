@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>jQuery.LiveQuery</id>
+    <version>1.3.4</version>
+    <title>jQuery.LiveQuery</title>
+    <authors>Brandon Aaron, hazzik</authors>
+    <owners>Brandon Aaron, hazzik</owners>
+    <projectUrl>http://github.com/hazzik/livequery</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Live Query utilizes the power of jQuery selectors by firing callbacks for matched elements auto-magically, even after the page has been loaded and the DOM updated.
+
+
+Live Query is Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.</description>
+    <releaseNotes>This is version from my fork on GitHub (https://github.com/hazzik/livequery)</releaseNotes>
+    <dependencies>
+      <dependency id="jQuery" />
+    </dependencies>
+    <references />
+  </metadata>
+</package>

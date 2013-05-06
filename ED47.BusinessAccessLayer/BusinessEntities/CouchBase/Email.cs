@@ -15,6 +15,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
         {
             IsHtml = true;
         }
+        public virtual string BusinessKey { get; set; }
 
         [MaxLength(200)]
         public virtual string Recipient { get; set; }

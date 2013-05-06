@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Web;
-using ED47.BusinessAccessLayer.BusinessEntities;
-
+using File = ED47.BusinessAccessLayer.BusinessEntities.CouchBase.File;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -48,7 +47,7 @@ namespace ED47.BusinessAccessLayer
             else
             {
                 var businessKey = context.Request["key"];
-                file = File.GetFileByKey<File>(businessKey);
+                file = File.Get(businessKey);
 
             }
 

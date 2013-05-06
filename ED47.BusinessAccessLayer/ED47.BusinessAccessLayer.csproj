@@ -69,6 +69,9 @@
     </Reference>
     <Reference Include="Microsoft.Data.OData">
       <HintPath>..\..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+	 </Reference>
+    <Reference Include="FluentValidation, Version=3.4.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -111,6 +114,7 @@
     <Reference Include="System.Spatial">
       <HintPath>..\..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -150,6 +154,7 @@
     <Compile Include="BusinessDomain.cs" />
     <Compile Include="BusinessEntities\Audit.cs" />
     <Compile Include="BusinessEntities\AuditFilter.cs" />
+    <Compile Include="BusinessEntityHelper.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
     <Compile Include="BusinessEntities\CommentRepositoryExtension.cs" />
@@ -161,6 +166,7 @@
     <Compile Include="BusinessEntities\FileBox.cs" />
     <Compile Include="BusinessEntities\FileBoxItem.cs" />
     <Compile Include="BusinessEntities\ICommentItem.cs" />
+    <Compile Include="BusinessEntities\IFile.cs" />
     <Compile Include="BusinessEntities\IRecipient.cs" />
     <Compile Include="BusinessEntities\Lang.cs" />
     <Compile Include="BusinessEntities\BaseMessage.cs" />

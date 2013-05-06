@@ -138,7 +138,7 @@ namespace ED47.Stack.Web.Multilingual
 
 
         /// <summary>
-        /// Gets a multilignual string in the current UI culture with a plurielization.
+        /// Gets a multilignual string in the current UI culture with a pluralization.
         /// </summary>
         /// <param name="path">The path of the translation.</param>
         /// <param name="pluralizeCount">The pluralize count.</param>

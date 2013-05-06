@@ -5,9 +5,8 @@ using System.Text;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
- public    interface ICommentItem
+    public interface ICommentItem
     {
         string GetCommentBusinessKey();
-
     }
 }

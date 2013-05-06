@@ -69,7 +69,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         {
             var client = CouchbaseManager.Instance;
             var view = client.GetView(designName, viewName).Key(value);
-            var item = view.FirstOrDefault();
+            var item = view.Descending(true).FirstOrDefault();
             if (item == null) return null;
             var o = Get<TDocument>(item.ItemId);
             o.Init();

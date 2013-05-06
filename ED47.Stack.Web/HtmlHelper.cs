@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -99,6 +100,24 @@ namespace ED47.Stack.Web
             var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientPageView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
+        }
+
+        /// <summary>
+        /// Create a select list from an enumeration.
+        /// </summary>
+        /// <param name="enumerationType">The Type of the enumeration.</param>
+        /// <param name="partialKeyName">The partial i18n translation key. Each enumeration value name will be appended to it to get the select item text.</param>
+        /// <param name="selectedValue">The optional selected value.</param>
+        /// <returns></returns>
+        public static SelectList CreateSelectListFromEnum(Type enumerationType, string partialKeyName, object selectedValue = null)
+        {
+            return new SelectList(Enum.GetNames(enumerationType)
+                                      .Select(el => new SelectListItem
+                                          {
+                                              Text = Multilingual.Multilingual.N(partialKeyName + el),
+                                              Value = ((int)Enum.Parse(enumerationType, el)).ToString(CultureInfo.InvariantCulture)
+                                          }).ToList()
+                                  , "Value", "Text", selectedValue);
         }
     }
 }
