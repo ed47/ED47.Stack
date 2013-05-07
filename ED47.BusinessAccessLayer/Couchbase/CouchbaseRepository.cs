@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Couchbase;
 using Enyim.Caching.Memcached;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
@@ -115,6 +116,23 @@ namespace ED47.BusinessAccessLayer.Couchbase
                 res.Add(Get<TDocument>(viewRow.ItemId));
             }
             
+            return res;
+        }
+
+
+        public static IEnumerable<TDocument> GetByKey<TDocument>(string designName, string viewName, string key, string startKey = null, string endKey = null, int limit = 0, bool allowStale = false) where TDocument : class, IDocument, new()
+        {
+            var client = CouchbaseManager.Instance;
+            var view = client.GetView(designName, viewName).Key(key.ToLower());
+            if (limit > 0) view.Limit(limit);
+            if (!allowStale) view.Stale(StaleMode.False);
+            if (!string.IsNullOrEmpty(startKey)) view.StartKey(startKey);
+            if (!string.IsNullOrEmpty(endKey)) view.StartKey(endKey);
+            var res = new List<TDocument>();
+            foreach (var viewRow in view)
+            {
+                res.Add(Get<TDocument>(viewRow.ItemId));
+            }
             return res;
         }
 

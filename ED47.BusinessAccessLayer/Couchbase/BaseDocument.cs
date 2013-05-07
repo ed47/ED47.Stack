@@ -66,7 +66,23 @@ namespace ED47.BusinessAccessLayer.Couchbase
             set { _id = value; }
         }
 
-       
+
+        private DateTime? _creationDate;
+
+        public DateTime CreationDate
+        {
+            get
+            {
+                if (!_creationDate.HasValue)
+                {
+                    _creationDate = DateTime.UtcNow;
+                }
+                return _creationDate.Value;
+
+            }
+            set { _creationDate = value; }
+        }
+
 
         protected virtual string CalcKey()
         {

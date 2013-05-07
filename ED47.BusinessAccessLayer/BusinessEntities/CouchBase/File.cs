@@ -37,9 +37,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
 
         public static string GetUrl(File file, bool specificVersion = true)
         {
+            var request = HttpContext.Current.Request;
+            var appUrl = String.Format("{0}://{1}",request.Url.Scheme,request.Url.Authority);
             if (specificVersion)
-                return String.Format("/fileRepository.axd?id={0}&token={1}", file.Id, file.Guid);
-            return String.Format("/fileRepository.axd?key={0}&token={1}", file.BusinessKey, file.Guid);
+                return String.Format("{0}/fileRepository.axd?id={1}&token={2}",appUrl, file.Id, file.Guid);
+            return String.Format("{0}/fileRepository.axd?key={1}&token={2}", appUrl, file.BusinessKey, file.Guid);
         }
 
         public void Write(string content)
