@@ -28,6 +28,23 @@ namespace ED47.BusinessAccessLayer.Azure
             return false;
         }
 
+        public static CloudBlockBlob GetBlob(string containerName, string blobName)
+        {
+            var client = StorageAccount.CreateCloudBlobClient();
+            var name = blobName.StartsWith("/") ? blobName.Substring(1) : blobName;
+            var container = client.GetContainerReference(containerName.ToLower());
+            if (!container.Exists())
+            {
+                throw new Exception("Invalid container");
+            }
+            var blockBlob = container.GetBlockBlobReference(name);
+            if (!blockBlob.Exists())
+            {
+                throw new Exception("Invalid blob");
+            }
+
+            return blockBlob;
+        }
 
         public static Uri StoreBlob(string containerName, string blobName, Stream fileStream)
         {
@@ -87,6 +104,7 @@ namespace ED47.BusinessAccessLayer.Azure
             using (fileStream)
             {
                 blockBlob.UploadFromStream(fileStream);
+              
             }
             return blockBlob.Uri;
         }

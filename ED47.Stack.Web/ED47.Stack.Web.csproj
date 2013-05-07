@@ -37,6 +37,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BetterImageProcessor">
+      <HintPath>..\..\Shared\BetterImageProcessor.dll</HintPath>
+    </Reference>
+    <Reference Include="BetterImageProcessorQuantization">
+      <HintPath>..\..\Shared\BetterImageProcessorQuantization.dll</HintPath>
+    </Reference>
     <Reference Include="Elmah">
       <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
     </Reference>
