@@ -136,5 +136,21 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return res;
         }
 
+
+        public static IEnumerable<TDocument> GetAllBy<TDocument>(string designName, string viewName, string value, int start = 0, int count = 0) where TDocument : class, IDocument, new()
+        {
+            var client = CouchbaseManager.Instance;
+            var view = client.GetView(designName, viewName).Key(value).Skip(start);
+            if (count > 0)
+                view = view.Limit(count);
+            var res = new List<TDocument>();
+            foreach (var viewRow in view)
+            {
+                res.Add(Get<TDocument>(viewRow.ItemId));
+            }
+
+            return res;
+        }
+
     }
 }
