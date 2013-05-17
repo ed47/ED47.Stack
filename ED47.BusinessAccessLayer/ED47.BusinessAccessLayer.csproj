@@ -129,6 +129,7 @@
     <Compile Include="ClientData.cs" />
     <Compile Include="ClientToBusinessInjection.cs" />
     <Compile Include="BusinessToEntityInjection.cs" />
+    <Compile Include="Cryptography.cs" />
     <Compile Include="DictionaryInjection.cs" />
     <Compile Include="CustomFlatLoopValueInjection.cs" />
     <Compile Include="BusinessEntities\Email.cs" />

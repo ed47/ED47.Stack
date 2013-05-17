@@ -49,16 +49,23 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     .ToList();
         }
 
-        public static Comment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null)
+        public static Comment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null, bool? encrypted = false)
         {
-            var newComment = new Comment
-                                 {
-                                     BusinessKey = businessKey,
-                                     Body = comment.Trim(),
-                                     CommenterId = commenterId
-                                 };
+            Comment newComment;
 
-            BaseUserContext.Instance.Repository.Add<Entities.Comment, Comment>(newComment);
+            if(encrypted == null || !encrypted.Value)
+                newComment = new Comment();
+            else
+                newComment = new EncryptedComment();
+
+            newComment.BusinessKey = businessKey;
+            newComment.Body = comment.Trim();
+            newComment.CommenterId = commenterId;
+
+            if (encrypted == null || !encrypted.Value)
+                BaseUserContext.Instance.Repository.Add<Entities.Comment, Comment>(newComment);
+            else
+                BaseUserContext.Instance.Repository.Add<Entities.Comment, EncryptedComment>((EncryptedComment)newComment);
 
             newComment.AddFiles(fileIds);
             _Notifiers.ForEach(el => el.TryNotify(newComment, CommentActionType.New));
@@ -134,7 +141,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         }
             
 
-        public void Save()
+        public virtual void Save()
         {
             BaseUserContext.Instance.Repository.Update<Entities.Comment, Comment>(this);
             BaseUserContext.Instance.Commited += OnCommentSaved;
@@ -151,6 +158,22 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             var filebox = GetOrCreateFileBox();
             FileBoxItem.CreateNew(filebox.Id, file);
+        }
+    }
+
+    public class EncryptedComment : Comment
+    {
+        [EncryptedField]
+        public override string Body
+        {
+            get
+            {
+                return base.Body;
+            }
+            set
+            {
+                base.Body = value;
+            }
         }
     }
 }

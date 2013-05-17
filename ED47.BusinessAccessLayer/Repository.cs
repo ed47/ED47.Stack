@@ -354,8 +354,8 @@ namespace ED47.BusinessAccessLayer
             where TBusinessEntity :BusinessEntity
         {
             var newEntity = new TEntity();
-
             newEntity.InjectFrom(businessEntity);
+            Cryptography.EncryptProperties<TBusinessEntity>(newEntity);
 
             var baseDbEntity = newEntity as BaseDbEntity;
             if (baseDbEntity != null )
@@ -423,14 +423,15 @@ namespace ED47.BusinessAccessLayer
             if (!EventProxy.NotifyUpdate(businessEntity))
                 return;
 
-           var dbEntity = originalEntity as BaseDbEntity;
+            var dbEntity = originalEntity as BaseDbEntity;
             if (dbEntity != null)
             {
                 dbEntity.UpdateDate = DateTime.UtcNow.ToUniversalTime();
                 dbEntity.UpdaterUsername = UserName;
             }
-           
+
             originalEntity.InjectFrom(businessEntity);
+            Cryptography.EncryptProperties<TBusinessEntity>(originalEntity);
         }
 
         /// <summary>
@@ -517,6 +518,7 @@ namespace ED47.BusinessAccessLayer
                     BaseUserContext.StoreDynamicInstance(targetType,result as BusinessEntity );
             }
             result.InjectFrom<CustomFlatLoopValueInjection>(source);
+            Cryptography.DecryptProperties(result);
             var businessEntity = result as BusinessEntity;
             var dbEntity = source as DbEntity;
             if (businessEntity != null && dbEntity != null)
