@@ -42,7 +42,7 @@ namespace ED47.BusinessAccessLayer
 
                     var targetProperty = targetEntity.GetProperty(encryptedProperty.Name, BindingFlags.Public | BindingFlags.Instance);
 
-                    if(targetProperty == null || targetProperty.PropertyType != typeof(String))
+                    if (targetProperty == null || targetProperty.PropertyType != typeof(String))
                         continue;
 
                     var value = targetProperty.GetValue(entity, null) as String;
@@ -67,20 +67,20 @@ namespace ED47.BusinessAccessLayer
 
             if (encryptedProperties.Any())
             {
-                
-                    foreach (var encryptedProperty in encryptedProperties)
-                    {
-                        if (encryptedProperty.PropertyType != typeof(String))
-                            continue;
 
-                        var value = encryptedProperty.GetValue(entity, null) as String;
+                foreach (var encryptedProperty in encryptedProperties)
+                {
+                    if (encryptedProperty.PropertyType != typeof(String))
+                        continue;
 
-                        if (!CheckIsEncrypted(value))
-                            continue;
+                    var value = encryptedProperty.GetValue(entity, null) as String;
 
-                        encryptedProperty.SetValue(entity, Decrypt(value), null);
-                    }
-                
+                    if (!CheckIsEncrypted(value))
+                        continue;
+
+                    encryptedProperty.SetValue(entity, Decrypt(value), null);
+                }
+
             }
         }
 
@@ -136,16 +136,16 @@ namespace ED47.BusinessAccessLayer
         public static IEnumerable<PropertyInfo> GetEncryptedProprerties(Type entityType)
         {
             var cacheKey = "EncryptedProperties[" + entityType.FullName + "]";
-            var cache =  MemoryCache.Default.Get(cacheKey) as IEnumerable<PropertyInfo>;
+            var cache = MemoryCache.Default.Get(cacheKey) as IEnumerable<PropertyInfo>;
 
             if (cache == null)
             {
                 cache =
                     entityType
                         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Where(el => el.GetCustomAttributes(typeof (EncryptedFieldAttribute), false).Any());
+                        .Where(el => el.GetCustomAttributes(typeof(EncryptedFieldAttribute), false).Any());
 
-                MemoryCache.Default.Add(new CacheItem(cacheKey, cache), new CacheItemPolicy {Priority = CacheItemPriority.NotRemovable});
+                MemoryCache.Default.Add(new CacheItem(cacheKey, cache), new CacheItemPolicy { Priority = CacheItemPriority.NotRemovable });
             }
 
             return cache;
@@ -169,21 +169,27 @@ namespace ED47.BusinessAccessLayer
         {
             using (var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
             {
-                using (var msEncrypt = new MemoryStream())
+                using (var csEncrypt = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write))
                 {
-                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                    {
-                        file.CopyTo(csEncrypt);
-                        csEncrypt.CopyTo(encryptedStream);
-                    }
+                    file.CopyTo(csEncrypt);
                 }
             }
         }
 
         public static Stream Decrypt(Stream fileStream)
         {
-            var decryptor = SymmetricAlgorithm.CreateDecryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV);
-            return new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read);
+            var decryptedStream = new MemoryStream();
+
+            using (var decryptor = SymmetricAlgorithm.CreateDecryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
+            {
+                using (var decrypt = new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read))
+                {
+                    decrypt.CopyTo(decryptedStream);
+                    decryptedStream.Seek(0, SeekOrigin.Begin);
+                }
+
+                return decryptedStream;
+            }
         }
     }
 
