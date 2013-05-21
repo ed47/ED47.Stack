@@ -37,6 +37,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="BetterImageProcessor">
       <HintPath>..\..\Shared\BetterImageProcessor.dll</HintPath>
     </Reference>
@@ -77,6 +80,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
@@ -131,6 +137,9 @@
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="WebGrease">
+      <HintPath>..\..\packages\WebGrease.1.1.0\lib\WebGrease.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDataDownloadHandler.cs" />
@@ -138,6 +147,8 @@
     <Compile Include="Areas\Multilingual\MultilingualAreaRegistration.cs" />
     <Compile Include="Areas\Template\Controllers\TemplateController.cs" />
     <Compile Include="Areas\Template\TemplateAreaRegistration.cs" />
+    <Compile Include="AsIsBundleOrderer.cs" />
+    <Compile Include="BundleExtensions.cs" />
     <Compile Include="Cache\CacheProvider.cs" />
     <Compile Include="Code39BarCode.cs" />
     <Compile Include="Filters\ElmahHandledErrorLoggerFilter.cs" />
