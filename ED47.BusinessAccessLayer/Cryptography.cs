@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Caching;
 using System.Security.Cryptography;
 
 namespace ED47.BusinessAccessLayer
@@ -134,10 +135,20 @@ namespace ED47.BusinessAccessLayer
 
         public static IEnumerable<PropertyInfo> GetEncryptedProprerties(Type entityType)
         {
-            return
+            var cacheKey = "EncryptedProperties[" + entityType.FullName + "]";
+            var cache =  MemoryCache.Default.Get(cacheKey) as IEnumerable<PropertyInfo>;
+
+            if (cache == null)
+            {
+                cache =
                     entityType
                         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Where(el => el.GetCustomAttributes(typeof(EncryptedFieldAttribute), false).Any());
+                        .Where(el => el.GetCustomAttributes(typeof (EncryptedFieldAttribute), false).Any());
+
+                MemoryCache.Default.Add(new CacheItem(cacheKey, cache), new CacheItemPolicy {Priority = CacheItemPriority.NotRemovable});
+            }
+
+            return cache;
         }
 
         public static byte[] GetBytes(string str)
