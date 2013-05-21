@@ -191,6 +191,14 @@ namespace ED47.BusinessAccessLayer
                 return decryptedStream;
             }
         }
+
+        public static Stream Encrypt(Stream writeStream)
+        {
+            var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV);
+            var csEncrypt = new CryptoStream(writeStream, encryptor, CryptoStreamMode.Write);
+
+            return csEncrypt;
+        }
     }
 
     /// <summary>

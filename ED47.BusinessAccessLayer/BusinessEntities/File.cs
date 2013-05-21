@@ -241,7 +241,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <returns>The stream</returns>
         public Stream OpenWrite()
         {
-            return FileRepository.OpenWrite(this);
+            if (Encrypted)
+                return Cryptography.Encrypt(FileRepository.OpenWrite(this));
+            else
+                return FileRepository.OpenWrite(this);
         }
 
         /// <summary>
@@ -258,9 +261,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     if (rs.CanRead)
                     {
                         if (Encrypted)
-                        {
                             Cryptography.Encrypt(rs, s);
-                        }
                         else
                             rs.CopyTo(s);
 
