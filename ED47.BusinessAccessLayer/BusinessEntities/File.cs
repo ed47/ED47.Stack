@@ -11,7 +11,7 @@ using ED47.Stack.Web;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
-{   
+{
     [Model]
     public class File : BusinessEntity
     {
@@ -30,19 +30,20 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public virtual int Version { get; set; }
 
-        public virtual Boolean LoginRequired { get; set; }
+        public virtual bool LoginRequired { get; set; }
 
         public virtual Guid Guid { get; set; }
         public virtual string MimeType { get; set; }
         internal static readonly IFileRepository FileRepository = BusinessComponent.Kernel.Get<IFileRepository>();
-        
+
+        public virtual bool Encrypted { get; set; }
 
         public static TFile GetById<TFile>(int id) where TFile : File, new()
         {
-            return BaseUserContext.Instance.Repository.Find<Entities.File,TFile>(el => el.Id == id);
+            return BaseUserContext.Instance.Repository.Find<Entities.File, TFile>(el => el.Id == id);
         }
 
-        public static IEnumerable<File>  GetAll()
+        public static IEnumerable<File> GetAll()
         {
             var context = BaseUserContext.Instance;
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
@@ -66,7 +67,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             var context = BaseUserContext.Instance;
 
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
-                context = BusinessComponent.Kernel.Get<BaseUserContext>(); 
+                context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
             return context.Repository.ExecuteTableFunction<TFile>("File_GetFileByKey", businessKey, version).FirstOrDefault();
         }
@@ -107,7 +108,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         }
 
 
-
         /// <summary>
         /// Creates a new file into the repository.
         /// </summary>
@@ -116,26 +116,25 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="businessKey">The business key.</param>
         /// <param name="groupId">The group id.</param>
         /// <param name="requiresLogin">if set to <c>true</c> [requires login].</param>
+        /// <param name="encrypted">Pass <c>True</c> to encrypt the file on disk.</param>
         /// <returns></returns>
-        public static TFile CreateNewFile<TFile>(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null) where TFile :File, new ()
+        public static TFile CreateNewFile<TFile>(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false) where TFile : File, new()
         {
             var previous = GetFileByKey<File>(businessKey);
             var version = previous != null ? previous.Version + 1 : 1;
-           
+
             var file = new TFile
             {
                 Name = name,
                 BusinessKey = businessKey,
                 MimeType = MimeTypeHelper.GetMimeType(name),
-              
                 Version = version,
                 LoginRequired = requiresLogin,
-
                 Lang = langId,
-
-                GroupId = groupId.GetValueOrDefault(0)
+                GroupId = groupId.GetValueOrDefault(0),
+                Encrypted = encrypted
             };
-            BaseUserContext.Instance.Repository.Add<Entities.File,TFile>(file);
+            BaseUserContext.Instance.Repository.Add<Entities.File, TFile>(file);
 
             return file;
         }
@@ -148,7 +147,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (cxt.Request.Files.Count == 0) return null;
             var file = cxt.Request.Files[0];
             var res = CreateNewFile<TFile>(Path.GetFileName(file.FileName), businessKey, groupId, false);
-            using(var s = res.OpenWrite())
+            using (var s = res.OpenWrite())
             {
                 file.InputStream.CopyTo(s);
             }
@@ -188,7 +187,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <returns>[True] if the content has been copied else [False]</returns>
         public bool CopyTo(Stream destination)
         {
-            using(var s = OpenRead())
+            using (var s = OpenRead())
             {
                 if (s != null)
                 {
@@ -230,9 +229,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (context != null && addView)
                 AddView(context.User, context.Request.UserHostAddress);
 
+            if (Encrypted)
+                return Cryptography.Decrypt(FileRepository.OpenRead(this));
+
             return FileRepository.OpenRead(this);
         }
-
 
         /// <summary>
         /// Opens a write only stream on the repository file.
@@ -242,8 +243,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             return FileRepository.OpenWrite(this);
         }
-
-
 
         /// <summary>
         /// Writes the specified disk file into the repository file.
@@ -257,7 +256,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 using (var rs = file.OpenRead())
                 {
                     if (rs.CanRead)
-                        rs.CopyTo(s);
+                    {
+                        if (Encrypted)
+                        {
+                            Cryptography.Encrypt(rs, s);
+                        }
+                        else
+                            rs.CopyTo(s);
+
+                    }
                 }
             }
         }
