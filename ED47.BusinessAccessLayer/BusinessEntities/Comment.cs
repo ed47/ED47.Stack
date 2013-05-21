@@ -9,7 +9,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
     {
         New,
         Delete,
-        Edit
+        Edit,
+        View
     }
 
     /// <summary>
@@ -17,12 +18,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
     /// </summary>
     public class Comment : BusinessEntity
     {
-
-        private static readonly List<CommentNotifier> _Notifiers = new List<CommentNotifier>();
+        protected static readonly ICollection<CommentNotifier> Notifiers = new List<CommentNotifier>();
 
         public static void AddNotifier(CommentNotifier notifier)
         {
-            _Notifiers.Add(notifier);
+            Notifiers.Add(notifier);
         }
 
         public virtual int Id { get; set; }
@@ -43,6 +43,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="businessKey">The business key to get comments for.</param>
         public static IEnumerable<Comment> GetByBusinessKey(string businessKey)
         {
+            Notifiers.ToList().ForEach(el => el.TryNotify(businessKey, CommentActionType.View));
+
             return BaseUserContext.Instance.Repository
                     .Where<Entities.Comment, Comment>(el => el.BusinessKey == businessKey)
                     .OrderByDescending(el => el.CreationDate)
@@ -68,7 +70,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 BaseUserContext.Instance.Repository.Add<Entities.Comment, EncryptedComment>((EncryptedComment)newComment);
 
             newComment.AddFiles(fileIds);
-            _Notifiers.ForEach(el => el.TryNotify(newComment, CommentActionType.New));
+            Notifiers.ToList().ForEach(el => el.TryNotify(newComment, CommentActionType.New));
             MakePreviousReadOnly(newComment.Id, newComment.BusinessKey);
          
 
@@ -137,7 +139,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public void OnCommentSaved(object sender, EventArgs e)
         {
             BaseUserContext.Instance.Commited -= OnCommentSaved;
-            _Notifiers.ForEach(el => el.TryNotify(this, CommentActionType.Edit));
+            Notifiers.ToList().ForEach(el => el.TryNotify(this, CommentActionType.Edit));
         }
             
 
@@ -151,7 +153,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.Comment>(this.Id);
             this.IsDeleted = true;
-            _Notifiers.ForEach(el => el.TryNotify(this, CommentActionType.Delete));
+            Notifiers.ToList().ForEach(el => el.TryNotify(this, CommentActionType.Delete));
         }
 
         public void AddFile(File file)
