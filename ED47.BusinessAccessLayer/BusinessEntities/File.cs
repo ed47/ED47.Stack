@@ -260,11 +260,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 {
                     if (rs.CanRead)
                     {
-                        if (Encrypted)
-                            Cryptography.Encrypt(rs, s);
-                        else
-                            rs.CopyTo(s);
-
+                        rs.CopyTo(s);
                     }
                 }
             }

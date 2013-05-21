@@ -165,17 +165,6 @@ namespace ED47.BusinessAccessLayer
             return new string(chars);
         }
 
-        public static void Encrypt(FileStream file, Stream encryptedStream)
-        {
-            using (var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
-            {
-                using (var csEncrypt = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write))
-                {
-                    file.CopyTo(csEncrypt);
-                }
-            }
-        }
-
         public static Stream Decrypt(Stream fileStream)
         {
             var decryptedStream = new MemoryStream();
