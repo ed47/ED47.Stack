@@ -164,6 +164,27 @@ namespace ED47.BusinessAccessLayer
             System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
             return new string(chars);
         }
+
+        public static void Encrypt(FileStream file, Stream encryptedStream)
+        {
+            using (var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
+            {
+                using (var msEncrypt = new MemoryStream())
+                {
+                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        file.CopyTo(csEncrypt);
+                        csEncrypt.CopyTo(encryptedStream);
+                    }
+                }
+            }
+        }
+
+        public static Stream Decrypt(Stream fileStream)
+        {
+            var decryptor = SymmetricAlgorithm.CreateDecryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV);
+            return new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read);
+        }
     }
 
     /// <summary>
