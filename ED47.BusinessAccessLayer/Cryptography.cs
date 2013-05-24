@@ -59,6 +59,9 @@ namespace ED47.BusinessAccessLayer
                     if (String.IsNullOrWhiteSpace(value))
                         return;
 
+                    if (CheckIsEncrypted(value))
+                        return;
+
                     targetProperty.SetValue(entity, EncryptedFlag + Encrypt(value), null);
                 }
             }
