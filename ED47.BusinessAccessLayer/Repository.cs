@@ -141,16 +141,19 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filtering predicate.</param>
         /// <param name="includes">The optional includes for this query.</param>
         /// <returns></returns>
-        public IEnumerable<TBusinessEntity> Where<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null)
+        public IEnumerable<TBusinessEntity> Where<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null, bool ignoreBusinessPredicate = false)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
             var query = DbContext.Set<TEntity>().AsQueryable();
 
-            var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
+            if (!ignoreBusinessPredicate)
+            {
+                var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
 
-            if (businessPredicate != null)
-                query = query.Where(businessPredicate);
+                if (businessPredicate != null)
+                    query = query.Where(businessPredicate);
+            }
 
             query = AddIncludes(query, GetBusinessIncludes<TBusinessEntity>());
             query = AddIncludes(query, includes);
@@ -815,6 +818,26 @@ namespace ED47.BusinessAccessLayer
             element.DeletionDate = DateTime.UtcNow.ToUniversalTime();
             element.DeleterUsername = UserName;
             element.IsDeleted = true;
+        }
+
+        /// <summary>
+        /// Restores a soft deleted entity.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type.</typeparam>
+        /// <param name="keys">The entity's keys.</param>
+        public TBusinessEntity Restore<TEntity, TBusinessEntity>(params object[] keys) 
+            where TEntity : BaseDbEntity 
+            where TBusinessEntity : class, new()
+        {
+            var element = DbContext.Set<TEntity>().Find(keys);
+            if (element == null) 
+                return null;
+
+            element.DeletionDate = null;
+            element.DeleterUsername = null;
+            element.IsDeleted = false;
+
+            return Convert<TEntity, TBusinessEntity>(element);
         }
 
 
