@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
@@ -16,8 +15,6 @@ namespace ED47.BusinessAccessLayer
 {
     public class Repository : IDisposable
     {
-       
-
         /// <summary>
         /// The current Entity Framework DbContext.
         /// </summary>
@@ -52,17 +49,17 @@ namespace ED47.BusinessAccessLayer
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public Repository(DbContext dbcontext, DbContext immediateDbcontext, string userName = "[anonymous]")
         {
-          
+
             DbContext = dbcontext;
             ImmediateDbContext = immediateDbcontext;
-            
+
 #if !DEBUG
             //this.TransactionScope = new TransactionScope();
 #else
             //Infinite timeout to make debugging easier.
             //this.TransactionScope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(5));
 #endif
-            
+
             UserName = userName;
         }
 
@@ -77,10 +74,10 @@ namespace ED47.BusinessAccessLayer
             var modifiedEntities = DbContext.ChangeTracker.Entries()
                 .Where(el => el.State == EntityState.Modified).ToList();
             var deletedEntities = DbContext.ChangeTracker.Entries().Where(el => el.State == EntityState.Deleted).ToList();
-            
+
             var writtenObjectCount = DbContext.SaveChanges();
 
-            foreach(var e in modifiedEntities.OfType<DbEntity>().Where(el=>el.BusinessEntity != null))
+            foreach (var e in modifiedEntities.OfType<DbEntity>().Where(el => el.BusinessEntity != null))
             {
                 e.BusinessEntity.Commit();
                 EventProxy.NotifyUpdated(e.BusinessEntity);
@@ -95,7 +92,7 @@ namespace ED47.BusinessAccessLayer
             var saveCounter = 0;
             while (DbContext.ChangeTracker.Entries().Any(el => el.State != EntityState.Unchanged))
             {
-                if(saveCounter++ > 1000)
+                if (saveCounter++ > 1000)
                     throw new RepositoryException("Repository tried saving more than set limit and there are still changes. Check for infinite recursion events or increase the limit.");
 
                 writtenObjectCount += Commit();
@@ -103,7 +100,7 @@ namespace ED47.BusinessAccessLayer
 
             return writtenObjectCount;
         }
-        
+
         /// <summary>
         /// Finds an entity by its keys.
         /// </summary>
@@ -116,7 +113,7 @@ namespace ED47.BusinessAccessLayer
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
-            var result = DbContext.Set<TEntity>().Find(keys); 
+            var result = DbContext.Set<TEntity>().Find(keys);
             return result != null ? Convert<TEntity, TBusinessEntity>(result) : null;
         }
 
@@ -129,7 +126,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="includes">The optional includes.</param>
         /// <returns></returns>
         public TBusinessEntity Find<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null)
-            where TEntity :  DbEntity
+            where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
             return Where<TEntity, TBusinessEntity>(predicate, includes).SingleOrDefault();
@@ -144,7 +141,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filtering predicate.</param>
         /// <param name="includes">The optional includes for this query.</param>
         /// <returns></returns>
-        public IEnumerable<TBusinessEntity> Where<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null) 
+        public IEnumerable<TBusinessEntity> Where<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -175,7 +172,7 @@ namespace ED47.BusinessAccessLayer
             var query = DbContext.Set<TEntity>().AsQueryable();
 
             var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
-            
+
             if (businessPredicate != null)
                 query = query.Where(businessPredicate);
 
@@ -296,8 +293,8 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TEntity">The Entity type.</typeparam>
         /// <typeparam name="TBusinessEntity">The Business Entity type.</typeparam>
         /// <returns>A queryable set prefiltered by the business predicate.</returns>
-        public IQueryable<TEntity> GetQueryableSet<TEntity, TBusinessEntity>() 
-            where TEntity :DbEntity
+        public IQueryable<TEntity> GetQueryableSet<TEntity, TBusinessEntity>()
+            where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
             var query = DbContext.Set<TEntity>().AsQueryable();
@@ -351,14 +348,14 @@ namespace ED47.BusinessAccessLayer
         /// <param name="businessEntity">The business entity to add to the repository.</param>
         public void Add<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
             where TEntity : DbEntity, new()
-            where TBusinessEntity :BusinessEntity
+            where TBusinessEntity : BusinessEntity
         {
             var newEntity = new TEntity();
             newEntity.InjectFrom(businessEntity);
             Cryptography.EncryptProperties<TBusinessEntity>(newEntity);
 
             var baseDbEntity = newEntity as BaseDbEntity;
-            if (baseDbEntity != null )
+            if (baseDbEntity != null)
             {
                 baseDbEntity.Guid = Guid.NewGuid();
                 baseDbEntity.CreationDate = DateTime.UtcNow.ToUniversalTime();
@@ -367,7 +364,7 @@ namespace ED47.BusinessAccessLayer
                 baseDbEntity.UpdaterUsername = UserName;
                 baseDbEntity.IsDeleted = false;
             }
-            
+
             EventProxy.NotifyAdd(businessEntity);
 
             ImmediateDbContext.Set<TEntity>().Add(newEntity);
@@ -380,7 +377,7 @@ namespace ED47.BusinessAccessLayer
             businessEntity.Init();
 
             EventProxy.NotifyAdded(businessEntity);
-         
+
         }
 
         /// <summary>
@@ -390,7 +387,7 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TBusinessEntity">The Type of the business entity to add.</typeparam>
         /// <param name="businessEntities">The collection of business entities to add to the repository.</param>
         public void Add<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
-            where TEntity :  DbEntity, new()
+            where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
             foreach (var businessEntity in businessEntities)
@@ -407,7 +404,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="businessEntity">The business entity that's updating.</param>
         /// <exception cref="RepositoryException">Fires this exception when the Entity is not found in the context.</exception>
         public void Update<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
-            where TEntity :  DbEntity,new()
+            where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
             IEnumerable<object> keys;
@@ -442,12 +439,12 @@ namespace ED47.BusinessAccessLayer
         /// <param name="businessEntities">The business entity collections that's updating.</param>
         /// <exception cref="RepositoryException">Fires this exception when the Entity is not found in the context.</exception>
         public void Update<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
-            where TEntity :  DbEntity, new()
+            where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
             foreach (var businessEntity in businessEntities)
             {
-                Update<TEntity, TBusinessEntity>(businessEntity);    
+                Update<TEntity, TBusinessEntity>(businessEntity);
             }
         }
 
@@ -460,7 +457,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="keys">Returns the key values from the business entity.</param>
         /// <returns>The Entity instance that corresponds to the passed business entity.</returns>
         private TEntity GetEntityFromBusinessEntity<TEntity, TBusinessEntity>(TBusinessEntity businessEntity, out IEnumerable<object> keys)
-            where TEntity :  DbEntity, new()
+            where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
             var keyMembers = MetadataHelper.GetKeyMembers<TEntity>(DbContext);
@@ -470,7 +467,7 @@ namespace ED47.BusinessAccessLayer
         }
 
         public void Delete<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
-            where TEntity :  DbEntity, new()
+            where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
 
@@ -482,7 +479,7 @@ namespace ED47.BusinessAccessLayer
 
             DbContext.Set<TEntity>().Remove(entity);
         }
-        
+
         /// <summary>
         /// Converts an entity into a business entitity.
         /// </summary>
@@ -491,14 +488,14 @@ namespace ED47.BusinessAccessLayer
         /// <param name="source">The entity to convert.</param>
         /// <returns>A converted business entity.</returns>
         public static TResult Convert<TSource, TResult>(TSource source)
-          
+
             where TResult : class, new()
         {
             if (source == null)
                 return null;
 
-            Type sourceType = typeof (TSource);
-            Type targetType = typeof (TResult);
+            Type sourceType = typeof(TSource);
+            Type targetType = typeof(TResult);
             TResult result = null;
             if (sourceType.IsSubclassOf(typeof(DbEntity))
                                && targetType.IsSubclassOf(typeof(BusinessEntity)))
@@ -507,7 +504,7 @@ namespace ED47.BusinessAccessLayer
                 if (idprop != null && idprop.PropertyType == typeof(Int32))
                 {
                     var id = System.Convert.ToInt32(idprop.GetValue(source, null));
-                    result = BaseUserContext.TryGetDynamicInstance(targetType,id) as TResult;
+                    result = BaseUserContext.TryGetDynamicInstance(targetType, id) as TResult;
                 }
             }
 
@@ -515,7 +512,7 @@ namespace ED47.BusinessAccessLayer
             {
                 result = new TResult();
                 if (result is BusinessEntity)
-                    BaseUserContext.StoreDynamicInstance(targetType,result as BusinessEntity );
+                    BaseUserContext.StoreDynamicInstance(targetType, result as BusinessEntity);
             }
             result.InjectFrom<CustomFlatLoopValueInjection>(source);
             Cryptography.DecryptProperties(result);
@@ -551,11 +548,11 @@ namespace ED47.BusinessAccessLayer
         /// <returns>The predicate expression to filter by.</returns>
         private static Expression<Func<TEntity, bool>> GetBusinessWherePredicate<TEntity, TBusinessEntity>()
         {
-            var type = typeof (TBusinessEntity);
+            var type = typeof(TBusinessEntity);
             var whereClauseProprety = type
                                         .GetProperties(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                                         .FirstOrDefault(el => el.Name == "Where");
-            if(whereClauseProprety == null) return null;
+            if (whereClauseProprety == null) return null;
             return whereClauseProprety.GetValue(null, null) as Expression<Func<TEntity, bool>>;
         }
 
@@ -566,8 +563,8 @@ namespace ED47.BusinessAccessLayer
         /// <returns></returns>
         protected static IEnumerable<string> GetBusinessIncludes<TBusinessEntity>()
         {
-            var type = typeof (TBusinessEntity);
-            var includesMember = type.GetField("Includes",BindingFlags.FlattenHierarchy |  BindingFlags.Static | BindingFlags.NonPublic);
+            var type = typeof(TBusinessEntity);
+            var includesMember = type.GetField("Includes", BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.NonPublic);
             if (includesMember == null) return null;
             return includesMember.GetValue(null) as IEnumerable<string>;
         }
@@ -581,7 +578,7 @@ namespace ED47.BusinessAccessLayer
             if (TransactionScope != null)
                 TransactionScope.Dispose();
 
-            if(DbContext != null)
+            if (DbContext != null)
                 DbContext.Dispose();
 
             if (ImmediateDbContext != null)
@@ -635,7 +632,7 @@ namespace ED47.BusinessAccessLayer
                                          String.Join(",", sqlparams.Select(el => el.ParameterName)) + ")";
                     sqlcmd.Parameters.AddRange(sqlparams);
 
-                  var reader = sqlcmd.ExecuteReader();
+                    var reader = sqlcmd.ExecuteReader();
 
                     return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
                 }
@@ -750,14 +747,14 @@ namespace ED47.BusinessAccessLayer
         /// <param name="keySelector">The key selector.</param>
         /// <param name="entitySelector">The entity selector.</param>
         /// <param name="dataSelector">The data selector.</param>
-        public void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, IntKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null, IEnumerable<SqlParameter> parameters = null )
+        public void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, IntKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null, IEnumerable<SqlParameter> parameters = null)
         {
-            var idProp = typeof (TEntity).GetProperty("Id");
+            var idProp = typeof(TEntity).GetProperty("Id");
             var ks = keySelector ?? (el => new IntKey { Value = (System.Convert.ToInt32(idProp.GetValue(el, null))) });
             var ids = entities.Select(ks).Distinct().ToDataTable();
-            var allParameters = new List<SqlParameter> {new SqlParameter(idParameter, ids)};
+            var allParameters = new List<SqlParameter> { new SqlParameter(idParameter, ids) };
 
-            if(parameters!=null)
+            if (parameters != null)
             {
                 allParameters.AddRange(parameters);
             }
@@ -802,7 +799,7 @@ namespace ED47.BusinessAccessLayer
                     }
                 }
             }
-        } 
+        }
 
 
         /// <summary>
