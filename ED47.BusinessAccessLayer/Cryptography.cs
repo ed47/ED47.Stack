@@ -8,12 +8,21 @@ using System.Security.Cryptography;
 
 namespace ED47.BusinessAccessLayer
 {
+    /// <summary>
+    /// Cryptography helper class.
+    /// </summary>
     public static class Cryptography
     {
         public const string EncryptedFlag = "]~[";
 
         private static SymmetricAlgorithm SymmetricAlgorithm { get; set; }
 
+        /// <summary>
+        /// Configures the cryptography for the current application.
+        /// </summary>
+        /// <param name="symmetricAlgorithm">The instance of the symmetric algorithm.</param>
+        /// <param name="key">The cryptographic key.</param>
+        /// <param name="iv">The cryptographic initialization vector.</param>
         public static void Configure(SymmetricAlgorithm symmetricAlgorithm, byte[] key, byte[] iv)
         {
             SymmetricAlgorithm = symmetricAlgorithm;
@@ -84,6 +93,11 @@ namespace ED47.BusinessAccessLayer
             }
         }
 
+        /// <summary>
+        /// Decrypts a single value.
+        /// </summary>
+        /// <param name="value">The value to decrypt.</param>
+        /// <returns>The decrypted value.</returns>
         public static string Decrypt(string value)
         {
             if (!CheckIsEncrypted(value))
@@ -106,6 +120,11 @@ namespace ED47.BusinessAccessLayer
             }
         }
 
+        /// <summary>
+        /// Encrypts a value.
+        /// </summary>
+        /// <param name="value">The value to encrypt.</param>
+        /// <returns>The encrypted value.</returns>
         public static string Encrypt(string value)
         {
             using (var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
@@ -125,7 +144,12 @@ namespace ED47.BusinessAccessLayer
             }
         }
 
-        private static bool CheckIsEncrypted(string value)
+        /// <summary>
+        /// Checks if a value is encrypted.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns><c>True</c> if the value is encrypted.</returns>
+        public static bool CheckIsEncrypted(string value)
         {
             if (value == null)
                 return false;
@@ -133,6 +157,11 @@ namespace ED47.BusinessAccessLayer
             return value.StartsWith(EncryptedFlag);
         }
 
+        /// <summary>
+        /// Get all the properties that are marked as encrypted. 
+        /// </summary>
+        /// <param name="entityType">The type to get encrypted properties.</param>
+        /// <returns>The list of properites that are marked as encrypted.</returns>
         public static IEnumerable<PropertyInfo> GetEncryptedProprerties(Type entityType)
         {
             var cacheKey = "EncryptedProperties[" + entityType.FullName + "]";
@@ -151,20 +180,10 @@ namespace ED47.BusinessAccessLayer
             return cache;
         }
 
-        public static byte[] GetBytes(string str)
-        {
-            byte[] bytes = new byte[str.Length * sizeof(char)];
-            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
-        }
-
-        public static string GetString(byte[] bytes)
-        {
-            char[] chars = new char[bytes.Length / sizeof(char)];
-            System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
-            return new string(chars);
-        }
-
+        /// <summary>
+        /// Decrypts a stream.
+        /// </summary>
+        /// <param name="fileStream">The stream to decrypt.</param>
         public static Stream Decrypt(Stream fileStream)
         {
             var decryptedStream = new MemoryStream();
@@ -181,6 +200,10 @@ namespace ED47.BusinessAccessLayer
             }
         }
 
+        /// <summary>
+        ///Encrypts a stream.
+        /// </summary>
+        /// <param name="writeStream">The stream to encrypt into.</param>
         public static Stream Encrypt(Stream writeStream)
         {
             var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV);
