@@ -107,7 +107,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         public static IEnumerable<TDocument> GetAllBy<TDocument>(string designName, string viewName, int start = 0,  int count = 0) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
-            var view= client.GetView(designName, viewName).Skip(start);
+            var view= client.GetView(designName, viewName).Skip(start).Stale(StaleMode.False);
             if (count > 0)
                 view = view.Limit(count);
             var res = new List<TDocument>();
@@ -120,14 +120,14 @@ namespace ED47.BusinessAccessLayer.Couchbase
         }
 
 
-
-        public static IEnumerable<TDocument> GetByKey<TDocument>(string designName, string viewName, object[] startKeys, object[] endKey, int limit = 0, bool allowStale = false) where TDocument : class, IDocument, new()
+        public static IEnumerable<TDocument> GetByKey<TDocument>(string designName, string viewName, string key, string startKey = null, string endKey = null, int limit = 1000, bool allowStale = false) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
-            var view = client.GetView(designName, viewName).StartKey(startKeys).EndKey(endKey);
-
-            if (!allowStale) view = view.Stale(StaleMode.False);
-            if (limit > 0) view = view.Limit(limit);
+            var view = key.Length != 0 ? client.GetView(designName, viewName).Key(key.ToLower()) : client.GetView(designName, viewName);
+            if (limit > 0) view.Limit(limit);
+            if (!allowStale) view.Stale(StaleMode.False);
+            if (!string.IsNullOrEmpty(startKey)) view.StartKey(startKey);
+            if (!string.IsNullOrEmpty(endKey)) view.StartKey(endKey);
             var res = new List<TDocument>();
             foreach (var viewRow in view)
             {
@@ -136,40 +136,16 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return res;
         }
 
-
-
-        public static IEnumerable<TDocument> GetByKey<TDocument>(string designName, string viewName, string key, string startKey = null, string endKey = null, int limit = 0, bool allowStale = false) where TDocument : class, IDocument, new()
+        public static IEnumerable<TDocument> All<TDocument>(string type) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
-            var view = client.GetView(designName, viewName).Key(key.ToLower());
-          
-            if (!allowStale) view = view.Stale(StaleMode.False);
-            if (!string.IsNullOrEmpty(startKey)) view =view.StartKey(startKey);
-            if (!string.IsNullOrEmpty(endKey)) view = view.EndKey(endKey);
-            if (limit > 0) view = view.Limit(limit);
-            var res = new List<TDocument>();
-            foreach (var viewRow in view)
-            {
-                res.Add(Get<TDocument>(viewRow.ItemId));
-            }
-            return res;
-        }
+            var view = client.GetView("all", "byType")
+                                .StartKey(new[] { type, "z" })
+                                .EndKey(new[] { type, "" })
+                                .Descending(true);
 
-
-        public static IEnumerable<TDocument> GetAllBy<TDocument>(string designName, string viewName, string value, int start = 0, int count = 0) where TDocument : class, IDocument, new()
-        {
-            var client = CouchbaseManager.Instance;
-            var view = client.GetView(designName, viewName).Key(value).Skip(start);
-            if (count > 0)
-                view = view.Limit(count);
-            var res = new List<TDocument>();
-            foreach (var viewRow in view)
-            {
-                res.Add(Get<TDocument>(viewRow.ItemId));
-            }
-
-            return res;
-        }
+            return view.Select(viewRow => Get<TDocument>(viewRow.ItemId)).ToList();
+        }  
 
     }
 }

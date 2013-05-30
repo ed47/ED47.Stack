@@ -178,7 +178,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
 
         public static IEnumerable<File> All(int start = 0 , int count = 10)
         {
-            return CouchbaseRepository.GetAllBy<File>("file", "all", start,count);
+            return CouchbaseRepository.All<File>("File");
         }
     }
 }
