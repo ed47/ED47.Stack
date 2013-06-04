@@ -28,6 +28,20 @@ namespace ED47.BusinessAccessLayer.Azure
             return false;
         }
 
+        public static bool RemoveContainer(string containerName, BlobContainerPermissions permissions)
+        {
+            var client = StorageAccount.CreateCloudBlobClient();
+            var container = client.GetContainerReference(containerName);
+
+            if (container != null)
+            {
+                container.DeleteIfExists();
+                return true;                
+            }
+            else
+                return false;
+        }
+
         public static CloudBlockBlob GetBlob(string containerName, string blobName)
         {
             var client = StorageAccount.CreateCloudBlobClient();
