@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
@@ -145,6 +146,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
             }
 
             base.Delete();
+        }
+
+        public static IEnumerable<Email> All()
+        {
+            return CouchbaseRepository.All<Email>("Email");
         }
     }
 }
