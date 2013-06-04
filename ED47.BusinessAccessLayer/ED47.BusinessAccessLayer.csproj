@@ -41,7 +41,7 @@
     </Reference>
     <Reference Include="EPPlus, Version=3.1.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EPPlus.3.1.2\lib\net35\EPPlus.dll</HintPath>
+      <HintPath>..\..\..\packages\EPPlus.3.1.2\lib\net35\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -111,6 +111,7 @@
     <Compile Include="BusinessEntities\Audit.cs" />
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\CommentAccessDeniedException.cs" />
+    <Compile Include="BusinessEntities\CommentDiscussion.cs" />
     <Compile Include="BusinessEntityHelper.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Entities\Audit.cs" />
     <Compile Include="Entities\AuditFilter.cs" />
     <Compile Include="Entities\Comment.cs" />
+    <Compile Include="Entities\Discussion.cs" />
     <Compile Include="Entities\Email.cs" />
     <Compile Include="Entities\EmailAttachment.cs" />
     <Compile Include="Entities\FileBox.cs" />
@@ -223,6 +225,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.6\tools\Microsoft.Bcl.Build.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

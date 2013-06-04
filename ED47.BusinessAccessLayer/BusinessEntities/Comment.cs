@@ -41,6 +41,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// Returns the comments by their business key.
         /// </summary>
         /// <param name="businessKey">The business key to get comments for.</param>
+        [Obsolete("User Get() instead.")]
         public static IEnumerable<Comment> GetByBusinessKey(string businessKey)
         {
             Notifiers.ToList().ForEach(el => el.TryNotify(businessKey, CommentActionType.View));
@@ -160,6 +161,36 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             var filebox = GetOrCreateFileBox();
             FileBoxItem.CreateNew(filebox.Id, file);
+        }
+
+        public enum CommentOrder
+        {
+            OldestFirst = 0,
+            RecentFirst = 1
+        }
+
+        public static IEnumerable<TComment> Get<TComment>(string businessKey, int? commentOrder, bool isEncrypted, bool isReadOnly, int? maxComments) where TComment : Comment, new()
+        {
+            Notifiers.ToList().ForEach(el => el.TryNotify(businessKey, CommentActionType.View));
+
+            var query = BaseUserContext.Instance.Repository
+                                           .GetQueryableSet<Entities.Comment, TComment>()
+                                           .Where(el => el.BusinessKey == businessKey);
+
+            if (commentOrder.HasValue)
+            {
+                if ((Comment.CommentOrder)commentOrder == Comment.CommentOrder.RecentFirst)
+                    query = query.OrderByDescending(el => el.CreationDate);
+                else
+                    query = query.OrderBy(el => el.CreationDate);
+            }
+            else
+                query = query.OrderBy(el => el.CreationDate);
+
+            if (maxComments.HasValue)
+                query = query.Take(maxComments.Value);
+
+            return Repository.Convert<Entities.Comment, TComment>(query).ToList();
         }
     }
 
