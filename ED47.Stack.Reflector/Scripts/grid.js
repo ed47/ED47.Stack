@@ -2,7 +2,7 @@
 if (window.Ext) {
     Ext.define("ED47.ui.Grid", {
         extend: "Ext.grid.Panel",
-        constructor: function(config) {
+        constructor: function (config) {
             var defaultConfig = {
                 renderTo: config.model.Id,
                 disableSelectFirst: false,
@@ -19,7 +19,7 @@ if (window.Ext) {
 
         },
 
-        expandHeight: function() {
+        expandHeight: function () {
             var h = this.getEl().parent().getHeight();
             var h2 = this.getHeight();
             if (Math.abs(h - h2) < 5) return;
@@ -28,20 +28,23 @@ if (window.Ext) {
 
         },
 
-        bindDataStore: function(storeId, sorter, direction) {
+        bindDataStore: function (storeId, sorter, direction) {
             var me = this;
             if (!direction) direction = "ASC";
-            ED47.Stores.get(storeId, function(store) {
+            ED47.Stores.get(storeId, function (store) {
                 store.sorters = new Ext.util.MixedCollection();
                 store.sorters.add("sorter", { property: sorter, direction: direction });
                 me.reconfigure(store);
 
-                var selectFirst = function() {
-                    Ext.defer(function() {
-                        if (!store.preselectedRecordId)
+                var selectFirst = function () {
+                    Ext.defer(function () {
+                        if (!store.preselectedRecordId) {
                             me.getSelectionModel().select(store.getAt(0));
-                        else
+                            store.selectedRecords = [store.getAt(0)];
+                        } else {
                             me.getSelectionModel().select(store.getById(store.preselectedRecordId));
+                            store.selectedRecords = [store.getById(store.preselectedRecordId)];
+                        }
                     }, 100);
                 };
                 if (!me.disableSelectFirst) {
@@ -49,7 +52,7 @@ if (window.Ext) {
                         store.sort(sorter, direction);
                         selectFirst();
                     } else {
-                        store.on("load", function() {
+                        store.on("load", function () {
                             store.sort(sorter, direction);
                             selectFirst();
                         });
@@ -61,7 +64,7 @@ if (window.Ext) {
         statics: {
             //Navigates a property tree to render a value.
             //Example: "myData.Element1.valueToRender" as dataIndex will render the value for "valueToRender" property.
-            deepRenderer: function(dataIndex, value, record) {
+            deepRenderer: function (dataIndex, value, record) {
                 var split = dataIndex.split(".");
                 var currentLevel = record.data;
 

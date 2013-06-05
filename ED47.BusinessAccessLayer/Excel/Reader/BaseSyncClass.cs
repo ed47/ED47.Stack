@@ -6,7 +6,7 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
     { 
         public bool DeleteInExistent { get; set; }   
         public Repository Repository { get; set; }
-
+        public string UserName { get; set; }
 
         private IEnumerable<ExcelData> _syncData;
         public IEnumerable<ExcelData> SyncData
@@ -14,11 +14,12 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
             get { return  _syncData ?? (_syncData = new List<ExcelData>()); }
         }
 
-        public BaseSyncClass(IEnumerable<ExcelData> syncData, Repository repository, bool deleteExistent)
+        public BaseSyncClass(IEnumerable<ExcelData> syncData, Repository repository, bool deleteExistent, string userName)
         {
             _syncData = syncData;
             Repository = repository;
             DeleteInExistent = deleteExistent;
+            UserName = userName;
         }
 
     }

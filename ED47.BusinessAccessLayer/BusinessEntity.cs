@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace ED47.BusinessAccessLayer
 {
-    [BusinessEntityAmendment]
     public abstract class BusinessEntity
     {
         private BusinessEntityTracker _Tracker;
+
+        [IgnoreDataMember]
         public  EventProxy Events { get; set; }
+
+        [IgnoreDataMember]
         public ClientData ClientData { get; set; }
         /// <summary>
         ///   Inits this instance. This method is executed after the database load and instance creation.
@@ -99,6 +103,14 @@ namespace ED47.BusinessAccessLayer
             var entityType = GetType();
             var keyMembers = MetadataHelper.GetKeyMembers<TEntity>(BaseUserContext.Instance.Repository.DbContext);
             return keyMembers.Select(k => new KeyValuePair<string, object>(k, entityType.GetProperty(k).GetValue(this, null)));
+        }
+        
+        /// <summary>
+        /// Gets a copy of all the changes.
+        /// </summary>
+        public Dictionary<string, object> GetAllChanges()
+        {
+            return _Tracker.GetAllChanges();
         }
     }
 }
