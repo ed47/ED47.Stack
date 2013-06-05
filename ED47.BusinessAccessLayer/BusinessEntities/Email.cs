@@ -65,6 +65,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 return;
             }
+            FromAddress = from;
 
             var mailMessage = new MailMessage
             {

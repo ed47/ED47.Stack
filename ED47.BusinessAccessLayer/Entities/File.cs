@@ -25,6 +25,7 @@ namespace ED47.BusinessAccessLayer.Entities
 
         [MaxLength(100)]
         public virtual string MimeType { get; set; }
-       
+
+        public virtual bool Encrypted { get; set; }
     }
 }
