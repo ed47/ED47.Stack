@@ -59,9 +59,7 @@
             });
 
             $.each(window.keys, function (index, item) {
-                if (item.value.toLowerCase().indexOf(searchValue.toLowerCase()) == -1)
-                    $(item).parents("form").hide();
-                else
+                if (item.value.toLowerCase().indexOf(searchValue.toLowerCase()) != -1)
                     $(item).parents("form").show();
             });
         });

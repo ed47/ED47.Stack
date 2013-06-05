@@ -388,6 +388,11 @@ namespace ED47.Stack.Web
 
         }
 
+        public static object Deserialize(string str)
+        {
+            return JsonConvert.DeserializeObject(str);
+        }
+
        
         #region ISerializable Membres
 
