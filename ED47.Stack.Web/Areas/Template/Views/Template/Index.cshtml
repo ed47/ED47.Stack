@@ -9,16 +9,17 @@
 {
     var formId = "form-" + itemCounter++;
     var template = ED47.Stack.Web.Template.Template.Get(templateInfo.Key);
-    <div>
+    
+    <label style="margin-bottom:4px;">
         <b>@templateInfo.Key</b>
-    </div>
+    </label>
     using (Ajax.BeginForm("Update", "Template", new { area = "Template"}, new AjaxOptions { HttpMethod = "POST", OnSuccess = "saveSuccess(data, '#" + formId + "' )" }, new { id = formId }))
     {
         @Html.Hidden("name", templateInfo.Key)
-        <div class="w80">
-            <textarea name="templateText" cols="150">@Html.Raw(template.TemplateText)</textarea>
+        <div class="w100">
+            <textarea name="templateText" style="width:100%;">@Html.Raw(template.TemplateText)</textarea>
         </div>
-        <div class="w10 right">
+        <div class="w10 right" style="margin-bottom: 12px;">
             <input type="submit" class="btn btn-normal" value="Save"/>
         </div>
         <div class="clear"></div>
