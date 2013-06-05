@@ -136,8 +136,7 @@ namespace ED47.Stack.Web.Multilingual
             return String.Format("[{0}]", path);
         }
 
-
-        public static string N2(string path, string language, params object[] args)
+     public static string N2(string path, string language, params object[] args)
         {
             IDictionary<string, TranslationItem> languageTranslations;
 
@@ -164,8 +163,7 @@ namespace ED47.Stack.Web.Multilingual
             return String.Format("[{0}]", path);
         }
 
-
-        /// <summary>
+       /// <summary>
         /// Gets a multilignual string in the current UI culture with a pluralization.
         /// </summary>
         /// <param name="path">The path of the translation.</param>
