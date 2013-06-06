@@ -12,7 +12,6 @@ namespace ED47.Stack.Web.FluentValidation
             return rule.Configure(config =>
             {
                 config.CurrentValidator.ErrorMessageSource = new MultilingualValidationSource(key, parameters);
-                
             });
         }
     }
