@@ -146,9 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <EmbeddedResource Include="CountriesList\af.xml" />
     <EmbeddedResource Include="CountriesList\af_NA.xml" />
     <EmbeddedResource Include="CountriesList\agq.xml" />
@@ -415,13 +412,6 @@
     <EmbeddedResource Include="CountriesList\zh_Hant_HK.xml" />
     <EmbeddedResource Include="CountriesList\zh_Hant_MO.xml" />
     <EmbeddedResource Include="CountriesList\zu.xml" />
-    <Content Include="Web.config" />
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Multilingual\Models\" />
