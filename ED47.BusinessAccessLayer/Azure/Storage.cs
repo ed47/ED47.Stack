@@ -42,6 +42,13 @@ namespace ED47.BusinessAccessLayer.Azure
                 return false;
         }
 
+        public static CloudBlockBlob GetBlob(IBlobItem item)
+        {
+        
+            return Storage.GetBlob(item.ContainerName, item.BlobName);
+        
+        }
+
         public static CloudBlockBlob GetBlob(string containerName, string blobName)
         {
             var client = StorageAccount.CreateCloudBlobClient();
@@ -94,7 +101,7 @@ namespace ED47.BusinessAccessLayer.Azure
 
         }
 
-        public static Uri StoreFile(string containerName, string virtualFilename, Stream fileStream, bool replace = true)
+        public static CloudBlockBlob StoreFile(string containerName, string virtualFilename, Stream fileStream, bool replace = true)
         {
             var client = StorageAccount.CreateCloudBlobClient();
             var container = client.GetContainerReference(containerName.ToLower());
@@ -113,17 +120,17 @@ namespace ED47.BusinessAccessLayer.Azure
             var blockBlob = container.GetBlockBlobReference(correctedPath.ToLower());
 
             if(!replace && blockBlob.Exists())
-                return blockBlob.Uri;
+                return blockBlob;
 
             using (fileStream)
             {
                 blockBlob.UploadFromStream(fileStream);
               
             }
-            return blockBlob.Uri;
+            return blockBlob;
         }
 
-        public static Uri StoreFile(string containerName, string virtualFilename, FileInfo file,bool  replace = true)
+        public static CloudBlockBlob StoreFile(string containerName, string virtualFilename, FileInfo file, bool replace = true)
         {
             using (var fs = file.OpenRead())
             {
