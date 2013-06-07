@@ -180,5 +180,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
         {
             return CouchbaseRepository.All<File>("File");
         }
+
+        public new bool Delete()
+        {
+            FileRepository.Delete(this);
+            return base.Delete();
+        }
     }
 }
