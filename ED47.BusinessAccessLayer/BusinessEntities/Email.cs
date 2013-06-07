@@ -31,6 +31,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual string Subject { get; set; }
 
         public virtual string Body { get; set; }
+        
+        public virtual DateTime? ReadDate { get; set; }
 
         public virtual DateTime?  TransmissionDate { get; set; }
         private List<EmailAttachment> _Attachments;
