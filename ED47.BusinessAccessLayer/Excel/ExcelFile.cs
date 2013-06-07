@@ -67,13 +67,28 @@ namespace ED47.BusinessAccessLayer.Excel
         public void Write(FileInfo fileInfo)
         {
             var excelPackage = new ExcelPackage(fileInfo);
-
+            
             foreach (var excelSheet in Sheets)
             {
                 excelSheet.Write(excelPackage);
             }
 
             excelPackage.Save();
+        }
+
+        /// <summary>
+        /// Saves the Excel file to a stream.
+        /// </summary>
+        /// <param name="stream">The output stream to write the Excel file to.</param>
+        public void Write(Stream stream)
+        {
+            var excelPackage = new ExcelPackage();
+
+            foreach (var excelSheet in Sheets)
+            {
+                excelSheet.Write(excelPackage);
+            }
+            excelPackage.SaveAs(stream);
         }
 
         public BusinessEntities.File Write(string name, string businessKey)

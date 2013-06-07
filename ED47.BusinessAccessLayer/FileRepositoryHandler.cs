@@ -65,7 +65,7 @@ namespace ED47.BusinessAccessLayer
                 return;
             }
 
-            if (file.Guid.ToString() != token)
+            if (file.Guid.ToString().ToLowerInvariant() != token.Replace("{",string.Empty).Replace("}",string.Empty).ToLowerInvariant() )
             {
                 context.Response.StatusCode = 401;
                 context.Response.End();
