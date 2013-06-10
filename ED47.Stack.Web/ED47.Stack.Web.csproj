@@ -148,6 +148,7 @@
     <Compile Include="Areas\Multilingual\MultilingualAreaRegistration.cs" />
     <Compile Include="Areas\Template\Controllers\TemplateController.cs" />
     <Compile Include="Areas\Template\TemplateAreaRegistration.cs" />
+    <Compile Include="Country.cs" />
     <Compile Include="CountryNames.cs" />
     <Compile Include="FileResponse.cs" />
     <Compile Include="Code39BarCode.cs" />
