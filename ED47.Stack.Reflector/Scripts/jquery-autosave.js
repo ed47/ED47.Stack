@@ -89,9 +89,6 @@
                         .addClass("field-validation-valid")
                         .html("");
 
-                    form.find(".success").removeClass("success");
-                    
-
                     for (var property in data.Values) {
                         var target = form.find("[name='" + property + "']");
 
@@ -112,6 +109,8 @@
 
                     form.data("initialState", form.serializeArray());
                     form.trigger("autosaved", { form: form, data: data });
+                }).fail(function() {
+                    form.find(".control-group").addClass("error");
                 });
                 
             });

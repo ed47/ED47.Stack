@@ -10,11 +10,11 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     public class ClientData : Dictionary<string,object>
     {
-
         public ClientData ()
         {
             
         }
+
         public ClientData(FormCollection formCollection)
         {
             foreach (var key in formCollection.Keys)
