@@ -14,6 +14,7 @@ namespace ED47.BusinessAccessLayer
     public static class Cryptography
     {
         public const string EncryptedFlag = "]~[";
+        public const string IVFlag = "]*[";
 
         private static SymmetricAlgorithm SymmetricAlgorithm { get; set; }
 
@@ -28,7 +29,10 @@ namespace ED47.BusinessAccessLayer
             SymmetricAlgorithm = symmetricAlgorithm;
             SymmetricAlgorithm.Key = key;
             SymmetricAlgorithm.IV = iv;
+            BaseIV = iv;
         }
+
+        private static byte[] BaseIV { get; set; }
 
         public static void EncryptProperties<TBusinessEntity>(object entity)
         {
@@ -107,8 +111,14 @@ namespace ED47.BusinessAccessLayer
                 return value;
 
             value = value.Substring(EncryptedFlag.Length);
+            var splitIV = value.Split(IVFlag.ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            value = splitIV[0];
+            
+            var iv = BaseIV;
+            if (splitIV.Length > 1)
+                iv = Convert.FromBase64String(splitIV[1]);
 
-            using (var decryptor = SymmetricAlgorithm.CreateDecryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
+            using (var decryptor = SymmetricAlgorithm.CreateDecryptor(SymmetricAlgorithm.Key, iv))
             {
                 using (var msEncrypt = new MemoryStream(Convert.FromBase64String(value)))
                 {
@@ -130,6 +140,8 @@ namespace ED47.BusinessAccessLayer
         /// <returns>The encrypted value.</returns>
         public static string Encrypt(string value)
         {
+            SymmetricAlgorithm.GenerateIV();
+            
             using (var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
             {
                 using (var msEncrypt = new MemoryStream())
@@ -141,7 +153,7 @@ namespace ED47.BusinessAccessLayer
                             //Write all data to the stream.
                             swEncrypt.Write(value);
                         }
-                        return Convert.ToBase64String(msEncrypt.ToArray());
+                        return Convert.ToBase64String(msEncrypt.ToArray()) + IVFlag + Convert.ToBase64String(SymmetricAlgorithm.IV);
                     }
                 }
             }

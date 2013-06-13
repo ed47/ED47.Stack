@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using ED47.BusinessAccessLayer;
-using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.Stack.Web.Template;
 using Newtonsoft.Json;
 
@@ -63,8 +59,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         private string _cc;
         private string _bcc;
-        private IEnumerable _fileBoxItemMessages;
-
+        
         public string CC
         {
             get { return _cc; }
