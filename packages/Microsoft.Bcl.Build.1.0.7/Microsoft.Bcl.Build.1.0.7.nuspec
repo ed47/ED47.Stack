@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Microsoft.Bcl.Build</id>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <title>Microsoft BCL Build Components</title>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
@@ -12,9 +12,7 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>This package provides build infrastructure components so that projects referencing specific Microsoft packages can successfully build.</description>
     <summary>Provides build infrastructure components for Microsoft packages.</summary>
-    <releaseNotes />
     <copyright>Copyright © Microsoft Corporation</copyright>
-    <language />
     <tags>BCL Microsoft</tags>
   </metadata>
 </package>
