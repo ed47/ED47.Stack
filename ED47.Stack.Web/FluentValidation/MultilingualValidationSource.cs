@@ -5,10 +5,13 @@ namespace ED47.Stack.Web.FluentValidation
 {
     public class MultilingualValidationSource : IStringSource
     {
-        public MultilingualValidationSource(string key)
+        public MultilingualValidationSource(string key, params object[] parameters)
         {
             this.TranslationKey = key;
+            this.Parameters = parameters;
         }
+
+        public object[] Parameters { get; set; }
 
         /// <summary>
         /// Construct the error message template
@@ -18,7 +21,7 @@ namespace ED47.Stack.Web.FluentValidation
         /// </returns>
         public string GetString()
         {
-            return Multilingual.Multilingual.N(this.TranslationKey);
+            return Multilingual.Multilingual.N(this.TranslationKey, this.Parameters);
         }
 
         /// <summary>

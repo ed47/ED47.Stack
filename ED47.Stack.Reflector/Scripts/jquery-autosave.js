@@ -83,37 +83,42 @@
                     update.Id = form.find("[name='Id']").val();
                 }
 
-                $.post(form.attr("action"), update, function (data) {
-                    form.find(".field-validation-error")
-                        .removeClass("field-validation-error")
-                        .addClass("field-validation-valid")
-                        .html("");
+                $.ajax({
+                    url: form.attr("action"),
+                    dataType: "json",
+                    data: update,
+                    type: "POST"
+                })
+                    .success(function (data) {
+                        form.find(".field-validation-error")
+                            .removeClass("field-validation-error")
+                            .addClass("field-validation-valid")
+                            .html("");
 
-                    form.find(".success").removeClass("success");
-                    
+                        for (var property in data.Values) {
+                            var target = form.find("[name='" + property + "']");
 
-                    for (var property in data.Values) {
-                        var target = form.find("[name='" + property + "']");
-
-                        if (target.length !== 0) {
-                            target.val(data.Values[property]);
-                            target.closest(".control-group").addClass("success");
-                            form.trigger("autosavepropertyset", { form: form, name: property });
+                            if (target.length !== 0) {
+                                target.val(data.Values[property]);
+                                target.closest(".control-group").addClass("success");
+                                form.trigger("autosavepropertyset", { form: form, name: property });
+                            }
                         }
-                    }
 
-                    $.each(data.Validations, function() {
-                        var validationElement = form.find(".field-validation-valid[data-valmsg-for='" + this.PropertyName + "']");
-                        validationElement
-                            .removeClass("field-validation-valid")
-                            .addClass("field-validation-error")
-                            .html(this.ErrorMessage);
+                        $.each(data.Validations, function() {
+                            var validationElement = form.find(".field-validation-valid[data-valmsg-for='" + this.PropertyName + "']");
+                            validationElement
+                                .removeClass("field-validation-valid")
+                                .addClass("field-validation-error")
+                                .html(this.ErrorMessage);
+                        });
+
+                        form.data("initialState", form.serializeArray());
+                        form.trigger("autosaved", { form: form, data: data });
+                    })
+                    .fail(function() {
+                        form.find(".control-group").addClass("error");
                     });
-
-                    form.data("initialState", form.serializeArray());
-                    form.trigger("autosaved", { form: form, data: data });
-                });
-                
             });
 
             form.find("select, textarea").on("change", function() {

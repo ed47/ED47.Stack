@@ -220,8 +220,11 @@ namespace ED47.BusinessAccessLayer.Excel
                     }
                     else
                         c.Render(value, worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column]);
+
+                    worksheet.Column(cellCoordinate.Column).AutoFit();
                     cellCoordinate.Column++;
                 }
+                
                 cellCoordinate.Column = 1;
                 cellCoordinate.Row++;
             }

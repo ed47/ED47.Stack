@@ -58,7 +58,7 @@
       <HintPath>..\..\packages\MvcContrib.2.0.95.0\lib\MvcContrib.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.5.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.5.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -148,6 +148,7 @@
     <Compile Include="Areas\Multilingual\MultilingualAreaRegistration.cs" />
     <Compile Include="Areas\Template\Controllers\TemplateController.cs" />
     <Compile Include="Areas\Template\TemplateAreaRegistration.cs" />
+    <Compile Include="Country.cs" />
     <Compile Include="CountryNames.cs" />
     <Compile Include="FileResponse.cs" />
     <Compile Include="Code39BarCode.cs" />
@@ -508,7 +509,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.6\tools\Microsoft.Bcl.Build.targets" />
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.7\tools\Microsoft.Bcl.Build.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

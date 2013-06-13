@@ -25,7 +25,12 @@ namespace ED47.Stack.Reflector
 
         public void ProcessRequest(HttpContext context)
         {
-
+            var js = new StringBuilder();
+#if !DEBUG
+            var minifier = new Microsoft.Ajax.Utilities.Minifier();
+#endif
+            context.Response.ContentType = "text/javascript";
+            
             // ReSharper disable RedundantAssignment
             var cachedStaticFilesResult = MemoryCache.Default.Get("ED47.Stack.Reflector.Static") as string;
             // ReSharper restore RedundantAssignment
@@ -43,13 +48,19 @@ namespace ED47.Stack.Reflector
                 staticScriptBuilder.AppendLine("/*=====================================================*/");
                 cachedStaticFilesResult = staticScriptBuilder.ToString();
             }
-            context.Response.Write(cachedStaticFilesResult);
+            
+            js.Append(cachedStaticFilesResult);
 
             var assemblyNames = context.Request.QueryString["assemblyName"];
             
             if (String.IsNullOrWhiteSpace(assemblyNames))
             {
                 context.Response.ContentType = "text/javascript";
+                #if !DEBUG
+                    context.Response.Write(minifier.MinifyJavaScript(js.ToString()));
+                #else
+                    context.Response.Write(js.ToString());
+                #endif
                 return;
             }
 
@@ -62,8 +73,7 @@ namespace ED47.Stack.Reflector
                 var cachedResult = MemoryCache.Default.Get(cacheKey) as string;
                 // ReSharper restore RedundantAssignment
 #if DEBUG
-                //Disable caching during development to make debugging easier
-                cachedResult = null;
+                cachedResult = null; //Disable caching during development to make debugging easier
 #endif
                 // ReSharper disable ConditionIsAlwaysTrueOrFalse
                 if (cachedResult == null)
@@ -73,11 +83,13 @@ namespace ED47.Stack.Reflector
                     MemoryCache.Default.Add(new CacheItem(cacheKey, cachedResult),
                                             new CacheItemPolicy {Priority = CacheItemPriority.NotRemovable});
                 }
-
-                context.Response.Write(cachedResult);
+                js.Append(cachedResult);
             }
-            
-            context.Response.ContentType = "text/javascript";
+#if DEBUG
+            context.Response.Write(js.ToString());
+#else
+            context.Response.Write(minifier.MinifyJavaScript(js.ToString()));
+#endif
         }
 
         /// <summary>
