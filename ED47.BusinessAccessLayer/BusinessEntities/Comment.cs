@@ -47,7 +47,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             Notifiers.ToList().ForEach(el => el.TryNotify(businessKey, CommentActionType.View));
 
             return BaseUserContext.Instance.Repository
-                    .Where<Entities.Comment, Comment>(el => el.BusinessKey == businessKey)
+                    .Where<Entities.Comment, Comment>(el => el.BusinessKey == businessKey, new[] { "FileBox" })
                     .OrderByDescending(el => el.CreationDate)
                     .ToList();
         }
