@@ -151,9 +151,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Readme\Elmah.txt" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <EmbeddedResource Include="CountriesList\af.xml" />
     <EmbeddedResource Include="CountriesList\af_NA.xml" />
     <EmbeddedResource Include="CountriesList\agq.xml" />

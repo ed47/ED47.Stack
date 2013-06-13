@@ -29,6 +29,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public virtual string LanguageCode { get; set; }
         
+        
         [JsonIgnore]
         public Email Email
         {
@@ -130,6 +131,17 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 Email.Delete();
 
             BaseUserContext.Instance.Repository.Delete<Entities.BaseMessage, BaseMessage>(this);
+        }
+
+        private void Save()
+        {
+            BaseUserContext.Instance.Repository.Update<Entities.BaseMessage, BaseMessage>(this);
+        }
+
+        public static BaseMessage Get(int id)
+        {
+            return BaseUserContext.Instance.Repository
+                .Find<Entities.BaseMessage, BaseMessage>(el => el.Id == id);
         }
     }
 }
