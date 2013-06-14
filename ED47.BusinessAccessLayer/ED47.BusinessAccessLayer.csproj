@@ -262,6 +262,7 @@
     <Compile Include="BaseUserContext.cs" />
     <Compile Include="Message\MessageFactoryHelper.cs" />
     <Compile Include="StringKey.cs" />
+    <Compile Include="Tools\ImageUtilities.cs" />
     <Compile Include="TypeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
