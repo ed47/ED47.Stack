@@ -187,9 +187,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             else
                 query = query.OrderBy(el => el.CreationDate);
 
-            if (maxComments.HasValue)
-                query = query.Take(maxComments.Value);
-
             return Repository.Convert<Entities.Comment, TComment>(query).ToList();
         }
     }
