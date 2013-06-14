@@ -32,6 +32,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
         public virtual DateTime? TransmissionDate { get; set; }
 
         public virtual DateTime? ReadDate { get; set; }
+        public int MessageId { get; set; }
 
         private List<EmailAttachment> _Attachments;
         public IEnumerable<EmailAttachment> Attachments
@@ -156,17 +157,16 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
             return CouchbaseRepository.All<Email>("Email");
         }
 
-        public static void MarkAsRead(int id)
+        public void MarkAsRead()
         {
-            var email = Get(id);
-            if (email == null)
-            {
-                return;
-            }
+            ReadDate = DateTime.Now;
+            Save();
+        }
 
-            email.ReadDate = DateTime.Now;
-
-            email.Save();
+        public void SetMessageId(int id)
+        {
+            MessageId = id;
+            Save();
         }
     }
 }

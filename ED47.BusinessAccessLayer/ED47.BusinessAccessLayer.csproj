@@ -36,6 +36,12 @@
     <Reference Include="Afterthought">
       <HintPath>..\..\packages\Afterthought.1.0.8\lib\Afterthought.dll</HintPath>
     </Reference>
+    <Reference Include="BetterImageProcessor">
+      <HintPath>..\..\Shared\BetterImageProcessor.dll</HintPath>
+    </Reference>
+    <Reference Include="BetterImageProcessorQuantization">
+      <HintPath>..\..\Shared\BetterImageProcessorQuantization.dll</HintPath>
+    </Reference>
     <Reference Include="Couchbase, Version=1.2.6.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\CouchbaseNetClient.1.2.6\lib\net40\Couchbase.dll</HintPath>
@@ -101,6 +107,9 @@
     <Reference Include="QuickLZ">
       <HintPath>..\..\packages\CouchbaseAspNetExtended.1.3.3.1\lib\QuickLZ.dll</HintPath>
     </Reference>
+    <Reference Include="SwiftMapping">
+      <HintPath>..\..\Shared\SwiftMapping.dll</HintPath>
+    </Reference>
     <Reference Include="SX, Version=2.0.5.2, Culture=neutral, PublicKeyToken=882b9c044052e7f6, processorArchitecture=MSIL">
       <HintPath>..\Shared\SX.dll</HintPath>
     </Reference>
@@ -154,6 +163,12 @@
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\CommentAccessDeniedException.cs" />
     <Compile Include="BusinessEntities\CommentDiscussion.cs" />
+    <Compile Include="BusinessEntities\CouchBase\Comment\FileBox.cs" />
+    <Compile Include="BusinessEntities\CouchBase\Comment\FileBoxItem.cs" />
+    <Compile Include="BusinessEntities\CouchBase\Comment\Comment.cs" />
+    <Compile Include="BusinessEntities\IComment.cs" />
+    <Compile Include="BusinessEntities\IFileBox.cs" />
+    <Compile Include="BusinessEntities\IFileBoxItem.cs" />
     <Compile Include="BusinessEntityHelper.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />

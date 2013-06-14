@@ -7,7 +7,7 @@ using System.Web;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
-    public class FileBox : BusinessEntity
+    public class FileBox : BusinessEntity, IFileBox
     {
       public int Id { get; set; }
 
@@ -50,12 +50,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return BaseUserContext.Instance.Repository.Count<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileBoxId == fileBoxId);
         }
 
-        public IEnumerable<FileBoxItem> GetFiles()
+        public IEnumerable<IFileBoxItem> GetFiles()
         {
             return FileBoxItem.GetByFileBoxId(Id);
         }
 
-        public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true)
+        public IFileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true)
         {
             if(file == null || file.ContentLength == 0)
                 return null;
@@ -70,7 +70,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return FileBoxItem.CreateNew(Id, newFile, comment);
         }
 
-        public FileBoxItem AddFile(File file, string comment = null)
+        public IFileBoxItem AddFile(IFile file, string comment = null)
         {
             return FileBoxItem.CreateNew(Id, file, comment);
         }
