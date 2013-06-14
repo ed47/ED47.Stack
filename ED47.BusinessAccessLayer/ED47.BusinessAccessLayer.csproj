@@ -147,6 +147,7 @@
   <ItemGroup>
     <Compile Include="Azure\IBlobItem.cs" />
     <Compile Include="Azure\Storage.cs" />
+    <Compile Include="Azure\StorageFileConfig.cs" />
     <Compile Include="BaseDbEntity.cs" />
     <Compile Include="BusinessComponent.cs" />
     <Compile Include="BusinessDomain.cs" />

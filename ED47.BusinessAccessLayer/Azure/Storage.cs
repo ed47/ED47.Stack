@@ -8,27 +8,6 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace ED47.BusinessAccessLayer.Azure
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// 
-    
-    public class StorageFileConfig
-    {
-        public StorageFileConfig()
-        {
-            ContentType = "application/octet-stream";
-            CacheControl = "private";
-            Replace = false;
-        }
-
-        public string ContentType { get; set; }
-        public string CacheControl { get; set; }
-        public string ContentEncoding { get; set; }
-        public string ContentLanguage { get; set; }
-        public bool Replace { get; set; }
-    }
-
     public class Storage
     {
         public static CloudStorageAccount StorageAccount = CloudStorageAccount.Parse(
