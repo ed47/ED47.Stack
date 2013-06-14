@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing.Imaging;
 using System.IO;
+using ED47.Stack.Web;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -10,6 +11,24 @@ namespace ED47.BusinessAccessLayer.Azure
     /// <summary>
     /// 
     /// </summary>
+    /// 
+    
+    public class StorageFileConfig
+    {
+        public StorageFileConfig()
+        {
+            ContentType = "application/octet-stream";
+            CacheControl = "private";
+            Replace = false;
+        }
+
+        public string ContentType { get; set; }
+        public string CacheControl { get; set; }
+        public string ContentEncoding { get; set; }
+        public string ContentLanguage { get; set; }
+        public bool Replace { get; set; }
+    }
+
     public class Storage
     {
         public static CloudStorageAccount StorageAccount = CloudStorageAccount.Parse(
@@ -40,6 +59,41 @@ namespace ED47.BusinessAccessLayer.Azure
             }
             else
                 return false;
+        }
+
+        public static void CopyContainer(string containerName, string newContainer, bool replace = false)
+        {
+            var client = StorageAccount.CreateCloudBlobClient();
+           
+            var container = client.GetContainerReference(containerName.ToLower());
+             if (!container.Exists())
+            {
+                throw new Exception("Invalid container");
+            }
+
+            var container2 = client.GetContainerReference(newContainer.ToLower());
+
+            foreach (var b in container.ListBlobs())
+            {
+                var sourceBlobReference = container.GetBlockBlobReference(b.Uri.AbsoluteUri);
+                var targetBlobReference = container2.GetBlockBlobReference(sourceBlobReference.Name);
+
+                if(targetBlobReference.Exists()) continue;
+
+                using (Stream targetStream = targetBlobReference.OpenWrite())
+                {
+                    try
+                    {
+                        sourceBlobReference.DownloadToStream(targetStream);
+                    }
+                    catch (Exception)
+                    {
+                        
+                    }
+                }
+            }
+           
+           
         }
 
         public static CloudBlockBlob GetBlob(IBlobItem item)
@@ -101,7 +155,7 @@ namespace ED47.BusinessAccessLayer.Azure
 
         }
 
-        public static CloudBlockBlob StoreFile(string containerName, string virtualFilename, Stream fileStream, bool replace = true)
+        public static CloudBlockBlob StoreFile(string containerName, string virtualFilename, Stream fileStream, StorageFileConfig config)
         {
             var client = StorageAccount.CreateCloudBlobClient();
             var container = client.GetContainerReference(containerName.ToLower());
@@ -119,22 +173,44 @@ namespace ED47.BusinessAccessLayer.Azure
 
             var blockBlob = container.GetBlockBlobReference(correctedPath.ToLower());
 
-            if(!replace && blockBlob.Exists())
+            if(!config.Replace && blockBlob.Exists())
                 return blockBlob;
 
             using (fileStream)
             {
                 blockBlob.UploadFromStream(fileStream);
-              
             }
+
+            blockBlob.Properties.ContentType = config.ContentType;
+            blockBlob.Properties.CacheControl = config.CacheControl;
+            blockBlob.Properties.ContentEncoding = config.ContentEncoding;
+            blockBlob.Properties.ContentLanguage = config.ContentLanguage;
+            blockBlob.SetProperties();
+            
             return blockBlob;
+        }
+
+
+        public static CloudBlockBlob StoreFile(string containerName, string virtualFilename, FileInfo file, StorageFileConfig config)
+        {
+            using (var fs = file.OpenRead())
+            {
+                config.ContentType = MimeTypeHelper.GetMimeType(file.FullName);
+                return StoreFile(containerName, virtualFilename, fs, config);
+            }
         }
 
         public static CloudBlockBlob StoreFile(string containerName, string virtualFilename, FileInfo file, bool replace = true)
         {
             using (var fs = file.OpenRead())
             {
-                return StoreFile(containerName, virtualFilename, fs, replace);
+                var contenttype = MimeTypeHelper.GetMimeType(file.FullName);
+
+                return StoreFile(containerName, virtualFilename, fs,new StorageFileConfig()
+                    {
+                        Replace = replace,
+                        ContentType = contenttype
+                    });
             }
         }
 
