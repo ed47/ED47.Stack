@@ -30,6 +30,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             get { return _file ?? (_file = CouchBase.File.Get(FileId)); }
         }
 
+
+        //A redifin
+        public static IEnumerable<FileBoxItem> GetByFileBoxId(int id)
+        {
+            throw new NotImplementedException(); 
+        }
+
         public static FileBoxItem Get(int id)
         {
             return CouchbaseRepository.Get<FileBoxItem>(new {Id = id});
