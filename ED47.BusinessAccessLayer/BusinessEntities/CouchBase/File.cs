@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using ED47.BusinessAccessLayer.Couchbase;
+using ED47.BusinessAccessLayer.Tools;
 using ED47.Stack.Web;
 using Ninject;
 
