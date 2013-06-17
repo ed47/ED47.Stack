@@ -10,19 +10,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 {
     public class FileBoxItem :BaseDocument,IFileBoxItem
     {
-        public static FileBoxItem CreateNew(int fileBoxId, IFile file, string comment = null)
-        {
-            var fileBoxItem = new FileBoxItem
-            {
-                FileBoxId = fileBoxId,
-                FileId = file.Id,
-                Name = file.Name,
-                FileExtension = Path.GetExtension(file.Name),
-                Comment = comment
-            };
-            fileBoxItem.Save();
-            return fileBoxItem;
-        }
 
         public string Name { get; set; }
 
@@ -43,6 +30,25 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             get { return _file ?? (_file = CouchBase.File.Get(FileId)); }
         }
 
+        public static FileBoxItem Get(int id)
+        {
+            return CouchbaseRepository.Get<FileBoxItem>(new {Id = id});
+        }
+
+        public static FileBoxItem CreateNew(int fileBoxId, IFile file, string comment = null)
+        {
+            var fileBoxItem = new FileBoxItem
+            {
+                FileBoxId = fileBoxId,
+                FileId = file.Id,
+                Name = file.Name,
+                FileExtension = Path.GetExtension(file.Name),
+                Comment = comment
+            };
+            fileBoxItem.Save();
+            return fileBoxItem;
+        }
+        
         public IFile LoadFile()
         {
             return CouchBase.File.Get(FileId);

@@ -165,10 +165,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
             if (commentOrder.HasValue)
             {
-                if ((CommentOrder)commentOrder == CommentOrder.RecentFirst)
-                    query = query.OrderByDescending(el => el.CreationDate);
-                else
-                    query = query.OrderBy(el => el.CreationDate);
+                query = (CommentOrder)commentOrder == CommentOrder.RecentFirst ? query.OrderByDescending(el => el.CreationDate) : query.OrderBy(el => el.CreationDate);
             }
             else
                 query = query.OrderBy(el => el.CreationDate);
