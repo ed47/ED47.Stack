@@ -60,7 +60,7 @@
                 }
                 
                 var update = {};
-
+             
                 $.each(differences.value, function () {
                     if (this.changed !== "equal") {
                         if (this.changed === "object change") {
@@ -99,7 +99,7 @@
                         if (target.length !== 0) {
                             target.val(data.Values[property]);
                             target.closest(".control-group").addClass("success");
-                            form.trigger("autosavepropertyset", { form: form, name: property });
+                            form.trigger("autosavepropertyset", { form: form, name: property, value:  data.Values[property]});
                         }
                     }
 

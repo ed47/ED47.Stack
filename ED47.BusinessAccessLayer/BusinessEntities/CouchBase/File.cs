@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
 using ED47.BusinessAccessLayer.Couchbase;
+using ED47.BusinessAccessLayer.Tools;
 using ED47.Stack.Web;
 using Ninject;
 
@@ -169,6 +171,48 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
         public static File Upload(string businessKey, int groupId = 0)
         {
             return Upload<File>(businessKey, groupId);
+        }
+
+        public static File UploadAndResize(string businessKey, int w, int h , int groupId = 0)
+        {
+            return UploadAndResize<File>(businessKey, w, h, groupId);
+        }
+
+
+        public static TFile UploadAndResize<TFile>(string businessKey, int w, int h, int groupId = 0) where TFile : File, new()
+        {
+            var cxt = HttpContext.Current;
+            if (cxt == null) return null;
+
+            if (cxt.Request.Files.Count == 0) return null;
+
+
+            var temp = Path.GetTempFileName();
+            var file = cxt.Request.Files[0];
+
+            if (!file.ContentType.StartsWith("image/"))
+                return null;
+            
+            var validExtensions = new[] {".gif", ".jpeg",".jpg",".png"};
+            var fileName = Path.GetFileName(file.FileName);
+            var ext = Path.GetExtension(fileName);
+
+            if (validExtensions.Contains(ext.ToLower()))
+            {
+                var tmpFileName = Path.GetTempPath() + Guid.NewGuid() + ext;
+                file.SaveAs(tmpFileName);
+                ImageUtilities.Resize(tmpFileName, temp, w, h);
+                var res = CreateNewFile<TFile>(fileName, businessKey, groupId, false);
+                var resized = System.IO.File.OpenRead(temp);
+                using (var s = res.OpenWrite())
+                {
+                    resized.CopyTo(s);
+                }
+                resized.Dispose();
+                return res;
+            }
+            return null;
+
         }
 
         public static File GetFileByKey(string businessKey)

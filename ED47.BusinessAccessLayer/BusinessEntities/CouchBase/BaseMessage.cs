@@ -103,8 +103,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
 
         public virtual void SetBody(object data = null)
         {
-            if (!String.IsNullOrWhiteSpace(Email.Body))
-                return;
+//            if (!String.IsNullOrWhiteSpace(Email.Body))
+//                return;
 
             var tpl = GetBodyTpl();
             Email.Body = tpl != null ? tpl.Apply(data ?? Data ?? this) : (data != null ? data.ToString() : "No body");
@@ -129,6 +129,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
             if (deleteEmail)
                 Email.Delete();
             base.Delete();
+        }
+
+        public void SetOpenDate()
+        {
+
+            OpenDate = DateTime.Now;
+            Save();
         }
     }
 }
