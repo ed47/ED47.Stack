@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using ED47.BusinessAccessLayer.Couchbase;
+using Newtonsoft.Json;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 {
-    public class Comment : BaseDocument,IComment
+    public class Comment : IComment
     {
         protected static readonly ICollection<CommentNotifier> Notifiers = new List<CommentNotifier>();
 
@@ -16,32 +14,27 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             Notifiers.Add(notifier);
         }
 
-        [MaxLength(250)]
         public string BusinessKey { get; set; }
         public string Body { get; set; }
-        public int? CommenterId { get; set; }
-        public int? FileBoxId { get; set; }
+        public string Creator { get; set; }
+        public DateTime CreationDate { get; set; }
         public bool IsReadOnly { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletionDate { get; set; }
-        public string CommentType { get; set; }
-
-        /// <summary>
-        /// Returns the comments by their business key.
-        /// </summary>
-        /// <param name="businessKey">The business key to get comments for.</param>
-        [Obsolete("User Get() instead.")]
-        public static IEnumerable<IComment> GetByBusinessKey(string businessKey)
+        List<Comment> Comments = new List<Comment>();
+        public IEnumerable<IComment> Replies
         {
-            Notifiers.ToList().ForEach(el => el.TryNotify(businessKey, CommentActionType.View));
+            get { return Comments; }
+        }
+        private IFileBox _fileBox;
 
-            return BaseUserContext.Instance.Repository
-                    .Where<Entities.Comment, Comment>(el => el.BusinessKey == businessKey)
-                    .OrderByDescending(el => el.CreationDate)
-                    .ToList();
+        public IFileBox FileBox
+        {
+            get { return _fileBox ?? (_fileBox = CouchBase.Comment.FileBox.CreateNew("comment")); }
+            set { _fileBox = value; }
         }
 
-        public static IComment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null, bool? encrypted = false)
+        public static IComment Create(string body, string creator = null, bool? encrypted = false)
         {
             Comment newComment;
 
@@ -50,28 +43,17 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             else
                 newComment = new EncryptedComment();
 
-            newComment.BusinessKey = businessKey;
-            newComment.Body = comment.Trim();
-            newComment.CommenterId = commenterId;
-            newComment.Save();
-            newComment.AddFiles(fileIds);
-            Notifiers.ToList().ForEach(el => el.TryNotify(newComment, CommentActionType.New));
-            MakePreviousReadOnly(newComment.Id, newComment.BusinessKey);
-         
+            newComment.BusinessKey = Guid.NewGuid().ToString();
+            newComment.Body = body.Trim();
+            newComment.Creator = creator;
+            newComment.CreationDate = DateTime.UtcNow;
             return newComment;
         }
 
-        private static void MakePreviousReadOnly(int currentCommentId, string businessKey)
-        {
-            BaseUserContext.Instance.Repository.MakePreviousCommentReadOnly(currentCommentId, businessKey);
-        }
-
-        private void AddFiles(IEnumerable<int> fileIds)
+        public void AddFiles(IEnumerable<int> fileIds)
         {
             if (fileIds == null)
                 return;
-
-            var filebox = GetOrCreateFileBox();
 
             foreach (var fileId in fileIds)
             {
@@ -79,7 +61,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
                 if (file != null)
                 {
-                    FileBoxItem.CreateNew(filebox.Id, file);
+                    FileBox.AddFile(file);
                 }
             }
         }
@@ -90,91 +72,56 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         /// <param name="files">The FileBoxItems to add to the comment.</param>
         public void AddFiles(IEnumerable<IFileBoxItem> files)
         {
-            var filebox = GetOrCreateFileBox();
-
             foreach (var fileBoxItem in files)
             {
-                FileBoxItem.CreateNew(filebox.Id, fileBoxItem.File);
+                FileBox.AddFile(fileBoxItem.File);
             }
         }
 
-        private IFileBox GetOrCreateFileBox()
+        public IComment Reply(string comment, string creator = null, bool? encrypted = false)
         {
-            IFileBox filebox;
+            if (!CanReply()) return null;            
+            var newComment = Create(comment, creator,encrypted);
+            Comments.Add((Comment)newComment);
+            return newComment;
+        }
 
-            if (FileBoxId == null)
+        public bool CanWrite()
+        {
+            return !Replies.Any() && !IsDeleted;
+        }
+
+        public bool CanRead()
+        {
+            return !IsDeleted;
+        }
+
+        public bool CanDelete()
+        {
+            return true;
+        }
+
+        public bool CanReply()
+        {
+            return !IsDeleted;
+        }
+
+        public bool Delete()
+        {
+            if (CanDelete())
             {
-                filebox = CouchBase.Comment.FileBox.CreateNew("Comment");
-                FileBoxId = filebox.Id;
-                Save();
+                IsDeleted = true;
+                return true;
             }
-            else
-                filebox = FileBox;
-            return filebox;
+
+            return false;
         }
 
-        private IFileBox _fileBox;
-        public IFileBox FileBox
+        public void AddFile(IFile file)
         {
-            get { return _fileBox ?? (_fileBox = FileBoxId.HasValue ? CouchBase.Comment.FileBox.Get(FileBoxId.Value) : null); }
+            FileBox.AddFile(file);
         }
 
-
-        //public void OnCommentSaved(object sender, EventArgs e)
-        //{
-        //    BaseUserContext.Instance.Commited -= OnCommentSaved;
-        //    Notifiers.ToList().ForEach(el => el.TryNotify(this, CommentActionType.Edit));
-        //}
-            
-
-        public new void Save()
-        {
-            //BaseUserContext.Instance.Repository.Update<Entities.Comment, Comment>(this);
-            base.Save();
-            //BaseUserContext.Instance.Commited += OnCommentSaved;
-            Notifiers.ToList().ForEach(el => el.TryNotify(this, CommentActionType.Edit));
-        }
-
-        public new void Delete()
-        {
-            //BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.Comment>(this.Id);
-            base.Delete();
-            IsDeleted = true;
-            Notifiers.ToList().ForEach(el => el.TryNotify(this, CommentActionType.Delete));
-        }
-
-        public void AddFile(File file)
-        {
-            var filebox = GetOrCreateFileBox();
-            FileBoxItem.CreateNew(filebox.Id, file);
-        }
-
-        public enum CommentOrder
-        {
-            OldestFirst = 0,
-            RecentFirst = 1
-        }
-
-        public static IEnumerable<TComment> Get<TComment>(string businessKey, int? commentOrder, bool isEncrypted, bool isReadOnly, int? maxComments) where TComment : Comment, new()
-        {
-            Notifiers.ToList().ForEach(el => el.TryNotify(businessKey, CommentActionType.View));
-
-            var query = BaseUserContext.Instance.Repository
-                                           .GetQueryableSet<Entities.Comment, TComment>()
-                                           .Where(el => el.BusinessKey == businessKey);
-
-            if (commentOrder.HasValue)
-            {
-                query = (CommentOrder)commentOrder == CommentOrder.RecentFirst ? query.OrderByDescending(el => el.CreationDate) : query.OrderBy(el => el.CreationDate);
-            }
-            else
-                query = query.OrderBy(el => el.CreationDate);
-
-            if (maxComments.HasValue)
-                query = query.Take(maxComments.Value);
-
-            return Repository.Convert<Entities.Comment, TComment>(query).ToList();
-        }
     }
 
     public class EncryptedComment : Comment
