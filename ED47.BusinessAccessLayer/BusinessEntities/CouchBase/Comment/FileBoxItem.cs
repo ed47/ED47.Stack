@@ -1,28 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using ED47.BusinessAccessLayer.Couchbase;
 using Newtonsoft.Json;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 {
-    public class FileBoxItem :BaseDocument,IFileBoxItem
+    public class FileBoxItem :IFileBoxItem
     {
-        public static FileBoxItem CreateNew(int fileBoxId, IFile file, string comment = null)
-        {
-            var fileBoxItem = new FileBoxItem
-            {
-                FileBoxId = fileBoxId,
-                FileId = file.Id,
-                Name = file.Name,
-                FileExtension = Path.GetExtension(file.Name),
-                Comment = comment
-            };
-            fileBoxItem.Save();
-            return fileBoxItem;
-        }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 
@@ -30,9 +14,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
         public string Comment { get; set; }
 
-        public int FileBoxId { get; set; }
-
         public int FileId { get; set; }
+
+        public DateTime CreationDate { get; set; }
 
 
         private IFile _file;
@@ -43,14 +27,23 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             get { return _file ?? (_file = CouchBase.File.Get(FileId)); }
         }
 
+        public static FileBoxItem CreateNew(IFile file, string comment = null)
+        {
+            var fileBoxItem = new FileBoxItem
+            {
+                Id = Guid.NewGuid().ToString(),
+                FileId = file.Id,
+                Name = file.Name,
+                FileExtension = Path.GetExtension(file.Name),
+                Comment = comment,
+                CreationDate = DateTime.UtcNow
+            };
+            return fileBoxItem;
+        }
+        
         public IFile LoadFile()
         {
             return CouchBase.File.Get(FileId);
-        }
-
-        public new void Delete()
-        {
-            base.Delete();
         }
     }
 }

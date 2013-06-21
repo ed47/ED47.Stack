@@ -16,7 +16,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
     /// <summary>
     /// Represents a user comment.
     /// </summary>
-    public class Comment : BusinessEntity,IComment
+    public class Comment : BusinessEntity
     {
         protected static readonly ICollection<CommentNotifier> Notifiers = new List<CommentNotifier>();
 
@@ -121,9 +121,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
             if (FileBoxId == null)
             {
-                filebox = BusinessEntities.FileBox.CreateNew("Comment");
-                this.FileBoxId = filebox.Id;
-                this.Save();
+                filebox = FileBox.CreateNew("Comment");
+                FileBoxId = filebox.Id;
+                Save();
             }
             else
                 filebox = this.FileBox;
@@ -152,7 +152,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public void Delete()
         {
-            BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.Comment>(this.Id);
+            BaseUserContext.Instance.Repository.SoftDelete<Entities.Comment>(Id);
             this.IsDeleted = true;
             Notifiers.ToList().ForEach(el => el.TryNotify(this, CommentActionType.Delete));
         }
@@ -161,12 +161,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             var filebox = GetOrCreateFileBox();
             FileBoxItem.CreateNew(filebox.Id, file);
-        }
-
-        public enum CommentOrder
-        {
-            OldestFirst = 0,
-            RecentFirst = 1
         }
 
         public static IEnumerable<TComment> Get<TComment>(string businessKey, int? commentOrder, bool isEncrypted, bool isReadOnly, int? maxComments) where TComment : Comment, new()
@@ -179,7 +173,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
             if (commentOrder.HasValue)
             {
-                if ((Comment.CommentOrder)commentOrder == Comment.CommentOrder.RecentFirst)
+                if ((CommentOrder)commentOrder == CommentOrder.RecentFirst)
                     query = query.OrderByDescending(el => el.CreationDate);
                 else
                     query = query.OrderBy(el => el.CreationDate);

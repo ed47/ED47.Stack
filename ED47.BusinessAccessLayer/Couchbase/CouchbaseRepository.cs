@@ -127,7 +127,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
             if (limit > 0) view.Limit(limit);
             if (!allowStale) view.Stale(StaleMode.False);
             if (!string.IsNullOrEmpty(startKey)) view.StartKey(startKey);
-            if (!string.IsNullOrEmpty(endKey)) view.StartKey(endKey);
+            if (!string.IsNullOrEmpty(endKey)) view.EndKey(endKey);
             var res = new List<TDocument>();
             foreach (var viewRow in view)
             {

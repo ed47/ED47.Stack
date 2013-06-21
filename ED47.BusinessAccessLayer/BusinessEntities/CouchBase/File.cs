@@ -230,5 +230,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
             FileRepository.Delete(this);
             return base.Delete();
         }
+
+        public TFile Duplicate<TFile>()where TFile : File, new()
+        {
+            var newFile =  CreateNewFile<TFile>(Name, BusinessKey, GroupId, false);
+            using (var s = newFile.OpenWrite())
+            {
+                CopyTo(s);
+            }
+            return newFile;
+        }
     }
 }
