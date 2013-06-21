@@ -14,6 +14,12 @@ namespace ED47.BusinessAccessLayer.Azure
             CloudConfigurationManager.GetSetting("StorageConnectionString"));
 
 
+        public static void DeleteBlob(string container, string blobname)
+        {
+            var blob = Storage.GetBlob(container, blobname);
+            blob.DeleteIfExists();
+        }
+
         public static bool CreateContainer(string containerName, BlobContainerPermissions permissions)
         {
             var client = StorageAccount.CreateCloudBlobClient();
