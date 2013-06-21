@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web;
 using ED47.BusinessAccessLayer.Couchbase;
 using Newtonsoft.Json;
 
@@ -21,7 +22,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         }
         public DateTime? DeletionDate { get; set; }
         public bool IsDeleted { get; set; }
-        public bool IsReadOnly { get; set; }
+
+        public string Title { get; set; }
+
         public bool IsEncrypted { get; set; }
         public CommentOrder CommentOrder { get; set; }
         public HashSet<string> Notifiers { get; set; }
@@ -35,6 +38,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             get { return Comments; }
         }
 
+        [JsonIgnore]
         public Dictionary<string,IComment> AllComments = new Dictionary<string, IComment>();
 
         internal static string CalculateKey(string businessKey)
@@ -64,13 +68,18 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         }
 
 
-        public static TDiscussion GetOrCreate<TDiscussion>(string businessKey, bool isEncrypted = false, CommentOrder commentOrder = CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TDiscussion : class, IDiscussion, IDocument, new()
+        public static TDiscussion GetOrCreate<TDiscussion>(string businessKey,string title=null, string body=null,string creator=null, bool isEncrypted = false, CommentOrder commentOrder = CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TDiscussion : class, IDiscussion, IDocument, new()
         {
-            var discussion = CouchbaseRepository.Get<TDiscussion>(new {BusinessKey = businessKey});
-            return discussion ?? Create<TDiscussion>(businessKey, isEncrypted, commentOrder, maxComments, isReadOnly);
+            var discussion = Get<TDiscussion>(businessKey);
+            return discussion ?? Create<TDiscussion>(businessKey, title,body,creator, isEncrypted, commentOrder, maxComments, isReadOnly);
         }
 
-        public static TDiscussion Create<TDiscussion>(string businessKey, bool isEncrypted = false, CommentOrder commentOrder = CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TDiscussion : class, IDiscussion, IDocument, new()
+        public static TDiscussion Get<TDiscussion>(string businessKey) where TDiscussion : class, IDiscussion, IDocument, new()
+        {
+            return CouchbaseRepository.Get<TDiscussion>(new {BusinessKey = businessKey});
+        }
+
+        public static TDiscussion Create<TDiscussion>(string businessKey,string title=null, string body=null,string creator=null, bool isEncrypted = false, CommentOrder commentOrder = CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TDiscussion : class, IDiscussion, IDocument, new()
         {
             var newDiscussion = new TDiscussion
             {
@@ -78,6 +87,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
                 Key = CalculateKey(businessKey),
                 CommentOrder = commentOrder,
                 IsEncrypted = isEncrypted,
+                Title = title,
+                Body = body,
+                Creator = creator,
                 Notifiers = new HashSet<string>()
             };
 
@@ -89,7 +101,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         public IComment Reply(string body, string creator = null, bool? encrypted = false)
         {
             if (!CanReply()) return null;
-            IsReadOnly = true;
             var newComment = Comment.Create(body, creator, encrypted);
             Comments.Add((Comment) newComment);
             return newComment;
@@ -105,12 +116,46 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
         public void AddFile(IFile file)
         {
-            FileBox.AddFile(file);
+            FileBox.AddFile(file,BusinessKey);
+        }
+
+        public void AddFile(string businesskey, IFile file )
+        {
+            if (!AllComments.ContainsKey(businesskey))
+                return ;
+            var comment = AllComments[businesskey];
+            comment.AddFile(file);
+        }
+
+        public bool Edit(string body)
+        {
+            if (CanWrite())
+            {
+                Body = body;
+                return true;
+            }
+            return false;
+        }
+
+        public bool Edit(string businesskey, string body)
+        {
+            if (!AllComments.ContainsKey(businesskey))
+                return false;
+            var comment = AllComments[businesskey];
+            return comment.Edit(body);
+        }
+
+        public bool Delete(string businesskey)
+        {
+            if (!AllComments.ContainsKey(businesskey))
+                return false;
+            var comment = AllComments[businesskey];
+            return comment.Delete();
         }
 
         public bool CanWrite()
         {
-            return !IsReadOnly && !IsDeleted;
+            return Replies.All(el => el.IsDeleted) && !IsDeleted;
         }
 
         public bool CanRead()
