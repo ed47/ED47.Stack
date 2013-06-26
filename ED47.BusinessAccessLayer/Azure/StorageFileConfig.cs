@@ -12,8 +12,11 @@
             ContentType = "application/octet-stream";
             CacheControl = "public";
             Replace = false;
+            Gzip = false;
+            
         }
 
+        public bool Gzip { get; set; }
         public string ContentType { get; set; }
         public string CacheControl { get; set; }
         public string ContentEncoding { get; set; }
