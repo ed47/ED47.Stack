@@ -18,7 +18,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         public string Body { get; set; }
         public string Creator { get; set; }
         public DateTime CreationDate { get; set; }
-        public bool IsReadOnly { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletionDate { get; set; }
         List<Comment> Comments = new List<Comment>();
@@ -88,7 +87,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
         public bool CanWrite()
         {
-            return !Replies.Any() && !IsDeleted;
+            return Replies.All(el => el.IsDeleted) && !IsDeleted;
         }
 
         public bool CanRead()
@@ -122,6 +121,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             FileBox.AddFile(file);
         }
 
+        public bool Edit(string body)
+        {
+            if (CanWrite())
+            {
+                Body = body;
+                return true;
+            }
+            return false;
+        }
     }
 
     public class EncryptedComment : Comment
