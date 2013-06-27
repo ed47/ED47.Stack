@@ -41,7 +41,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         [JsonIgnore]
         public Dictionary<string,IComment> AllComments = new Dictionary<string, IComment>();
 
-        internal static string CalculateKey(string businessKey)
+        public static string CalculateKey(string businessKey)
         {
             return ("discussion?key=" + businessKey).ToLower();
         }
@@ -106,11 +106,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             return newComment;
         }
 
-        public IComment Reply(string businesskey, string body, string creator = null, bool? encrypted = false)
+        public IComment Reply(string businessKey, string body, string creator = null, bool? encrypted = false)
         {
-            if (!AllComments.ContainsKey(businesskey))
+            if (!AllComments.ContainsKey(businessKey))
                 return null;
-            var comment = AllComments[businesskey];
+            var comment = AllComments[businessKey];
             return comment.Reply(body, creator, encrypted);
         }
 
@@ -119,13 +119,23 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             FileBox.AddFile(file,BusinessKey);
         }
 
-        public void AddFile(string businesskey, IFile file )
+        public void AddFile(string businessKey, IFile file )
         {
-            if (!AllComments.ContainsKey(businesskey))
+            if (!AllComments.ContainsKey(businessKey))
                 return ;
-            var comment = AllComments[businesskey];
+            var comment = AllComments[businessKey];
             comment.AddFile(file);
         }
+
+
+        public bool DeleteFile(string businessKey, string fileId)
+        {
+            if (!AllComments.ContainsKey(businessKey))
+                return false;
+            var comment = AllComments[businessKey];
+            return comment.FileBox.DeleteFile(fileId);
+        }
+
 
         public bool Edit(string body)
         {

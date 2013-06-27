@@ -9,12 +9,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
     public class FileBox : IFileBox
     {
         public string ParentTypeName { get; set; }
+        [JsonProperty]
+        List<FileBoxItem> _filesBoxItems = new List<FileBoxItem>();
         [JsonIgnore]
-        public IEnumerable<IFileBoxItem> _filesBoxItems { get; set; }
         public IEnumerable<IFileBoxItem> FilesBoxItems
         {
-            get { return _filesBoxItems ?? (_filesBoxItems = new List<FileBoxItem>()); }
-            set { _filesBoxItems = value; }
+            get { return _filesBoxItems; }
+            
         }
         public string Id { get; set; }
 
@@ -31,13 +32,19 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             }
 
             var fileBoxItem = FileBoxItem.CreateNew(newFile, comment);
-            FilesBoxItems.ToList().Add(fileBoxItem);
+            _filesBoxItems.Add(fileBoxItem);
         }
 
         public void AddFile(IFile file, string comment = null)
         {
             var fileBoxItem = FileBoxItem.CreateNew(file, comment);
-            FilesBoxItems.ToList().Add(fileBoxItem);
+            _filesBoxItems.Add(fileBoxItem);
+        }
+
+        public bool DeleteFile(string businessKey)
+        {
+            var fileItem = _filesBoxItems.SingleOrDefault(el => el.Id == businessKey);
+            return fileItem != null && fileItem.Delete();
         }
 
         public static IFileBox CreateNew(string parentTypeName)
