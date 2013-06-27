@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
-    public class FileBoxItem : BusinessEntity, IFileBoxItem
+    public class FileBoxItem : BusinessEntity
     {
         public  int Id { get; set; }
 

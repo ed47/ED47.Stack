@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Web;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     public interface IComment
     {
-        int Id { get; set; }
         string BusinessKey { get; set; }
         string Body { get; set; }
-        int? CommenterId { get; set; }
+        string Creator { get; set; }
         DateTime CreationDate { get; set; }
-        int? FileBoxId { get; set; }
-        bool IsReadOnly { get; set; }
-        bool IsDeleted { get; set; }
+        IFileBox FileBox { get; set; }
         DateTime? DeletionDate { get; set; }
-        string CommentType { get; set; }
+        IEnumerable<IComment> Replies { get; }
+        bool IsDeleted { get; set; }
+        IComment Reply(string body, string creator = null, bool? encrypted = false);
+        bool CanWrite();
+        bool CanRead();
+        bool CanDelete();
+        bool CanReply();
+        bool Delete();
+        void AddFile(IFile file);
+        //event EventHandler OnAdd;
+        //event EventHandler OnRemove;
+        bool Edit(string body);
     }
 }

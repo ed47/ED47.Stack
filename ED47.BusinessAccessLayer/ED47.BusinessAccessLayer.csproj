@@ -164,10 +164,13 @@
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\CommentAccessDeniedException.cs" />
     <Compile Include="BusinessEntities\CommentDiscussion.cs" />
+    <Compile Include="BusinessEntities\CommentOrder.cs" />
+    <Compile Include="BusinessEntities\CouchBase\Comment\Discussion.cs" />
     <Compile Include="BusinessEntities\CouchBase\Comment\FileBox.cs" />
     <Compile Include="BusinessEntities\CouchBase\Comment\FileBoxItem.cs" />
     <Compile Include="BusinessEntities\CouchBase\Comment\Comment.cs" />
     <Compile Include="BusinessEntities\IComment.cs" />
+    <Compile Include="BusinessEntities\IDiscussion.cs" />
     <Compile Include="BusinessEntities\IFileBox.cs" />
     <Compile Include="BusinessEntities\IFileBoxItem.cs" />
     <Compile Include="BusinessEntityHelper.cs" />

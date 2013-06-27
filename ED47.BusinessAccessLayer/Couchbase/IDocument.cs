@@ -10,6 +10,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         string GetKey();
         void Init();
         void AfterSave();
+        bool Save();
     }
 
    
