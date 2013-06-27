@@ -18,6 +18,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
         public DateTime CreationDate { get; set; }
 
+        public bool IsDeleted { get; set; }
 
         private IFile _file;
 
@@ -45,5 +46,22 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         {
             return CouchBase.File.Get(FileId);
         }
+
+        public bool Delete()
+        {
+            if (CanDelete())
+            {
+                IsDeleted = true;
+                return true;
+            }
+                
+            return false;
+        }
+
+        public bool CanDelete()
+        {
+            return true;
+        }
+
     }
 }

@@ -12,5 +12,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         DateTime CreationDate { get; set; }
         IFile File { get; }
         IFile LoadFile();
+        bool IsDeleted { get; set; }
+        bool Delete();
+        bool CanDelete();
     }
 }
