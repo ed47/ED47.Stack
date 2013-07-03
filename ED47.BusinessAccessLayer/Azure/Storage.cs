@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using ED47.Stack.Web;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
@@ -215,6 +217,44 @@ namespace ED47.BusinessAccessLayer.Azure
                 var virtualPath = fileInfo.FullName.Substring(removePath.Length+1).ToLower();
                 StoreFile(containerName.ToLower(), virtualPath, fileInfo, replace);
             }
+            return true;
+        }
+
+        public static bool RemoveDirectoryLayers(string containerName, string directoryName)
+        {
+            var client = StorageAccount.CreateCloudBlobClient();
+            var container = client.GetContainerReference(containerName.ToLower());
+
+            if (!container.Exists()) return false;
+
+            var directory = container.GetDirectoryReference(directoryName.Substring(0));
+
+            CloudBlobDirectory dira = container.GetDirectoryReference("images");
+            CloudBlobDirectory dirb = dira.GetSubdirectoryReference("layers");
+            CloudBlobDirectory dirc = dirb.GetSubdirectoryReference(directoryName);
+
+            var blobs = dirc.ListBlobs().ToList();
+
+            foreach (var blob in blobs)
+            {
+                if (blob is ICloudBlob)
+                    ((ICloudBlob)blob).DeleteIfExists();
+                else if (blob is CloudBlobDirectory)
+                {
+                    var dird = blob as CloudBlobDirectory;
+                    var subBlobs = dird.ListBlobs().ToList();
+                    foreach (var subblob in subBlobs)
+                    {
+                        var cloudBlob = subblob as ICloudBlob;
+                        if (cloudBlob != null)
+                            cloudBlob.DeleteIfExists();
+                    }
+                }
+                
+            }
+                
+                
+
             return true;
         }
 
