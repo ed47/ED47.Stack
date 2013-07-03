@@ -64,7 +64,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             newComment.BusinessKey = businessKey;
             newComment.Body = comment.Trim();
             newComment.CommenterId = commenterId;
-
+            
             if (encrypted == null || !encrypted.Value)
                 BaseUserContext.Instance.Repository.Add<Entities.Comment, Comment>(newComment);
             else
