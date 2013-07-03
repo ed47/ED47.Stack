@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.IO.Compression;
 using ED47.Stack.Web;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
@@ -57,9 +58,7 @@ namespace ED47.BusinessAccessLayer.Azure
             {
                 throw new Exception("Invalid container");
             }
-
             var container2 = client.GetContainerReference(newContainer.ToLower());
-
             foreach (var b in container.ListBlobs())
             {
                 var sourceBlobReference = container.GetBlockBlobReference(b.Uri.AbsoluteUri);
@@ -165,12 +164,47 @@ namespace ED47.BusinessAccessLayer.Azure
 
             using (fileStream)
             {
-                blockBlob.UploadFromStream(fileStream);
+                if (config.Gzip)
+                {
+                    using (var compressedData = new MemoryStream())
+                    {
+
+                        using (var gzipStream = new GZipStream(compressedData, CompressionMode.Compress))
+                        {
+
+                            var buffer = new byte[1024];
+                            var c = 0;
+
+                            while ((c = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                gzipStream.Write(buffer, 0, c);
+                            }
+                            gzipStream.Close();
+                        }
+
+
+                        using (var tmp = blockBlob.OpenWrite())
+                        {
+                            var data = compressedData.ToArray();
+                            tmp.Write(data, 0, data.Length);
+                            
+                        }
+                    }
+
+
+                }
+                else
+                {
+                    blockBlob.UploadFromStream(fileStream);    
+                }
+
+
+                
             }
 
             blockBlob.Properties.ContentType = config.ContentType;
             blockBlob.Properties.CacheControl = config.CacheControl;
-            blockBlob.Properties.ContentEncoding = config.ContentEncoding;
+            blockBlob.Properties.ContentEncoding = String.IsNullOrWhiteSpace(config.ContentEncoding) ? (config.Gzip ? "gzip" : "") : config.ContentEncoding ;
             blockBlob.Properties.ContentLanguage = config.ContentLanguage;
             blockBlob.SetProperties();
             
@@ -201,7 +235,8 @@ namespace ED47.BusinessAccessLayer.Azure
             }
         }
 
-        public static bool StoreDirectory(string containerName, DirectoryInfo directory, bool replace = true, bool rootAsContainer = true)
+        public static bool StoreDirectory(string containerName, DirectoryInfo directory, StorageFileConfig defaultConfig,
+                                          bool rootAsContainer = true)
         {
             if (!directory.Exists) return false;
             var dirName = directory.Name;
@@ -211,11 +246,10 @@ namespace ED47.BusinessAccessLayer.Azure
 
             var files = directory.GetFiles("*.*", SearchOption.AllDirectories);
 
-
             foreach (var fileInfo in files)
             {
-                var virtualPath = fileInfo.FullName.Substring(removePath.Length+1).ToLower();
-                StoreFile(containerName.ToLower(), virtualPath, fileInfo, replace);
+                var virtualPath = fileInfo.FullName.Substring(removePath.Length + 1).ToLower();
+                StoreFile(containerName.ToLower(), virtualPath, fileInfo, defaultConfig);
             }
             return true;
         }
@@ -256,6 +290,11 @@ namespace ED47.BusinessAccessLayer.Azure
                 
 
             return true;
+        }
+
+        public static bool StoreDirectory(string containerName, DirectoryInfo directory, bool replace = true, bool rootAsContainer = true)
+        {
+            return StoreDirectory(containerName, directory, new StorageFileConfig() {Replace = replace}, rootAsContainer);
         }
 
     }

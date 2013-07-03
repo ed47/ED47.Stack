@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
@@ -22,5 +23,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         void AddFile(IFile file);
         //event EventHandler OnAdd;
         //event EventHandler OnRemove;
+        bool Edit(string body);
     }
 }
