@@ -54,26 +54,33 @@ namespace ED47.BusinessAccessLayer
             if (!jsonProperties.Any())
                 return;
 
-            var json = new JObject();
+            var targetType = target.GetType();
+            var targetJsonProperties = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                            .Where(el => el.GetCustomAttributes(typeof(JsonDataFieldAttribute), false).Any())
+                                            .ToList();
+
+            if (!targetJsonProperties.Any())
+                throw new ApplicationException(String.Format("BusinessEntity '{0}' has properties marked with JsonDataFieldAttribute but target Entity '{1}' has no target JSON property marked with JsonDataFieldAttribute!", sourceType.Name, targetType.Name));
+
+            if (targetJsonProperties.Count() > 1)
+                throw new ApplicationException(String.Format("Entity '{0}' has more than one property marked with JsonDataFieldAttribute!", sourceType.Name));
+
+            var targetJsonProperty = targetJsonProperties.First();
+            var targetValue = targetJsonProperty.GetValue(target, null) as String;
+            var json = targetValue == null ? new JObject() : JObject.Parse(targetValue);
             
             foreach (var propertyInfo in jsonProperties)
             {
-                var value = propertyInfo.GetValue(source, null);
-                json.Add(propertyInfo.Name, JToken.FromObject(value));
+                var value = JToken.FromObject(propertyInfo.GetValue(source, null));
+                var existingProperty = json.Property(propertyInfo.Name);
+
+                if (existingProperty == null)
+                    json.Add(propertyInfo.Name, value);
+                else
+                    existingProperty.Value = value;
             }
 
-            var targetType = target.GetType();
-            var targetJsonProperty = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                        .Where(el => el.GetCustomAttributes(typeof(JsonDataFieldAttribute), false).Any())
-                                        .ToList();
-
-            if (!targetJsonProperty.Any())
-                throw new ApplicationException(String.Format("BusinessEntity '{0}' has properties marked with JsonDataFieldAttribute but target Entity '{1}' has no target JSON property marked with JsonDataFieldAttribute!", sourceType.Name, targetType.Name));
-
-            if (targetJsonProperty.Count() > 1)
-                throw new ApplicationException(String.Format("Entity '{0}' has more than one property marked with JsonDataFieldAttribute!", sourceType.Name));
-
-            targetJsonProperty.First().SetValue(target, json.ToString(Formatting.None), null);
+            targetJsonProperty.SetValue(target, json.ToString(Formatting.None), null);
         }
     }
 }
