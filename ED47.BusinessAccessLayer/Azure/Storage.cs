@@ -190,16 +190,11 @@ namespace ED47.BusinessAccessLayer.Azure
                             
                         }
                     }
-
-
                 }
                 else
                 {
                     blockBlob.UploadFromStream(fileStream);    
                 }
-
-
-                
             }
 
             blockBlob.Properties.ContentType = config.ContentType;
