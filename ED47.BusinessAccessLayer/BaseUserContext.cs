@@ -120,7 +120,7 @@ namespace ED47.BusinessAccessLayer
         {
             get
             {
-                return  new CacheItemPolicy(){AbsoluteExpiration = DateTime.Now + TimeSpan.FromMinutes(10)};
+                return  new CacheItemPolicy {AbsoluteExpiration = DateTime.Now.AddMinutes(10)};
             }
         }
 

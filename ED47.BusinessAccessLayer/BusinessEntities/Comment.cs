@@ -47,7 +47,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             Notifiers.ToList().ForEach(el => el.TryNotify(businessKey, CommentActionType.View));
 
             return BaseUserContext.Instance.Repository
-                    .Where<Entities.Comment, Comment>(el => el.BusinessKey == businessKey)
+                    .Where<Entities.Comment, Comment>(el => el.BusinessKey == businessKey, new[] { "FileBox" })
                     .OrderByDescending(el => el.CreationDate)
                     .ToList();
         }
@@ -64,7 +64,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             newComment.BusinessKey = businessKey;
             newComment.Body = comment.Trim();
             newComment.CommenterId = commenterId;
-
+            
             if (encrypted == null || !encrypted.Value)
                 BaseUserContext.Instance.Repository.Add<Entities.Comment, Comment>(newComment);
             else
@@ -186,9 +186,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             }
             else
                 query = query.OrderBy(el => el.CreationDate);
-
-            if (maxComments.HasValue)
-                query = query.Take(maxComments.Value);
 
             return Repository.Convert<Entities.Comment, TComment>(query).ToList();
         }
