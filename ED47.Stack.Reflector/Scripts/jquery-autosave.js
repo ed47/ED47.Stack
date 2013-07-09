@@ -101,6 +101,10 @@
             });
 
             form.find("select, textarea").on("change", function() {
+                if ($(this).parents(".autosave-ignore").length > 0) {
+                    return;
+                }
+                
                 form.trigger("submit", this);
             });
         }
