@@ -39,7 +39,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public static IEnumerable<FileBoxItem> GetByFileBoxId(int id)
         {
             return BaseUserContext.Instance.Repository
-                    .Where<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileBoxId == id)
+                    .Where<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileBoxId == id && !el.IsDeleted)
                     .OrderByDescending(el => el.CreationDate)
                     .ToList();
         }

@@ -15,7 +15,7 @@
     Plugin.prototype = {
 
         init: function() {
-            
+             
             var view = $(this.element);
             var self = this;
             view.on("click",function(e) {
@@ -68,4 +68,47 @@
 $(function() {
     
     $("a.ajaxlink").livequery(function() { $(this).ajaxlink(); });
+})
+
+
+
+; (function ($, window, document, undefined) {
+
+    var pluginName = "jOneShot",
+        defaults = {
+
+        };
+    function Plugin(element, options) {
+        this.element = element;
+        this.options = $.extend({}, defaults, options);
+        this._defaults = defaults;
+        this._name = pluginName;
+        this.init();
+    }
+
+    Plugin.prototype = {
+
+        init: function () {
+
+            var view = $(this.element);
+           
+            view.on("click", function (e) {
+                $(this).hide();
+            });
+        }
+    };
+
+    $.fn[pluginName] = function (options) {
+        return this.each(function () {
+            if (!$.data(this, "plugin_" + pluginName)) {
+                $.data(this, "plugin_" + pluginName, new Plugin(this, options));
+            }
+        });
+    };
+
+})(jQuery, window, document);
+
+$(function () {
+
+    $("a.one-shot, input[type=submit].one-shot").livequery(function () { $(this).jOneShot(); });
 })

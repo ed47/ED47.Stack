@@ -8,7 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Transactions;
-
+using Newtonsoft.Json;
 using Omu.ValueInjecter;
 
 namespace ED47.BusinessAccessLayer
@@ -355,6 +355,7 @@ namespace ED47.BusinessAccessLayer
         {
             var newEntity = new TEntity();
             newEntity.InjectFrom(businessEntity);
+            newEntity.WriteJsonData(businessEntity);
             Cryptography.EncryptProperties<TBusinessEntity>(newEntity);
 
             var baseDbEntity = newEntity as BaseDbEntity;
@@ -431,6 +432,7 @@ namespace ED47.BusinessAccessLayer
             }
 
             originalEntity.InjectFrom(businessEntity);
+            originalEntity.WriteJsonData(businessEntity);
             Cryptography.EncryptProperties<TBusinessEntity>(originalEntity);
         }
 
@@ -490,9 +492,7 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TResult">The business entity type.</typeparam>
         /// <param name="source">The entity to convert.</param>
         /// <returns>A converted business entity.</returns>
-        public static TResult Convert<TSource, TResult>(TSource source)
-
-            where TResult : class, new()
+        public static TResult Convert<TSource, TResult>(TSource source) where TResult : class, new()
         {
             if (source == null)
                 return null;
@@ -518,6 +518,7 @@ namespace ED47.BusinessAccessLayer
                     BaseUserContext.StoreDynamicInstance(targetType, result as BusinessEntity);
             }
             result.InjectFrom<CustomFlatLoopValueInjection>(source);
+            result.ReadJsonData(source);
             Cryptography.DecryptProperties(result);
             var businessEntity = result as BusinessEntity;
             var dbEntity = source as DbEntity;

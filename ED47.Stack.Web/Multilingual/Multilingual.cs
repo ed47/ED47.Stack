@@ -345,9 +345,12 @@ namespace ED47.Stack.Web.Multilingual
                     currentElement = nextElement;
                 }
                 // ReSharper restore LoopCanBeConvertedToQuery
-            
-                currentElement.SetValue(value);
-            
+                if (currentElement != null)
+                {
+                    var data = new XCData(value);
+                    currentElement.RemoveNodes();
+                    currentElement.Add(data);
+                }
                 document.Save(file);
             }
 

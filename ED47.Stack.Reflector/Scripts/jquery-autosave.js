@@ -50,38 +50,17 @@
             var me = this;
             form.data("initialState", form.serializeArray());
             
-            form.submit(function (e) {
+            form.submit(function (e, data) {
                 e.preventDefault();
+                data = $(data);
                 
-                var differences = objectDiff.diff(form.data("initialState"), form.serializeArray());
-
-                if (differences.changed === "equal") {
-                    return;
+                if (data.prop("tagName") === "OPTION") {
+                    data = data.closest("select");
                 }
-                
+
                 var update = {};
-
-                $.each(differences.value, function () {
-                    if (this.changed !== "equal") {
-                        if (this.changed === "object change") {
-                            update[this.value.name.value] = this.value.value.added;
-                        } else if (this.changed === "added" || this.changed === "removed") { //Multiselect, just grab the current values and throw them at the server
-                            var currentPropety = this.value.name;
-
-                            values = $("[name='" + currentPropety + "']").val();
-                            if (values)
-                                values = values.join(",");
-                            else
-                                values = "";
-
-                            update[currentPropety] = values;
-                        }
-                    }
-                });
-
-                if (!update.Id) {
-                    update.Id = form.find("[name='Id']").val();
-                }
+                update[data.attr("name")] = data.val();
+                update.Id = form.find("[name='Id']").val();
 
                 $.ajax({
                     url: form.attr("action"),
@@ -122,7 +101,11 @@
             });
 
             form.find("select, textarea").on("change", function() {
-                form.submit();
+                if ($(this).parents(".autosave-ignore").length > 0) {
+                    return;
+                }
+                
+                form.trigger("submit", this);
             });
         }
     };
