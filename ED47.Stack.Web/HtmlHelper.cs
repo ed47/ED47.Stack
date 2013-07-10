@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using ED47.Stack.Web.HelperTemplates;
 using Newtonsoft.Json;
@@ -118,6 +119,16 @@ namespace ED47.Stack.Web
                                               Value = ((int)Enum.Parse(enumerationType, el)).ToString(CultureInfo.InvariantCulture)
                                           }).ToList()
                                   , "Value", "Text", selectedValue);
+        }
+        
+        /// <summary>
+        /// Writes a text while preserving the line returns as <br/>
+        /// </summary>
+        /// <param name="htmlHelper">The Razor HTML helper.</param>
+        /// <param name="text">The text to preserve line returns.</param>
+        public static IHtmlString PreserveNewLines(this System.Web.Mvc.HtmlHelper htmlHelper, string text)
+        {
+            return text == null ? null : htmlHelper.Raw(htmlHelper.Encode(text).Replace("\n", "<br/>"));
         }
     }
 }
