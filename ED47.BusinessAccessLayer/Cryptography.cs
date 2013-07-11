@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Caching;
 using System.Security.Cryptography;
+using System.Web.Helpers;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -15,8 +16,14 @@ namespace ED47.BusinessAccessLayer
     {
         public const string EncryptedFlag = "]~[";
         public const string IVFlag = "]*[";
+        public const string KeyHashFlag = "]![";
 
-        private static SymmetricAlgorithm SymmetricAlgorithm { get; set; }
+        private static IDictionary<string, CryptoConfig> Configurations { get; set; }
+
+        static Cryptography()
+        {
+            Configurations = new Dictionary<string, CryptoConfig>();
+        }
 
         /// <summary>
         /// Configures the cryptography for the current application.
@@ -26,17 +33,27 @@ namespace ED47.BusinessAccessLayer
         /// <param name="iv">The cryptographic initialization vector.</param>
         public static void Configure(SymmetricAlgorithm symmetricAlgorithm, byte[] key, byte[] iv)
         {
-            SymmetricAlgorithm = symmetricAlgorithm;
-            SymmetricAlgorithm.Key = key;
-            SymmetricAlgorithm.IV = iv;
-            BaseIV = iv;
+            // ReSharper disable RedundantArgumentDefaultValue
+            var keyHash = Crypto.Hash(key, "sha256");
+            // ReSharper restore RedundantArgumentDefaultValue
+
+            if (Configurations.ContainsKey(keyHash))
+                return;
+
+            symmetricAlgorithm.Key = key;
+            symmetricAlgorithm.IV = iv;
+            Configurations.Add(keyHash, new CryptoConfig
+                                        {
+                                            SymmetricAlgorithm = symmetricAlgorithm,
+                                            BaseIV = iv
+                                        });
         }
 
-        private static byte[] BaseIV { get; set; }
+
 
         public static void EncryptProperties<TBusinessEntity>(object entity)
         {
-            if (SymmetricAlgorithm == null)
+            if (!Configurations.Any())
                 return;
 
             if (entity == null)
@@ -73,7 +90,7 @@ namespace ED47.BusinessAccessLayer
 
         public static void DecryptProperties(object entity)
         {
-            if (SymmetricAlgorithm == null)
+            if (!Configurations.Any())
                 return;
 
             if (entity == null)
@@ -109,16 +126,19 @@ namespace ED47.BusinessAccessLayer
         {
             if (!CheckIsEncrypted(value))
                 return value;
-
-            value = value.Substring(EncryptedFlag.Length);
-            var splitIV = value.Split(IVFlag.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            value = splitIV[0];
             
-            var iv = BaseIV;
-            if (splitIV.Length > 1)
-                iv = Convert.FromBase64String(splitIV[1]);
+            var split = value.Split(new[]{']'}, StringSplitOptions.RemoveEmptyEntries).ToDictionary(el => "]" + el.Substring(0, 2), el => el.Substring(2));
+            value = split[EncryptedFlag];
+            string keyHash;
+            split.TryGetValue(KeyHashFlag, out keyHash);
+            var configuration = CryptoConfig(new[]{keyHash});
+            var iv = configuration.BaseIV;
+            string splitIV;
 
-            using (var decryptor = SymmetricAlgorithm.CreateDecryptor(SymmetricAlgorithm.Key, iv))
+            if(split.TryGetValue(IVFlag, out splitIV))
+                iv = Convert.FromBase64String(splitIV);
+
+            using (var decryptor = configuration.SymmetricAlgorithm.CreateDecryptor(configuration.SymmetricAlgorithm.Key, iv))
             {
                 using (var msEncrypt = new MemoryStream(Convert.FromBase64String(value)))
                 {
@@ -140,9 +160,11 @@ namespace ED47.BusinessAccessLayer
         /// <returns>The encrypted value.</returns>
         public static string Encrypt(string value)
         {
-            SymmetricAlgorithm.GenerateIV();
-            
-            using (var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
+            var configuration = Configurations.Last();
+            configuration.Value.SymmetricAlgorithm.GenerateIV();
+            var iv = configuration.Value.SymmetricAlgorithm.IV;
+
+            using (var encryptor = configuration.Value.SymmetricAlgorithm.CreateEncryptor(configuration.Value.SymmetricAlgorithm.Key, iv))
             {
                 using (var msEncrypt = new MemoryStream())
                 {
@@ -153,7 +175,7 @@ namespace ED47.BusinessAccessLayer
                             //Write all data to the stream.
                             swEncrypt.Write(value);
                         }
-                        return Convert.ToBase64String(msEncrypt.ToArray()) + IVFlag + Convert.ToBase64String(SymmetricAlgorithm.IV);
+                        return Convert.ToBase64String(msEncrypt.ToArray()) + IVFlag + Convert.ToBase64String(iv) + KeyHashFlag + configuration.Key;
                     }
                 }
             }
@@ -199,11 +221,13 @@ namespace ED47.BusinessAccessLayer
         /// Decrypts a stream.
         /// </summary>
         /// <param name="fileStream">The stream to decrypt.</param>
-        public static Stream Decrypt(Stream fileStream)
+        /// <param name="keyHash">The optional hash of the key used to encrypt the file.</param>
+        public static Stream Decrypt(Stream fileStream, string keyHash = null)
         {
             var decryptedStream = new MemoryStream();
+            var configuration = CryptoConfig(new[] { keyHash });
 
-            using (var decryptor = SymmetricAlgorithm.CreateDecryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV))
+            using (var decryptor = configuration.SymmetricAlgorithm.CreateDecryptor(configuration.SymmetricAlgorithm.Key, configuration.BaseIV))
             {
                 using (var decrypt = new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read))
                 {
@@ -219,12 +243,29 @@ namespace ED47.BusinessAccessLayer
         ///Encrypts a stream.
         /// </summary>
         /// <param name="writeStream">The stream to encrypt into.</param>
-        public static Stream Encrypt(Stream writeStream)
+        /// <param name="keyHash">The hash of the key used to encrypt the file.</param>
+        public static Stream Encrypt(Stream writeStream, out string keyHash)
         {
-            var encryptor = SymmetricAlgorithm.CreateEncryptor(SymmetricAlgorithm.Key, SymmetricAlgorithm.IV);
+            var configuration = Configurations.Last();
+            keyHash = configuration.Key;
+            var encryptor = configuration.Value.SymmetricAlgorithm.CreateEncryptor(configuration.Value.SymmetricAlgorithm.Key, configuration.Value.BaseIV);
             var csEncrypt = new CryptoStream(writeStream, encryptor, CryptoStreamMode.Write);
-
+            
             return csEncrypt;
+        }
+
+        private static CryptoConfig CryptoConfig(string[] keyHash)
+        {
+            if (keyHash == null || keyHash.Length == 0 || keyHash[0] == null)
+                return Configurations.First().Value;
+            
+            CryptoConfig configuration;
+
+            if (Configurations.TryGetValue(keyHash[0], out configuration))
+                return configuration;
+
+            throw new ApplicationException(
+                String.Format("Data was encrypted with key hash {0} but key is not currently configured!", keyHash[0]));
         }
     }
 
@@ -235,5 +276,11 @@ namespace ED47.BusinessAccessLayer
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public sealed class EncryptedFieldAttribute : Attribute
     {
+    }
+
+    internal class CryptoConfig
+    {
+        internal SymmetricAlgorithm SymmetricAlgorithm { get; set; }
+        internal byte[] BaseIV { get; set; }
     }
 }

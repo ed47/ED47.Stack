@@ -230,10 +230,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 AddView(context.User, context.Request.UserHostAddress);
 
             if (Encrypted)
-                return Cryptography.Decrypt(FileRepository.OpenRead(this));
+                return Cryptography.Decrypt(FileRepository.OpenRead(this), KeyHash);
 
             return FileRepository.OpenRead(this);
         }
+
+        public string KeyHash { get; set; }
 
         /// <summary>
         /// Opens a write only stream on the repository file.
@@ -242,9 +244,22 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public Stream OpenWrite()
         {
             if (Encrypted)
-                return Cryptography.Encrypt(FileRepository.OpenWrite(this));
-            else
-                return FileRepository.OpenWrite(this);
+            {
+                string keyHash;
+                var stream = Cryptography.Encrypt(FileRepository.OpenWrite(this), out keyHash);
+                KeyHash = keyHash;
+                Save();
+                BaseUserContext.Instance.Commit();
+
+                return stream;
+            }
+
+            return FileRepository.OpenWrite(this);
+        }
+
+        private void Save()
+        {
+            BaseUserContext.Instance.Repository.Update<Entities.File, File>(this);
         }
 
         /// <summary>
