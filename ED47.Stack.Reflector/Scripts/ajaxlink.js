@@ -89,11 +89,19 @@ $(function() {
     Plugin.prototype = {
 
         init: function () {
-
             var view = $(this.element);
-           
+            
             view.on("click", function (e) {
-                $(this).hide();
+                var button = $(this);
+                
+                if (button.hasClass("disabled")) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return false;
+                }
+                
+                button.addClass("disabled");
+                return true;
             });
         }
     };
