@@ -39,7 +39,7 @@ namespace ED47.BusinessAccessLayer
 
             if (Configurations.ContainsKey(keyHash))
                 return;
-
+            
             symmetricAlgorithm.Key = key;
             symmetricAlgorithm.IV = iv;
             Configurations.Add(keyHash, new CryptoConfig
@@ -229,6 +229,9 @@ namespace ED47.BusinessAccessLayer
 
             using (var decryptor = configuration.SymmetricAlgorithm.CreateDecryptor(configuration.SymmetricAlgorithm.Key, configuration.BaseIV))
             {
+                if(fileStream.CanSeek)
+                    fileStream.Seek(0, SeekOrigin.Begin);
+
                 using (var decrypt = new CryptoStream(fileStream, decryptor, CryptoStreamMode.Read))
                 {
                     decrypt.CopyTo(decryptedStream);

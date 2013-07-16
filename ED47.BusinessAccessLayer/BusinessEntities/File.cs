@@ -150,6 +150,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             using (var s = res.OpenWrite())
             {
                 file.InputStream.CopyTo(s);
+                s.Flush();
             }
             return res;
         }
@@ -167,6 +168,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 var sw = new StreamWriter(s);
                 sw.Write(content);
                 sw.Close();
+                s.Flush();
             }
         }
 
@@ -239,6 +241,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         /// <summary>
         /// Opens a write only stream on the repository file.
+        /// CALL Flush() ON THE STREAM BEFORE EXITING THE USING BLOCK!
         /// </summary>
         /// <returns>The stream</returns>
         public Stream OpenWrite()
@@ -278,6 +281,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                         rs.CopyTo(s);
                     }
                 }
+                s.Flush();
             }
         }
 

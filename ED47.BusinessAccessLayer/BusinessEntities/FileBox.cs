@@ -65,6 +65,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             using (var fileStream = newFile.OpenWrite())
             {
                 file.InputStream.CopyTo(fileStream);
+                fileStream.Flush();
             }
 
             return FileBoxItem.CreateNew(Id, newFile, comment);
