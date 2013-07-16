@@ -154,12 +154,20 @@ namespace ED47.Stack.Web
         /// <param name="htmlHelper">The Razor HTML helper.</param>
         /// <param name="currentCount">The current iteration count.</param>
         /// <param name="totalCount">The total number of elements.</param>
-        public static IHtmlString AddTableLineClasses(this System.Web.Mvc.HtmlHelper htmlHelper, int currentCount, int? totalCount = null)
+        /// <param name="evenClass">The even class</param>
+        /// <param name="oddClass">The odd class</param>
+        /// <param name="lastClass">The last class</param>
+        public static IHtmlString AddTableLineClasses(this System.Web.Mvc.HtmlHelper htmlHelper, int currentCount, int? totalCount = null, string evenClass = "even", string oddClass = "odd", string lastClass = "last")
         {
-            var classes = currentCount%2 == 0 ? "even" : "odd";
+            var classes = currentCount % 2 == 0 ? evenClass : oddClass;
 
             if (totalCount.HasValue && currentCount + 1 == totalCount)
-                classes += " last";
+            {
+                if (!String.IsNullOrWhiteSpace(lastClass))
+                    classes += " " + lastClass;
+                else
+                    classes = String.Empty;
+            }
 
             return MvcHtmlString.Create(classes);
         }
