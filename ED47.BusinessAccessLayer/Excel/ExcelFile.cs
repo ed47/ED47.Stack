@@ -46,7 +46,7 @@ namespace ED47.BusinessAccessLayer.Excel
                                {
                                    Data = data
                                };
-
+            
             this.Sheets.Add(newSheet);
             return newSheet;
         }
@@ -66,14 +66,15 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <param name="fileInfo">The file info to save into.</param>
         public void Write(FileInfo fileInfo)
         {
-            var excelPackage = new ExcelPackage(fileInfo);
-            
-            foreach (var excelSheet in Sheets)
+            using (var excelPackage = new ExcelPackage(fileInfo))
             {
-                excelSheet.Write(excelPackage);
-            }
+                foreach (var excelSheet in Sheets)
+                {
+                    excelSheet.Write(excelPackage);
+                }
 
-            excelPackage.Save();
+                excelPackage.Save();
+            }
         }
 
         /// <summary>
@@ -89,7 +90,6 @@ namespace ED47.BusinessAccessLayer.Excel
                     excelSheet.Write(excelPackage);
                 }
                 excelPackage.SaveAs(stream);
-                excelPackage.Dispose();
             }
         }
 
