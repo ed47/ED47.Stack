@@ -59,8 +59,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             if(file == null || file.ContentLength == 0)
                 return null;
-
-            var newFile = File.CreateNewFile<File>(file.FileName, businessKey, groupdId, requireLogin, langId);
+            
+            var newFile = File.CreateNewFile<File>(System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId);
 
             using (var fileStream = newFile.OpenWrite())
             {
