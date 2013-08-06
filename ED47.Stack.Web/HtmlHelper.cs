@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using ED47.Stack.Web.HelperTemplates;
 using Newtonsoft.Json;
@@ -27,13 +28,19 @@ namespace ED47.Stack.Web
         /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, string id = null, string name = null, string addUpdateFunctionName = null, string initNewFunctionName = null, string deleteFunctionName = null, bool deleteConfirmation = true, int? preselectedRecordId = null, string deleteConfirmationMessage = null)
+        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model,
+                                                      string id = null, string name = null,
+                                                      string addUpdateFunctionName = null,
+                                                      string initNewFunctionName = null,
+                                                      string deleteFunctionName = null, bool deleteConfirmation = true,
+                                                      int? preselectedRecordId = null,
+                                                      string deleteConfirmationMessage = null)
         {
 // ReSharper disable JoinDeclarationAndInitializer
             Formatting formatting = Formatting.None;
 // ReSharper restore JoinDeclarationAndInitializer
 
-            if(model == null)
+            if (model == null)
                 return new MvcHtmlString(String.Empty);
 
 #if DEBUG
@@ -47,40 +54,47 @@ namespace ED47.Stack.Web
                 if (modelType.IsGenericType)
                     name += modelType.GetGenericArguments()[0].Name;
                 else
-                    name += modelType.Name.Replace("[]",String.Empty);
+                    name += modelType.Name.Replace("[]", String.Empty);
             }
 
             if (String.IsNullOrWhiteSpace(id))
                 id = name.Split('.').Last().ToLowerInvariant() + "-list";
 
             var builder = new StringBuilder("<script language='javascript'>");
-            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id, JsonConvert.SerializeObject(model, formatting, new JavaScriptDateTimeConverter())));
-            builder.AppendLine(String.Format("Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}, {7}); }});", id, name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null", deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0, deleteConfirmationMessage ?? "null"));
+            builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id,
+                                             JsonConvert.SerializeObject(model, formatting,
+                                                                         new JavaScriptDateTimeConverter())));
+            builder.AppendLine(
+                String.Format(
+                    "Ext.onReady(function(){{ ED47.Stores.setup('{0}', '{1}', {2},{3},{4},{5}, {6}, {7}); }});", id,
+                    name, addUpdateFunctionName ?? "null", initNewFunctionName ?? "null", deleteFunctionName ?? "null",
+                    deleteConfirmation ? "true" : "false", preselectedRecordId ?? 0, deleteConfirmationMessage ?? "null"));
             builder.AppendLine("</script>");
 
             return new MvcHtmlString(builder.ToString());
         }
-        
+
         /// <summary>
         /// Render the script used to initialize a client control in a razor view.
         /// </summary>
-         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public static MvcHtmlString RenderControlScript(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model)
         {
             var tpl = Template.Template.Get("ED47.Stack.Web.HelperTemplates.ClientControlScript.cshtml");
-            if(tpl == null) return new MvcHtmlString(String.Empty);
+            if (tpl == null) return new MvcHtmlString(String.Empty);
             return new MvcHtmlString(tpl.Apply(model));
         }
 
-         /// <summary>
-         /// Render the client control in a razor view.
-         /// </summary>
-         /// <param name="helper">The Html helper.</param>
-         /// <param name="model">The model.</param>
-         /// <param name="templatePath">The optional template path.</param>
-         /// <returns></returns>
+        /// <summary>
+        /// Render the client control in a razor view.
+        /// </summary>
+        /// <param name="helper">The Html helper.</param>
+        /// <param name="model">The model.</param>
+        /// <param name="templatePath">The optional template path.</param>
+        /// <returns></returns>
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public static MvcHtmlString RenderControl(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model, string templatePath = null)
+        public static MvcHtmlString RenderControl(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model,
+                                                  string templatePath = null)
         {
             var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientControlView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
@@ -95,7 +109,8 @@ namespace ED47.Stack.Web
         /// <param name="templatePath">The optional template path.</param>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Extension method")]
-        public static MvcHtmlString RenderPageView(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model, string templatePath = null)
+        public static MvcHtmlString RenderPageView(this System.Web.Mvc.HtmlHelper helper, ClientControlModel model,
+                                                   string templatePath = null)
         {
             var tpl = Template.Template.Get(templatePath ?? "ED47.Stack.Web.HelperTemplates.ClientPageView.cshtml");
             if (tpl == null) return new MvcHtmlString(String.Empty);
@@ -109,15 +124,52 @@ namespace ED47.Stack.Web
         /// <param name="partialKeyName">The partial i18n translation key. Each enumeration value name will be appended to it to get the select item text.</param>
         /// <param name="selectedValue">The optional selected value.</param>
         /// <returns></returns>
-        public static SelectList CreateSelectListFromEnum(Type enumerationType, string partialKeyName, object selectedValue = null)
+        public static SelectList CreateSelectListFromEnum(Type enumerationType, string partialKeyName,
+                                                          object selectedValue = null)
         {
             return new SelectList(Enum.GetNames(enumerationType)
                                       .Select(el => new SelectListItem
                                           {
                                               Text = Multilingual.Multilingual.N(partialKeyName + el),
-                                              Value = ((int)Enum.Parse(enumerationType, el)).ToString(CultureInfo.InvariantCulture)
+                                              Value =
+                                                  ((int) Enum.Parse(enumerationType, el)).ToString(
+                                                      CultureInfo.InvariantCulture)
                                           }).ToList()
                                   , "Value", "Text", selectedValue);
+        }
+
+        /// <summary>
+        /// Writes a text while preserving the line returns as <br/>
+        /// </summary>
+        /// <param name="htmlHelper">The Razor HTML helper.</param>
+        /// <param name="text">The text to preserve line returns.</param>
+        public static IHtmlString PreserveNewLines(this System.Web.Mvc.HtmlHelper htmlHelper, string text)
+        {
+            return text == null ? null : htmlHelper.Raw(htmlHelper.Encode(text).Replace("\n", "<br/>"));
+        }
+
+        /// <summary>
+        /// Adds the even/odd and/or last classes for a table style.
+        /// </summary>
+        /// <param name="htmlHelper">The Razor HTML helper.</param>
+        /// <param name="currentCount">The current iteration count.</param>
+        /// <param name="totalCount">The total number of elements.</param>
+        /// <param name="evenClass">The even class</param>
+        /// <param name="oddClass">The odd class</param>
+        /// <param name="lastClass">The last class</param>
+        public static IHtmlString AddTableLineClasses(this System.Web.Mvc.HtmlHelper htmlHelper, int currentCount, int? totalCount = null, string evenClass = "even", string oddClass = "odd", string lastClass = "last")
+        {
+            var classes = currentCount % 2 == 0 ? evenClass : oddClass;
+
+            if (totalCount.HasValue && currentCount + 1 == totalCount)
+            {
+                if (!String.IsNullOrWhiteSpace(lastClass))
+                    classes += " " + lastClass;
+                else
+                    classes = String.Empty;
+            }
+
+            return MvcHtmlString.Create(classes);
         }
     }
 }
