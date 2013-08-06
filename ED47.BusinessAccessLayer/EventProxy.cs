@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,10 +9,10 @@ namespace ED47.BusinessAccessLayer
 {
     public class EventProxy
     {
-        private static Dictionary<Type, EventProxy> _proxies;
-        internal static Dictionary<Type, EventProxy> Proxies
+        private static ConcurrentDictionary<Type, EventProxy> _proxies;
+        internal static ConcurrentDictionary<Type, EventProxy> Proxies
         {
-            get { return _proxies ?? (_proxies = new Dictionary<Type, EventProxy>()); }
+            get { return _proxies ?? (_proxies = new ConcurrentDictionary<Type, EventProxy>()); }
         }
 
         /// <summary>
@@ -32,25 +33,31 @@ namespace ED47.BusinessAccessLayer
         /// <returns>The Type's event proxy.</returns>
         public static TEventProxy GetSingleton<TEventProxy>(Type type) where TEventProxy : EventProxy, new()
         {
-            EventProxy baseProxy;
-            TEventProxy proxy = null;
-
-            if (Proxies.TryGetValue(type, out baseProxy))
-                proxy = baseProxy as TEventProxy;
-            
-            if (proxy == null && !Proxies.ContainsKey(type))
+            lock (Lock.Get(type.FullName))
             {
-                proxy = new TEventProxy();
-                Register(type, proxy);
+                EventProxy baseProxy;
+                TEventProxy proxy = null;
+
+                if (Proxies.TryGetValue(type, out baseProxy))
+                    proxy = baseProxy as TEventProxy;
+
+                if (proxy == null && !Proxies.ContainsKey(type))
+                {
+                    proxy = new TEventProxy();
+                    Register(type, proxy);
+                }
+
+                return proxy;
             }
-           
-            return proxy;
         }
 
 
         public static TEventProxy Get<TEventProxy>(Type type) where TEventProxy : EventProxy, new()
         {
-            return new TEventProxy();
+            lock (Lock.Get(type.FullName))
+            {
+                return new TEventProxy();
+            }
         }
 
         public event EventHandler<EventArgs> Update;
