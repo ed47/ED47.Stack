@@ -49,8 +49,31 @@
         setup: function(form) {
             var me = this;
             form.data("initialState", form.serializeArray());
+
+            me.setupOnChange(form);
+            me.setupSubmit(form);
             
-            form.submit(function (e, data) {
+            form.find("select, textarea").on("change", function() {
+                if ($(this).parents(".autosave-ignore").length > 0) {
+                    return;
+                }
+                
+                form.trigger("submit", this);
+            });
+        },
+        
+        setupOnChange: function(form) {
+            form.find("select, textarea").on("change", function() {
+                if ($(this).parents(".autosave-ignore").length > 0) {
+                    return;
+                }
+                
+                form.trigger("submit", this);
+            });
+        },
+        
+        setupSubmit: function(form) {
+            form.submit(function(e, data) {
                 e.preventDefault();
                 data = $(data);
                 
@@ -67,46 +90,37 @@
                     dataType: "json",
                     data: update,
                     type: "POST"
-                })
-                    .success(function (data) {
-                        form.find(".field-validation-error")
-                            .removeClass("field-validation-error")
-                            .addClass("field-validation-valid")
-                            .html("");
+                }).success(function (data) {
+                    form.find(".field-validation-error")
+                        .removeClass("field-validation-error")
+                        .addClass("field-validation-valid")
+                        .html("");
 
-                        for (var property in data.Values) {
-                            var target = form.find("[name='" + property + "']");
+                    for (var property in data.Values) {
+                        var target = form.find("[name='" + property + "']");
 
-                            if (target.length !== 0) {
-                                target.val(data.Values[property]);
-                                target.closest(".control-group").addClass("success");
-                                form.trigger("autosavepropertyset", { form: form, name: property });
-                            }
+                        if (target.length !== 0) {
+                            target.val(data.Values[property]);
+                            target.closest(".control-group").addClass("success");
+                            form.trigger("autosavepropertyset", { form: form, name: property });
                         }
+                    }
 
-                        $.each(data.Validations, function() {
-                            var validationElement = form.find(".field-validation-valid[data-valmsg-for='" + this.PropertyName + "']");
-                            validationElement
-                                .removeClass("field-validation-valid")
-                                .addClass("field-validation-error")
-                                .html(this.ErrorMessage);
-                        });
-
-                        form.data("initialState", form.serializeArray());
-                        form.trigger("autosaved", { form: form, data: data });
-                    })
-                    .fail(function() {
-                        form.find(".control-group").addClass("error");
+                    $.each(data.Validations, function() {
+                        var validationElement = form.find(".field-validation-valid[data-valmsg-for='" + this.PropertyName + "']");
+                        validationElement
+                            .removeClass("field-validation-valid")
+                            .addClass("field-validation-error")
+                            .html(this.ErrorMessage);
                     });
-            });
 
-            form.find("select, textarea").on("change", function() {
-                if ($(this).parents(".autosave-ignore").length > 0) {
-                    return;
-                }
-                
-                form.trigger("submit", this);
-            });
+                    form.data("initialState", form.serializeArray());
+                    form.trigger("autosaved", { form: form, data: data });
+                })
+                .fail(function() {
+                    form.find(".control-group").addClass("error");
+                });
+        });
         }
     };
 
