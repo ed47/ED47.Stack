@@ -19,24 +19,30 @@ namespace ED47.BusinessAccessLayer.Tools
         public static Size GetSize(FileInfo file)
         {
             if (!file.Exists) return new Size(0,0);
-            var img = System.Drawing.Image.FromFile(file.FullName);
-            return img.Size;
+            using (var img = System.Drawing.Image.FromFile(file.FullName))
+            {
+                return img.Size;    
+            }
+            
+            
         }
 
         public static void Crop(Stream imageStream, Rectangle rectangle, string filename)
         {
-            var originalimg = System.Drawing.Image.FromStream(imageStream);
-            double w = originalimg.Width;
-            double h = originalimg.Height;
-            using (System.Drawing.Image thumbnail = new Bitmap(Convert.ToInt32(rectangle.Width), Convert.ToInt32(rectangle.Height)))
+            using (var originalimg = Image.FromStream(imageStream))
             {
-                var objGraphics = Graphics.FromImage(thumbnail);
-                objGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                objGraphics.SmoothingMode = SmoothingMode.HighQuality;
-                objGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                objGraphics.CompositingQuality = CompositingQuality.HighQuality;
-                objGraphics.DrawImage(originalimg, new Rectangle(0, 0, rectangle.Width, rectangle.Height), rectangle, GraphicsUnit.Pixel);
-                thumbnail.Save(filename, ImageFormat.Jpeg);
+               
+                using (
+                    Image thumbnail = new Bitmap(Convert.ToInt32(rectangle.Width),Convert.ToInt32(rectangle.Height)))
+                {
+                    var objGraphics = Graphics.FromImage(thumbnail);
+                    objGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    objGraphics.SmoothingMode = SmoothingMode.HighQuality;
+                    objGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    objGraphics.CompositingQuality = CompositingQuality.HighQuality;
+                    objGraphics.DrawImage(originalimg, new Rectangle(0, 0, rectangle.Width, rectangle.Height), rectangle,GraphicsUnit.Pixel);
+                    thumbnail.Save(filename, ImageFormat.Jpeg);
+                }
             }
 
         }

@@ -97,11 +97,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
         public bool CanDelete()
         {
-            return true;
+            //TODO : add condition if comment creator == current user or admin
+            
+            return Replies.All(el => el.IsDeleted);
         }
 
         public bool CanReply()
         {
+            //TODO : add condition if comment creator != current user
             return !IsDeleted;
         }
 

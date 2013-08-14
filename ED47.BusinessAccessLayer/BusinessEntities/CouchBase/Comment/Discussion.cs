@@ -92,6 +92,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
                 Creator = creator,
                 Notifiers = new HashSet<string>()
             };
+            newDiscussion.Notifiers.Add(creator);
 
             newDiscussion.Save();
 
@@ -103,6 +104,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             if (!CanReply()) return null;
             var newComment = Comment.Create(body, creator, encrypted);
             Comments.Add((Comment) newComment);
+            Notifiers.Add(creator);
             return newComment;
         }
 
@@ -111,6 +113,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             if (!AllComments.ContainsKey(businessKey))
                 return null;
             var comment = AllComments[businessKey];
+            Notifiers.Add(creator);
             return comment.Reply(body, creator, encrypted);
         }
 
