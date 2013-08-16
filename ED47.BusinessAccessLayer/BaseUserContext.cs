@@ -94,10 +94,7 @@ namespace ED47.BusinessAccessLayer
 
         protected virtual string GetCurrentUserName()
         {
-           
-            if (Instance.GetCurrentUser != null)
-                var user = Instance.GetCurrentUser();
-
+        
             if (HttpContext.Current == null || !HttpContext.Current.User.Identity.IsAuthenticated) return null;
             return HttpContext.Current.User.Identity.Name;
 
