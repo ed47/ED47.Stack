@@ -14,6 +14,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         public string BusinessKey { get; set; }
         public string Body { get; set; }
         public string Creator { get; set; }
+
         private IFileBox _fileBox;
         public IFileBox FileBox
         {
