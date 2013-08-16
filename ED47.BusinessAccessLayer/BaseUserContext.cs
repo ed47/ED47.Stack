@@ -17,7 +17,10 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     public abstract class BaseUserContext
     {
-        public static Func<BaseUserContext> CreateDefaultContext { get; set; } 
+        public static Func<BaseUserContext> CreateDefaultContext { get; set; }
+
+        public delegate Ed47User GetCurrentUserDelegate();        
+        public  GetCurrentUserDelegate GetCurrentUser { get; set; }
 
         public static string ApplicationUrl
         {
@@ -91,6 +94,10 @@ namespace ED47.BusinessAccessLayer
 
         protected virtual string GetCurrentUserName()
         {
+           
+            if (Instance.GetCurrentUser != null)
+                var user = Instance.GetCurrentUser();
+
             if (HttpContext.Current == null || !HttpContext.Current.User.Identity.IsAuthenticated) return null;
             return HttpContext.Current.User.Identity.Name;
 
@@ -253,5 +260,6 @@ namespace ED47.BusinessAccessLayer
                 return Retrieve(key) as BusinessEntity;
             }
         }
+
     }
 }
