@@ -20,6 +20,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         public DateTime CreationDate { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletionDate { get; set; }
+
+        public DateTime? ModificationDate { get; set; }
+
         List<Comment> Comments = new List<Comment>();
         public IEnumerable<IComment> Replies
         {
@@ -98,13 +101,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         public bool CanDelete()
         {
             //TODO : add condition if comment creator == current user or admin
-            
             return Replies.All(el => el.IsDeleted);
         }
 
         public bool CanReply()
         {
             //TODO : add condition if comment creator != current user
+            
             return !IsDeleted;
         }
 
@@ -129,6 +132,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             if (CanWrite())
             {
                 Body = body;
+                ModificationDate = DateTime.UtcNow;
                 return true;
             }
             return false;

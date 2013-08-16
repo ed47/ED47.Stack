@@ -21,6 +21,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             set { _fileBox = value; }
         }
         public DateTime? DeletionDate { get; set; }
+
+        public DateTime? ModificationDate { get; set; }
+
         public bool IsDeleted { get; set; }
 
         public string Title { get; set; }
@@ -145,6 +148,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             if (CanWrite())
             {
                 Body = body;
+                ModificationDate = DateTime.UtcNow;
                 return true;
             }
             return false;

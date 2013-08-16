@@ -12,6 +12,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         DateTime CreationDate { get; set; }
         IFileBox FileBox { get; set; }
         DateTime? DeletionDate { get; set; }
+        DateTime? ModificationDate { get; set; }
         IEnumerable<IComment> Replies { get; }
         bool IsDeleted { get; set; }
         IComment Reply(string body, string creator = null, bool? encrypted = false);
