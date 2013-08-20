@@ -14,6 +14,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         public string BusinessKey { get; set; }
         public string Body { get; set; }
         public string Creator { get; set; }
+
+        public int CommenterId { get; set; }
+
+        public int CommentId { get; set; }
+
         private IFileBox _fileBox;
         public IFileBox FileBox
         {
@@ -21,6 +26,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             set { _fileBox = value; }
         }
         public DateTime? DeletionDate { get; set; }
+
+        public DateTime? ModificationDate { get; set; }
+
         public bool IsDeleted { get; set; }
 
         public string Title { get; set; }
@@ -92,26 +100,29 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
                 Creator = creator,
                 Notifiers = new HashSet<string>()
             };
+            newDiscussion.Notifiers.Add(creator);
 
             newDiscussion.Save();
 
             return newDiscussion;
         }
 
-        public IComment Reply(string body, string creator = null, bool? encrypted = false)
+        public IComment Reply(string body, int commenterId, string creator = null, bool? encrypted = false)
         {
             if (!CanReply()) return null;
-            var newComment = Comment.Create(body, creator, encrypted);
+            var newComment = Comment.Create(body, commenterId, creator, encrypted);
             Comments.Add((Comment) newComment);
+            Notifiers.Add(creator);
             return newComment;
         }
 
-        public IComment Reply(string businessKey, string body, string creator = null, bool? encrypted = false)
+        public IComment Reply(string businessKey, string body,int commenterId, string creator = null, bool? encrypted = false)
         {
             if (!AllComments.ContainsKey(businessKey))
                 return null;
             var comment = AllComments[businessKey];
-            return comment.Reply(body, creator, encrypted);
+            Notifiers.Add(creator);
+            return comment.Reply(body, commenterId, creator, encrypted);
         }
 
         public void AddFile(IFile file)
@@ -142,6 +153,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             if (CanWrite())
             {
                 Body = body;
+                ModificationDate = DateTime.UtcNow;
                 return true;
             }
             return false;

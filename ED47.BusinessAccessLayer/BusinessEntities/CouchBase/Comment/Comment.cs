@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+
 
 namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 {
@@ -17,9 +17,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         public string BusinessKey { get; set; }
         public string Body { get; set; }
         public string Creator { get; set; }
+
+        public int CommenterId { get; set; }
+
         public DateTime CreationDate { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletionDate { get; set; }
+
+        public DateTime? ModificationDate { get; set; }
+
         List<Comment> Comments = new List<Comment>();
         public IEnumerable<IComment> Replies
         {
@@ -33,9 +39,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             set { _fileBox = value; }
         }
 
-        public static IComment Create(string body, string creator = null, bool? encrypted = false)
+        public static IComment Create(string body, int commenterId, string creator = null, bool? encrypted = false)
         {
-            Comment newComment;
+            IComment newComment;
 
             if(encrypted == null || !encrypted.Value)
                 newComment = new Comment();
@@ -46,6 +52,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             newComment.Body = body.Trim();
             newComment.Creator = creator;
             newComment.CreationDate = DateTime.UtcNow;
+            newComment.CommenterId = commenterId;
             return newComment;
         }
 
@@ -77,35 +84,38 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             }
         }
 
-        public IComment Reply(string comment, string creator = null, bool? encrypted = false)
+        public IComment Reply(string comment, int commentId, string creator = null, bool? encrypted = false)
         {
             if (!CanReply()) return null;            
-            var newComment = Create(comment, creator,encrypted);
+            var newComment = Create(comment, commentId, creator,encrypted);
             Comments.Add((Comment)newComment);
             return newComment;
         }
 
-        public bool CanWrite()
+        public virtual bool CanWrite()
         {
             return Replies.All(el => el.IsDeleted) && !IsDeleted;
         }
 
-        public bool CanRead()
+        public virtual bool CanRead()
         {
             return !IsDeleted;
         }
 
-        public bool CanDelete()
+        public virtual bool CanDelete()
         {
-            return true;
+            //TODO : add condition if comment creator == current user or admin
+            return Replies.All(el => el.IsDeleted);
         }
 
-        public bool CanReply()
+        public virtual bool CanReply()
         {
+            //TODO : add condition if comment creator != current user
+            
             return !IsDeleted;
         }
 
-        public bool Delete()
+        public virtual bool Delete()
         {
             if (CanDelete())
             {
@@ -126,6 +136,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             if (CanWrite())
             {
                 Body = body;
+                ModificationDate = DateTime.UtcNow;
                 return true;
             }
             return false;
