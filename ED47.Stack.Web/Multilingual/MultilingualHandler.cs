@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Web;
 using Newtonsoft.Json;
 
@@ -45,11 +46,6 @@ namespace ED47.Stack.Web.Multilingual
                 context.Response.Write("throw new Error('Especify a language via the [lang] parameter.');");
                 return;
             }
-
-            #if !DEBUG
-            context.Response.Cache.SetExpires(DateTime.Now.AddMinutes(15));
-            context.Response.Cache.SetCacheability(HttpCacheability.Public);
-            #endif
 
             context.Response.ContentType = "text/javascript";
             context.Response.Write("var lang = $('html').attr('lang');var i8n = {}; i8n.n = function(s){ if(translations[s]) return translations[s].Text; else " + callAddKey + "};");
