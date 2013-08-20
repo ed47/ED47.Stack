@@ -1,15 +1,15 @@
 ﻿using System.IO;
-using File = ED47.BusinessAccessLayer.BusinessEntities.File;
+using ED47.BusinessAccessLayer.BusinessEntities;
 
 namespace ED47.BusinessAccessLayer
 {
     public interface IFileRepository
     {
-        bool Write(File file,  byte[] content);
-        bool Append(File file, byte[] content);
-        bool Delete(File file);
-        bool Exist(File file);
-        Stream OpenWrite(File file);
-        Stream OpenRead(File file);
+        bool Write(IFile file,  byte[] content);
+        bool Append(IFile file, byte[] content);
+        bool Delete(IFile file);
+        bool Exist(IFile file);
+        Stream OpenWrite(IFile file);
+        Stream OpenRead(IFile file);
     }
 }

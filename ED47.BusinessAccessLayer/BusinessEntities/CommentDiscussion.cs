@@ -13,7 +13,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual int? MaxComments { get; set; }
         public virtual bool IsReadOnly { get; set; }
 
-        public static TCommentDiscussion GetOrCreate<TCommentDiscussion>(string businessKey, bool isEncrypted = false, Comment.CommentOrder commentOrder = Comment.CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TCommentDiscussion : CommentDiscussion, new()
+        public static TCommentDiscussion GetOrCreate<TCommentDiscussion>(string businessKey, bool isEncrypted = false, CommentOrder commentOrder = BusinessEntities.CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TCommentDiscussion : CommentDiscussion, new()
         {
             var discussion = BaseUserContext.Instance.Repository.Find<Entities.Discussion, TCommentDiscussion>(el => el.BusinessKey == businessKey);
 
@@ -23,7 +23,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return Create<TCommentDiscussion>(businessKey, isEncrypted, commentOrder, maxComments, isReadOnly);
         }
 
-        public static TCommentDiscussion Create<TCommentDiscussion>(string businessKey, bool isEncrypted = false, Comment.CommentOrder commentOrder = Comment.CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TCommentDiscussion : CommentDiscussion, new()
+        public static TCommentDiscussion Create<TCommentDiscussion>(string businessKey, bool isEncrypted = false, CommentOrder commentOrder = BusinessEntities.CommentOrder.RecentFirst, int? maxComments = null, bool isReadOnly = false) where TCommentDiscussion : CommentDiscussion, new()
         {
             var newDiscussion = new TCommentDiscussion
                 {

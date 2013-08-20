@@ -17,7 +17,7 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     public abstract class BaseUserContext
     {
-        public static Func<BaseUserContext> CreateDefaultContext { get; set; } 
+        public static Func<BaseUserContext> CreateDefaultContext { get; set; }
 
         public static string ApplicationUrl
         {
@@ -253,5 +253,6 @@ namespace ED47.BusinessAccessLayer
                 return Retrieve(key) as BusinessEntity;
             }
         }
+
     }
 }

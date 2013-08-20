@@ -24,5 +24,7 @@ namespace ED47.BusinessAccessLayer.Entities
 
         public virtual DateTime?  TransmissionDate { get; set; }
 
+        public virtual DateTime? ReadDate { get; set; }
+
     }
 }

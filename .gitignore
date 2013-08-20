@@ -35,3 +35,4 @@ Elmah.sdf
 *.psd
 Thumbs.db
 .DS_Store
+packages/*

@@ -23,5 +23,6 @@ namespace ED47.BusinessAccessLayer.Entities
 
         [MaxLength(5)]
         public virtual string LanguageCode { get; set; }
+
     }
 }

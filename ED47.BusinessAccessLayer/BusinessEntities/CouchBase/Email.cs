@@ -1,24 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
+using ED47.BusinessAccessLayer.Couchbase;
 
-namespace ED47.BusinessAccessLayer.BusinessEntities
+namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
 {
-    public class Email : BusinessEntity
+    public class Email : BaseDocument 
     {
         public Email()
         {
             IsHtml = true;
         }
-
-        public virtual int Id { get; set; }
-
-        [MaxLength(250)]
         public virtual string BusinessKey { get; set; }
 
         [MaxLength(200)]
@@ -31,10 +28,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual string Subject { get; set; }
 
         public virtual string Body { get; set; }
-        
-        public virtual DateTime? ReadDate { get; set; }
 
-        public virtual DateTime?  TransmissionDate { get; set; }
+        public virtual DateTime? TransmissionDate { get; set; }
+
+        public virtual DateTime? ReadDate { get; set; }
+        public int MessageId { get; set; }
+
         private List<EmailAttachment> _Attachments;
         public IEnumerable<EmailAttachment> Attachments
         {
@@ -43,13 +42,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 if (_Attachments == null)
                 {
                     _Attachments = new List<EmailAttachment>();
-                    _Attachments.AddRange(BaseUserContext.Instance.Repository.Where<Entities.EmailAttachment, EmailAttachment>(el => el.EmailId == Id));
+                    //_Attachments.AddRange(BaseUserContext.Instance.Repository.Where<Entities.EmailAttachment, EmailAttachment>(el => el.EmailId == Id));
                 }
                 return _Attachments;
             }
             set
             {
-                if (value == null) return; 
+                if (value == null) return;
                 _Attachments = value.ToList();
             }
         }
@@ -63,11 +62,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="from">The optional from address.</param>
         public void Send(bool force = false, string from = null)
         {
-            if(TransmissionDate.HasValue && ! force)
+            if (TransmissionDate.HasValue && !force)
             {
                 return;
             }
-            FromAddress = from;
 
             var mailMessage = new MailMessage
             {
@@ -75,47 +73,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 Body = Body,
                 IsBodyHtml = IsHtml,
             };
-            
-            AddRecipients(mailMessage);
 
-            IEnumerable<Stream> streams = null;
-            try
-            {
-                streams = AddAttachments(mailMessage);
-                var smtpClient = new SmtpClient();
-                smtpClient.Send(mailMessage);
-                TransmissionDate = DateTime.Now;
-                Save();
-            }
-            finally
-            {
-                if (streams != null)
-                {
-                    foreach (var stream in streams)
-                    {
-                        stream.Dispose();
-                    }
-                }
-            }
-            
-        }
-
-        private IEnumerable<Stream> AddAttachments(MailMessage mailMessage)
-        {
-            var streams = new List<Stream>();
-            
-            foreach (var attachment in Attachments)
-            {
-                var s = attachment.File.OpenRead();
-                streams.Add(s);
-                mailMessage.Attachments.Add(new Attachment(s, attachment.File.Name));
-            }
-
-            return streams;
-        }
-
-        private void AddRecipients(MailMessage mailMessage)
-        {
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))
             {
@@ -147,39 +105,68 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     mailMessage.Bcc.Add(Bcc);
             }
 
-            if (!String.IsNullOrWhiteSpace(FromAddress))
-                mailMessage.From = new MailAddress(FromAddress);
+            var tmp = new List<Stream>();
+            try
+            {
+                foreach (var attachment in Attachments)
+                {
+                    var s = attachment.File.OpenRead();
+                    tmp.Add(s);
+                    mailMessage.Attachments.Add(new Attachment(s, attachment.File.Name));
+                }
+                var smtpClient = new SmtpClient();
+
+                if (!String.IsNullOrWhiteSpace(from))
+                    mailMessage.From = new MailAddress(from);
+
+                smtpClient.Send(mailMessage);
+                TransmissionDate = DateTime.Now;
+                Save();
+            }
+            finally
+            {
+                foreach (var stream in tmp)
+                {
+                    stream.Dispose();
+                }
+            }
+
         }
 
         public string Bcc { get; set; }
 
         public bool IsHtml { get; set; }
-        
-
-
-        public virtual void Insert()
-        {
-            BaseUserContext.Instance.Repository.Add<Entities.Email, Email>(this);
-        }
-
-        public virtual void Save()
-        {
-            BaseUserContext.Instance.Repository.Update<Entities.Email, Email>(this);
-        }
 
         public static Email Get(int id)
         {
-            return BaseUserContext.Instance.Repository.Find<Entities.Email, Email>(el => el.Id == id);
+            return CouchbaseRepository.Get<Email>(new { Id = id });
         }
 
-        public void Delete()
+        public new void Delete()
         {
             foreach (var emailAttachment in Attachments)
             {
                 emailAttachment.Delete();
             }
 
-            BaseUserContext.Instance.Repository.Delete<Entities.Email, Email>(this);
+            base.Delete();
+        }
+
+        public static IEnumerable<Email> All()
+        {
+            return CouchbaseRepository.All<Email>("Email");
+        }
+
+        public void MarkAsRead()
+        {
+            ReadDate = DateTime.Now;
+            Save();
+        }
+
+        public void SetMessageId(int id)
+        {
+            MessageId = id;
+            Save();
         }
     }
 }

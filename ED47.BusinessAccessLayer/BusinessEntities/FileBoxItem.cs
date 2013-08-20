@@ -9,31 +9,31 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     public class FileBoxItem : BusinessEntity
     {
-        public virtual int Id { get; set; }
+        public  int Id { get; set; }
 
         [MaxLength(200)]
-        public virtual string Name { get; set; }
+        public string Name { get; set; }
 
         [MaxLength(10)]
-        public virtual string FileExtension { get; set; }
+        public  string FileExtension { get; set; }
 
         [MaxLength(500)]
-        public virtual string Comment { get; set; }
+        public  string Comment { get; set; }
 
-        public virtual int FileBoxId { get; set; }
+        public  int FileBoxId { get; set; }
 
-        public virtual int FileId { get; set; }
+        public  int FileId { get; set; }
 
-        public virtual DateTime CreationDate { get; set; }
+        public  DateTime CreationDate { get; set; }
 
         private static readonly string[] Includes = new[] { "File" };
 
-        private File _File;
+        private IFile _file;
 
         [JsonIgnore]
-        public File File
+        public  IFile File
         {
-            get { return _File ?? (_File = File.Get(FileId)); }
+            get { return _file ?? (_file = BusinessEntities.File.Get(FileId)); }
         }
 
         public static IEnumerable<FileBoxItem> GetByFileBoxId(int id)
@@ -44,7 +44,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     .ToList();
         }
 
-        public static FileBoxItem CreateNew(int fileBoxId, File file, string comment = null)
+        public static FileBoxItem CreateNew(int fileBoxId, IFile file, string comment = null)
         {
             var fileBoxItem = new FileBoxItem()
             {
@@ -54,24 +54,24 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 FileExtension = Path.GetExtension(file.Name),
                 Comment = comment
             };
-            BaseUserContext.Instance.Repository.Add<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(fileBoxItem);
+            BaseUserContext.Instance.Repository.Add<Entities.FileBoxItem, FileBoxItem>(fileBoxItem);
             return fileBoxItem;
         }
 
-        private File LoadFile()
+        public IFile LoadFile()
         {
-            return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.File, File>(el => el.Id == this.FileId);
+            return BaseUserContext.Instance.Repository.Find<Entities.File, File>(el => el.Id == FileId);
         }
 
         public static FileBoxItem Get(int id)
         {
-            return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.Id == id);
+            return BaseUserContext.Instance.Repository.Find<Entities.FileBoxItem, FileBoxItem>(el => el.Id == id);
         }
 
         public void Delete()
         {
 
-            BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
+            BaseUserContext.Instance.Repository.Delete<Entities.FileBoxItem, FileBoxItem>(this);
         }
     }
 }

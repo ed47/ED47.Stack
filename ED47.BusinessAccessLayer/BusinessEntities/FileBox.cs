@@ -71,7 +71,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return FileBoxItem.CreateNew(Id, newFile, comment);
         }
 
-        public FileBoxItem AddFile(File file, string comment = null)
+        public FileBoxItem AddFile(IFile file, string comment = null)
         {
             return FileBoxItem.CreateNew(Id, file, comment);
         }

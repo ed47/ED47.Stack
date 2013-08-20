@@ -111,6 +111,32 @@ public static class StringExtensions
         return Regex.Replace(text, EmailRegexReplace, replacement);
     }
 
+    private static Regex _tags = new Regex("<[^>]*(>|$)",RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+    
+
+    public static string Sanitize(this string source, Regex whitelist)
+    {
+        if (String.IsNullOrEmpty(source)) return source;
+
+        string tagname;
+        Match tag;
+
+        // match every HTML tag in the input
+        MatchCollection tags = _tags.Matches(source);
+        for (int i = tags.Count - 1; i > -1; i--)
+        {
+            tag = tags[i];
+            tagname = tag.Value.ToLowerInvariant();
+
+            if (!(whitelist.IsMatch(tagname)))
+            {
+                source = source.Remove(tag.Index, tag.Length);
+            }
+        }
+
+        return source;
+    }
+
 }
 
 

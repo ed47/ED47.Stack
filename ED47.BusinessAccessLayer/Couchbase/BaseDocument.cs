@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using ED47.Stack.Web.Cache;
 
 namespace ED47.BusinessAccessLayer.Couchbase
 {
@@ -18,10 +19,14 @@ namespace ED47.BusinessAccessLayer.Couchbase
            
         }
 
-       
         public bool Save()
         {
-            return Repository.Store(this);
+            return CouchbaseRepository.Store(this);
+        }
+
+        public bool Delete()
+        {
+            return CouchbaseRepository.Delete(this);
         }
 
         private bool _loaded = false;
@@ -29,7 +34,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         public virtual bool Load(bool force = false)
         {
             if(!_loaded || force )
-                _loaded = Repository.Load(this);
+                _loaded = CouchbaseRepository.Load(this);
 
             return _loaded;
         }
@@ -54,7 +59,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
             {
                 if (!_id.HasValue)
                 {
-                    _id = Repository.GetNewId(Type);
+                    _id = CouchbaseRepository.GetNewId(Type);
                 }
                 return _id.Value;
 
@@ -62,16 +67,32 @@ namespace ED47.BusinessAccessLayer.Couchbase
             set { _id = value; }
         }
 
-        private string _key = null;
 
-        protected string CalcKey(int id)
+        private DateTime? _creationDate;
+
+        public DateTime CreationDate
         {
-            return Type + "?id=" + Id;
+            get
+            {
+                if (!_creationDate.HasValue)
+                {
+                    _creationDate = DateTime.UtcNow;
+                }
+                return _creationDate.Value;
+
+            }
+            set { _creationDate = value; }
         }
 
+
+        protected virtual string CalcKey()
+        {
+            return (Type + "?id=" + Id).ToLower();
+        }
+        private string _key = null;
         public string Key
         {
-            get { return _key ?? (_key = Type + "?id=" + Id); }
+            get { return _key ?? (_key = CalcKey()); }
             set { _key = value; }
         }
 
@@ -79,5 +100,6 @@ namespace ED47.BusinessAccessLayer.Couchbase
         {
             return Key;
         }
+     
     }
 }

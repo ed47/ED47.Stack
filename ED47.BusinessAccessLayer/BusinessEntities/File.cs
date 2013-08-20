@@ -13,7 +13,7 @@ using Ninject;
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     [Model]
-    public class File : BusinessEntity
+    public class File : BusinessEntity, IFile
     {
         public virtual int Id { get; set; }
 
