@@ -48,8 +48,6 @@
         },
         setup: function(form) {
             var me = this;
-            form.data("initialState", form.serializeArray());
-
             me.setupOnChange(form);
             me.setupSubmit(form);
             
@@ -113,8 +111,7 @@
                             .addClass("field-validation-error")
                             .html(this.ErrorMessage);
                     });
-
-                    form.data("initialState", form.serializeArray());
+                    
                     form.trigger("autosaved", { form: form, data: data });
                 })
                 .fail(function() {
