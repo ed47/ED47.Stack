@@ -38,6 +38,7 @@ namespace ED47.BusinessAccessLayer.Azure
         public static bool RemoveContainer(string containerName, BlobContainerPermissions permissions)
         {
             var client = StorageAccount.CreateCloudBlobClient();
+
             var container = client.GetContainerReference(containerName);
 
             if (container != null)
