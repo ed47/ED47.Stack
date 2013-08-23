@@ -4,13 +4,12 @@
  * Dual licensed under the MIT (MIT_LICENSE.txt)
  * and GPL Version 2 (GPL_LICENSE.txt) licenses.
  *
- * Version: 1.3.4
+ * Version: 1.3.5
  * Requires jQuery 1.3+
  * Docs: http://docs.jquery.com/Plugins/livequery
  */
 
 (function ($, undefined) {
-
 function _match(me, query, fn, fn2) {
 	return me.selector == query.selector &&
 		me.context == query.context &&
@@ -148,7 +147,7 @@ $.extend($jQlq, {
 	registerPlugin: function() {
 		$.each( arguments, function(i,n) {
 			// Short-circuit if the method doesn't exist
-			if (!$.fn[n] || $jQlq.registered.indexOf(n) > 0) return;
+			if (!$.fn[n] || $.inArray(n, $jQlq.registered) > 0) return;
 
 			// Save a reference to the original method
 			var old = $.fn[n];
