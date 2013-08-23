@@ -26,7 +26,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
 
         public DateTime? ModificationDate { get; set; }
 
-        List<Comment> Comments = new List<Comment>();
+        protected  List<Comment> Comments = new List<Comment>();
         public IEnumerable<IComment> Replies
         {
             get { return Comments; }
@@ -84,7 +84,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             }
         }
 
-        public IComment Reply(string comment, int commentId, string creator = null, bool? encrypted = false)
+        public virtual IComment Reply(string comment, int commentId, string creator = null, bool? encrypted = false)
         {
             if (!CanReply()) return null;            
             var newComment = Create(comment, commentId, creator,encrypted);
@@ -130,6 +130,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
         {
             FileBox.AddFile(file);
         }
+
+        public int ParentLevel { get; set; }
 
         public bool Edit(string body)
         {

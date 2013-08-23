@@ -130,6 +130,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             FileBox.AddFile(file,BusinessKey);
         }
 
+        public int ParentLevel { get; set; }
+
         public void AddFile(string businessKey, IFile file )
         {
             if (!AllComments.ContainsKey(businessKey))

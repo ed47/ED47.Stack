@@ -22,6 +22,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         bool CanReply();
         bool Delete();
         void AddFile(IFile file);
+        int ParentLevel { get; set; }
         //event EventHandler OnAdd;
         //event EventHandler OnRemove;
         bool Edit(string body);
