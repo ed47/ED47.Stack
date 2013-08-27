@@ -8,6 +8,5 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         string Title { get; set; }
         bool IsEncrypted { get; set; }
         CommentOrder CommentOrder { get; set; }
-        HashSet<string> Notifiers { get; set; }
     }
 }

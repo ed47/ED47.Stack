@@ -97,10 +97,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
                 IsEncrypted = isEncrypted,
                 Title = title,
                 Body = body,
-                Creator = creator,
-                Notifiers = new HashSet<string>()
+                Creator = creator
             };
-            newDiscussion.Notifiers.Add(creator);
 
             newDiscussion.Save();
 
@@ -159,6 +157,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
                 return true;
             }
             return false;
+        }
+
+        public IEnumerable<TComment> GetReplies<TComment>()
+        {
+            return Replies.Cast<TComment>();
         }
 
         public bool Edit(string businesskey, string body)

@@ -26,5 +26,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         //event EventHandler OnAdd;
         //event EventHandler OnRemove;
         bool Edit(string body);
+        IEnumerable<TComment> GetReplies<TComment>();
     }
 }

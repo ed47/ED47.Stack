@@ -143,6 +143,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase.Comment
             }
             return false;
         }
+
+        public IEnumerable<TComment> GetReplies<TComment>()
+        {
+            return Replies.Cast<TComment>();
+        }
     }
 
     public class EncryptedComment : Comment
