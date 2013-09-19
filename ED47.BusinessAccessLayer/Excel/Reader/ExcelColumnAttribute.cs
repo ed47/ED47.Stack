@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -40,14 +41,18 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
         public bool ValidateEmailAddress { get; set; }
         public string ValidRegExpress { get; set; }
         public object DefaultValue { get; set; }
-        
+        public bool ReadAllColumnsUntilLastOrEmpty  { get; set; }
+       
+ 
         internal static ExcelColumnAttribute GetAttribute(PropertyInfo p) {           
             var attr = GetCustomAttribute(p, typeof(ExcelColumnAttribute)) as ExcelColumnAttribute;
             return attr;
         }
 
-        internal static void Validate(PropertyInfo prop, string value, ExcelData line) {
+        internal static void Validate(PropertyInfo prop, object valueObj, ExcelData line) {
             line.ErrorMessage= "";
+
+            var value = valueObj != null ? valueObj.ToString():"";
 
             var attr = GetCustomAttribute(prop, typeof(ExcelColumnAttribute)) as ExcelColumnAttribute;
 
@@ -56,9 +61,7 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
                 return;
             }
 
-            if(value == null)
-                value ="";
-
+            
             if (attr.AllowBlank && string.IsNullOrEmpty(value.Trim()))
             {
                 line.CurrentPropertyIsBlank = true;
@@ -75,8 +78,13 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
 
             line.CurrentPropertyIsBlank = string.IsNullOrEmpty(value.Trim());
 
-            Boolean auxBool;
+            if (valueObj is List<string>) {
+                line.ValidValue = valueObj as List<string>;
+                return;
+            }
+
             if(prop.PropertyType == typeof(Boolean)){
+                Boolean auxBool;
                 if (!Boolean.TryParse(value, out auxBool))
                 {
                     line.ErrorMessage = string.Format("{0} value [" + value + "] cannot be converted to Boolean", string.IsNullOrEmpty(attr.Description) ? prop.Name : attr.Description);
@@ -87,9 +95,9 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
                 return;
             }
 
-            Int32 auxInt;
             if (prop.PropertyType == typeof(Int32))
             {
+                Int32 auxInt;
                 if (!Int32.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.CreateSpecificCulture(attr.Culture), out auxInt))
                 {
                     line.ErrorMessage = string.Format("{0} value [" + value + "] cannot be converted to Int32", string.IsNullOrEmpty(attr.Description) ? prop.Name : attr.Description);
@@ -100,8 +108,8 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
                 return;
             }
 
-            Double auxDouble;
             if(prop.PropertyType == typeof(Double) ){
+                Double auxDouble;
                 if (!Double.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.CreateSpecificCulture(attr.Culture), out auxDouble))
                 {
                     line.ErrorMessage = string.Format("{0} value [" + value + "] cannot be converted to Double", string.IsNullOrEmpty(attr.Description) ? prop.Name : attr.Description);
@@ -113,8 +121,8 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
 
             }
 
-            Decimal auxDecimal;
             if (prop.PropertyType == typeof(Decimal)) {
+                Decimal auxDecimal;
                 if (!Decimal.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.CreateSpecificCulture(attr.Culture), out auxDecimal))
                 {
                     line.ErrorMessage = string.Format("{0} value [" + value + "] cannot be converted to decimal", string.IsNullOrEmpty(attr.Description) ? prop.Name : attr.Description);

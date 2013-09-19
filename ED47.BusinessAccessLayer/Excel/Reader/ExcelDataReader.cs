@@ -7,7 +7,7 @@ using ED47.BusinessAccessLayer.Excel.Reader;
 using ED47.Stack.Web;
 using SmartXLS;
 
-namespace DED47.BusinessAccessLayer.Excel.Reader
+namespace ED47.BusinessAccessLayer.Excel.Reader
 {
     public class ExcelDataReader
     {
@@ -36,14 +36,13 @@ namespace DED47.BusinessAccessLayer.Excel.Reader
             ImportXls(filename, excelUseTypeDataList);
         }
 
-        public bool ImportXls<TExcelType>(string filename, List<TExcelType> excelUseTypeDataList) where TExcelType : ExcelData
+        public void ImportXls<TExcelType>(string filename, List<TExcelType> excelUseTypeDataList) where TExcelType : ExcelData
         {
             var name = Path.GetFileNameWithoutExtension(filename);
             var ext = Path.GetExtension(filename);
 
             var workBook = new WorkBook();
-            try
-            {
+         
                 if (ext == ".xls")
                 {
                     workBook.read(filename);
@@ -55,14 +54,9 @@ namespace DED47.BusinessAccessLayer.Excel.Reader
                 else
                 {                    
                     //"Wrong file type", "User tried to upload a " + ext + " file.";
-                    return false;
+                    return ;
                 }
-            }
-            catch (Exception err)
-            {
-                //"Reading Excel file", "error reading excel file: " + err.Message;
-                return false;
-            }
+           
 
             var myObject = CreateGeneric(typeof(TExcelType)) as ExcelData;
             ExcelGenericAttribute xlAttr = ExcelGenericAttribute.GetAttribute(myObject.GetType());
@@ -78,7 +72,7 @@ namespace DED47.BusinessAccessLayer.Excel.Reader
                 excelUseTypeDataList.AddRange(ReadExcelSheetData<TExcelType>(workBook, 0, ref _readErrors));
                 
             }
-            return true;
+            
         }
 
 
@@ -119,16 +113,15 @@ namespace DED47.BusinessAccessLayer.Excel.Reader
                     ExcelColumnAttribute xlColAttr = ExcelColumnAttribute.GetAttribute(p);
                     if (xlColAttr == null || xlColAttr.OutputOnly) continue;
 
-                    var xlValue = workBook.getText(i, xlColAttr.Column);
+
+                    var xlValue = GetValueFromExcel<TExcelType>(workBook, xlColAttr, i);
 
                     try
                     {
                         ExcelColumnAttribute.Validate(p, xlValue, mbrLine);
-
                         mbrLine.CustomPropertyValidation(p, xlValue, mbrLine);
-                    }catch(Exception er)
+                    } catch(Exception er)
                     {
-
                         var importStats = BaseImportWorker.GetImportStatus("GroupProperty", BaseUserContext.Instance.UserName);
                         importStats.Status = new { Msg = "Errors while validating" };
                         importStats.ImportProgres = 100;
@@ -177,6 +170,29 @@ namespace DED47.BusinessAccessLayer.Excel.Reader
             }
 
             return tempDataList;
+        }
+
+        private static object GetValueFromExcel<TExcelType>(WorkBook workBook, ExcelColumnAttribute xlColAttr, int i) where TExcelType : ExcelData
+        {
+            if (!xlColAttr.ReadAllColumnsUntilLastOrEmpty)
+            {
+                return workBook.getText(i, xlColAttr.Column);
+            }
+
+            // read until first empty cell
+            var xlValue = new List<string>();
+            var xlVal = "";
+            var currentCol = xlColAttr.Column;
+            do
+            {
+                xlVal = workBook.getText(i, currentCol);
+                if (!string.IsNullOrWhiteSpace(xlVal))
+                    xlValue.Add(xlVal);
+
+                currentCol++;
+            } while (!string.IsNullOrWhiteSpace(xlVal));
+
+            return xlValue;
         }
 
         private bool IsLineEmpty(WorkBook workBook, int i, int colsCount) {

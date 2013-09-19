@@ -31,7 +31,7 @@ namespace ED47.BusinessAccessLayer.Excel.Reader
         public string ErrorMessage { get; set; }
         public int ExcelLine { get; set; }
         
-        public virtual void CustomPropertyValidation(System.Reflection.PropertyInfo p, string xlValue, ExcelData line){
+        public virtual void CustomPropertyValidation(System.Reflection.PropertyInfo p, object xlValue, ExcelData line){
         }
 
         public bool WasIgnored { get; set; }        
