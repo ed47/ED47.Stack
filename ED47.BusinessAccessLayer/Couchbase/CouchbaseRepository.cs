@@ -27,7 +27,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return false;
         }
 
-        public static TDocument Get<TDocument>(string key) where TDocument : class, IDocument, new()
+        public static TDocument Get<TDocument>(string key) where TDocument : class, IDocument
         {
             var client = CouchbaseManager.Instance;
             var op = client.ExecuteGet(key);

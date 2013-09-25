@@ -19,7 +19,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
            
         }
 
-        public bool Save()
+        public virtual bool Save()
         {
             return CouchbaseRepository.Store(this);
         }
