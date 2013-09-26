@@ -45,7 +45,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         }
 
         private string _type = null;
-        public string Type
+        public virtual string Type
         {
             get { return _type ?? (_type = GetType().Name); }
             set { _type = value; }

@@ -134,7 +134,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
         }
 
 
-        public static IEnumerable<TDocument> GetByKey<TDocument>(string designName, string viewName, string key, string startKey = null, string endKey = null, int limit = 1000, bool allowStale = false) where TDocument : class, IDocument, new()
+        public static IEnumerable<TDocument> GetByKey<TDocument>(string designName, string viewName, string key, string startKey = null, string endKey = null, int limit = 1000, bool allowStale = false) where TDocument : class, IDocument
         {
             var client = CouchbaseManager.Instance;
             var view = key.Length != 0 ? client.GetView(designName, viewName).Key(key) : client.GetView(designName, viewName);
@@ -150,7 +150,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return res;
         }
 
-        public static IEnumerable<TDocument> All<TDocument>(string type) where TDocument : class, IDocument, new()
+        public static IEnumerable<TDocument> All<TDocument>(string type) where TDocument : class, IDocument
         {
             var client = CouchbaseManager.Instance;
             var view = client.GetView("all", "byType")
