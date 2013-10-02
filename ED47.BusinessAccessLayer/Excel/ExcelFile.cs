@@ -89,7 +89,9 @@ namespace ED47.BusinessAccessLayer.Excel
                 {
                     excelSheet.Write(excelPackage);
                 }
+                
                 excelPackage.SaveAs(stream);
+                excelPackage.Package.Close();
             }
         }
 

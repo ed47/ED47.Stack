@@ -8,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Transactions;
-using Newtonsoft.Json;
 using Omu.ValueInjecter;
 
 namespace ED47.BusinessAccessLayer
