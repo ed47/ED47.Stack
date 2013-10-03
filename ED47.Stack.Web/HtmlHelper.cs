@@ -36,9 +36,7 @@ namespace ED47.Stack.Web
                                                       int? preselectedRecordId = null,
                                                       string deleteConfirmationMessage = null)
         {
-// ReSharper disable JoinDeclarationAndInitializer
-            Formatting formatting = Formatting.None;
-// ReSharper restore JoinDeclarationAndInitializer
+            var formatting = Formatting.None;
 
             if (model == null)
                 return new MvcHtmlString(String.Empty);
@@ -62,7 +60,7 @@ namespace ED47.Stack.Web
 
             var builder = new StringBuilder("<script language='javascript'>");
             builder.AppendLine(String.Format("ED47.views.Models['{0}'] = {1};", id,
-                                             JsonConvert.SerializeObject(model, formatting,
+                                             JsonConvert.SerializeObject(model, formatting, 
                                                                          new JavaScriptDateTimeConverter())));
             builder.AppendLine(
                 String.Format(
