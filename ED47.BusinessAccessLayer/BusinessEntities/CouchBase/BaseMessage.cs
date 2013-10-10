@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using ED47.BusinessAccessLayer.Couchbase;
 using ED47.Stack.Web.Template;
 using Newtonsoft.Json;
@@ -103,8 +100,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities.CouchBase
 
         public virtual void SetBody(object data = null)
         {
-//            if (!String.IsNullOrWhiteSpace(Email.Body))
-//                return;
+            if (!String.IsNullOrWhiteSpace(Email.Body))
+                return;
 
             var tpl = GetBodyTpl();
             Email.Body = tpl != null ? tpl.Apply(data ?? Data ?? this) : (data != null ? data.ToString() : "No body");

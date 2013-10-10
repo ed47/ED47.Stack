@@ -29,6 +29,12 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return CouchbaseRepository.Delete(this);
         }
 
+        public void SoftDelete()
+        {
+            IsDeleted = true;
+            DeletionDate = DateTime.UtcNow;
+        }
+        
         private bool _loaded = false;
         
         public virtual bool Load(bool force = false)
@@ -100,6 +106,10 @@ namespace ED47.BusinessAccessLayer.Couchbase
         {
             return Key;
         }
+
+        public bool IsDeleted { get; set; }
+        public DateTime DeletionDate { get; set; }
+        public virtual string DeleterUsername { get; set; }
      
     }
 }

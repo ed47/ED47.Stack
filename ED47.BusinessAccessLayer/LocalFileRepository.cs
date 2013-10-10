@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 using ED47.BusinessAccessLayer.BusinessEntities;
-using File = ED47.BusinessAccessLayer.BusinessEntities.File;
 
 
 namespace ED47.BusinessAccessLayer

@@ -31,5 +31,12 @@ namespace ED47.Stack.Web.Cache
         {
             Cache.Remove(key);
         }
+        public static void Clear()
+        {
+            foreach (var item in Cache)
+            {
+                Cache.Remove(item.Key);
+            }
+        }
     }
 }

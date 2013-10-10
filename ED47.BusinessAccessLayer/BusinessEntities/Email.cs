@@ -5,7 +5,6 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
