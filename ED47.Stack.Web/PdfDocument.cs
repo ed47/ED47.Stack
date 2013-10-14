@@ -157,7 +157,7 @@ namespace ED47.Stack.Web
                 System.Web.HttpResponse response = System.Web.HttpContext.Current.Response;
                 response.Clear();
                 response.AddHeader("Content-Type", "application/pdf");
-                response.AddHeader("Content-Disposition", "attachment; filename=" + attachName + "; size=" + pdfbyte.Length.ToString());
+                response.AddHeader("Content-Disposition", "attachment; filename=" + attachName + "; size=" + pdfbyte.Length);
                 response.Flush();
                 response.BinaryWrite(pdfbyte);
                 response.Flush();
