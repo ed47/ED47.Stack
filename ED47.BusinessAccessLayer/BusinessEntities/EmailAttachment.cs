@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace ED47.BusinessAccessLayer.BusinessEntities
+﻿namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     public class EmailAttachment : BusinessEntity
     {

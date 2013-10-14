@@ -70,7 +70,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public void Delete()
         {
-
             BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
         }
     }
