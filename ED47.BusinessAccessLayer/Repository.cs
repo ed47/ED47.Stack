@@ -123,12 +123,13 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TBusinessEntity">The business entity type to get.</typeparam>
         /// <param name="predicate">The filter predicate that must return a single result.</param>
         /// <param name="includes">The optional includes.</param>
+        /// <param name="ignoreBusinessPredicate"></param>
         /// <returns></returns>
-        public TBusinessEntity Find<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null)
+        public TBusinessEntity Find<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null, bool ignoreBusinessPredicate = false)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
-            return Where<TEntity, TBusinessEntity>(predicate, includes).SingleOrDefault();
+            return Where<TEntity, TBusinessEntity>(predicate, includes, ignoreBusinessPredicate).SingleOrDefault();
         }
 
 
