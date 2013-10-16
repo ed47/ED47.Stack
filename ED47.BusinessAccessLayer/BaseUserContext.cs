@@ -147,7 +147,7 @@ namespace ED47.BusinessAccessLayer
             return String.Join("&", entity.GetKeys<TDbEntity>().Select(el => el.Key + "=" + el.Value.ToString()));
         }
 
-        public static TBusinessEntity GetStaticInstance<TDbEntity, TBusinessEntity>(int id)
+        public static TBusinessEntity GetStaticInstance<TDbEntity, TBusinessEntity>(int id, bool ignoreBusinessPredicate = false)
             where TDbEntity : BaseDbEntity
             where TBusinessEntity : BusinessEntity, new()
         {
@@ -159,7 +159,7 @@ namespace ED47.BusinessAccessLayer
                 var entity = cache.Get(key) as TBusinessEntity;
                 if (entity == null)
                 {
-                    entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id);
+                    entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id, ignoreBusinessPredicate: ignoreBusinessPredicate);
                     if (entity == null)
                         return null;
                         //throw new NullReferenceException(String.Format("No entity {0} {1} found.", id,
