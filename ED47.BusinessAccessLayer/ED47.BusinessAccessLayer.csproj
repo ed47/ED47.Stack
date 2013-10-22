@@ -175,6 +175,7 @@
     <Compile Include="Multilingual\MultilingualExtensions.cs" />
     <Compile Include="PropertyChangedEventHandler.cs" />
     <Compile Include="PropertyChangedEventHandlerArgs.cs" />
+    <Compile Include="QueryableHelper.cs" />
     <Compile Include="QueryOptions.cs" />
     <Compile Include="QueueWorker.cs" />
     <Compile Include="ReaderInjection.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="TypeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
