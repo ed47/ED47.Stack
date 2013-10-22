@@ -225,7 +225,7 @@ namespace ED47.BusinessAccessLayer
 
         }
 
-        public static TBusinessEntity GetDynamicInstance<TDbEntity, TBusinessEntity>(int id)
+        public static TBusinessEntity GetDynamicInstance<TDbEntity, TBusinessEntity>(int id, bool ignoreBusinessPredicate = false)
             where TDbEntity : BaseDbEntity
             where TBusinessEntity : BusinessEntity, new()
         {
@@ -235,7 +235,7 @@ namespace ED47.BusinessAccessLayer
                 var entity = Retrieve(key) as TBusinessEntity;
                 if (entity == null)
                 {
-                    entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id);
+                    entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id, ignoreBusinessPredicate: ignoreBusinessPredicate);
                     if (entity == null) throw new NullReferenceException(String.Format("No entity {0} {1} found.", id, typeof(TBusinessEntity).FullName));
                     StoreDynamicInstance<TDbEntity, TBusinessEntity>(entity);
                 }
