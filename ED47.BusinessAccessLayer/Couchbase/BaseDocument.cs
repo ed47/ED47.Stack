@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using ED47.Stack.Web.Cache;
 
 namespace ED47.BusinessAccessLayer.Couchbase
 {
