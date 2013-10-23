@@ -37,7 +37,7 @@ namespace ED47.BusinessAccessLayer
                         value = Convert.ChangeType(value, Nullable.GetUnderlyingType(targetProp.PropertyType));
                 }
 
-                if (value == String.Empty && targetProp.PropertyType != typeof(String))
+                if (value != null && value.ToString() == String.Empty && targetProp.PropertyType != typeof(String))
                     value = null;
 
                 if (value is JArray)
