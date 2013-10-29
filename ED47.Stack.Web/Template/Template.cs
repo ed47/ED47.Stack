@@ -75,7 +75,7 @@ namespace ED47.Stack.Web.Template
             AddFunction("inject", Inject);
         }
 
-        public Template(string tplText)
+        public Template(string tplText, TemplateType type = TemplateType.XTemplate)
             : this()
         {
             TemplateText = tplText;

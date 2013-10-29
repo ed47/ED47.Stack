@@ -119,6 +119,7 @@ namespace ED47.BusinessAccessLayer.Couchbase
             return res;
         }
 
+      
         public static IEnumerable<TDocument> GetByKey<TDocument>(string designName, string viewName, object startKey, object endKey = null, int limit = 1000, bool allowStale = false) where TDocument : class, IDocument, new()
         {
             var client = CouchbaseManager.Instance;
