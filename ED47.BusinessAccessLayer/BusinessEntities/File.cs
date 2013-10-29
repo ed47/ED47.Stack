@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using ED47.Stack.Reflector.Attributes;
 using ED47.Stack.Web;
@@ -43,13 +44,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return BaseUserContext.Instance.Repository.Find<Entities.File, TFile>(el => el.Id == id);
         }
 
-        public static IEnumerable<File> GetAll()
+        public async static Task<IEnumerable<File>> GetAll()
         {
             var context = BaseUserContext.Instance;
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            return context.Repository.GetAll<Entities.File, File>();
+            return await context.Repository.GetAll<Entities.File, File>();
         }
 
         public static File Get(int id)

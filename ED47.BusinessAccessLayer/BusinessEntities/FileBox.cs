@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
@@ -43,11 +44,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// </summary>
         /// <param name="fileBoxId">The filebox's Id.</param>
         /// <returns></returns>
-        public static int FileCount(int? fileBoxId)
+        public async static Task<int> FileCount(int? fileBoxId)
         {
             if (!fileBoxId.HasValue) return 0;
 
-            return BaseUserContext.Instance.Repository.Count<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileBoxId == fileBoxId);
+            return await BaseUserContext.Instance.Repository.Count<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileBoxId == fileBoxId);
         }
 
         public IEnumerable<FileBoxItem> GetFiles()

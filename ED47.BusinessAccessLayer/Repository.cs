@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Transactions;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
@@ -125,6 +126,21 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filter predicate that must return a single result.</param>
         /// <param name="includes">The optional includes.</param>
         /// <returns></returns>
+        public async Task<TBusinessEntity> FindAsync<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null)
+            where TEntity : DbEntity
+            where TBusinessEntity : class, new()
+        {
+            return (await WhereAsync<TEntity, TBusinessEntity>(predicate, includes)).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Fins an entity with a predicate.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type to find.</typeparam>
+        /// <typeparam name="TBusinessEntity">The business entity type to get.</typeparam>
+        /// <param name="predicate">The filter predicate that must return a single result.</param>
+        /// <param name="includes">The optional includes.</param>
+        /// <returns></returns>
         public TBusinessEntity Find<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
@@ -132,6 +148,34 @@ namespace ED47.BusinessAccessLayer
             return Where<TEntity, TBusinessEntity>(predicate, includes).SingleOrDefault();
         }
 
+
+        /// <summary>
+        /// Searches for entities using a predicate.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type to get results in.</typeparam>
+        /// <typeparam name="TBusinessEntity">The business entity type. </typeparam>
+        /// <param name="predicate">The filtering predicate.</param>
+        /// <param name="includes">The optional includes for this query.</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<TBusinessEntity>> WhereAsync<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null, bool ignoreBusinessPredicate = false)
+            where TEntity : DbEntity
+            where TBusinessEntity : class, new()
+        {
+            var query = DbContext.Set<TEntity>().AsQueryable();
+
+            if (!ignoreBusinessPredicate)
+            {
+                var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
+
+                if (businessPredicate != null)
+                    query = query.Where(businessPredicate);
+            }
+
+            query = AddIncludes(query, GetBusinessIncludes<TBusinessEntity>());
+            query = AddIncludes(query, includes);
+
+            return Convert<TEntity, TBusinessEntity>(await query.Where(predicate).ToArrayAsync());
+        }
 
         /// <summary>
         /// Searches for entities using a predicate.
@@ -189,7 +233,7 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TBusinessEntity">The business entity type. Its business predicate will also be applied if available,</typeparam>
         /// <param name="predicate">The filter predicate.</param>
         /// <returns></returns>
-        public bool All<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate)
+        public async Task<bool> All<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -200,7 +244,7 @@ namespace ED47.BusinessAccessLayer
             if (businessPredicate != null)
                 query = query.Where(businessPredicate);
 
-            return query.All(predicate);
+            return await query.AllAsync(predicate);
         }
 
         /// <summary>
@@ -210,7 +254,7 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TBusinessEntity">The business entity type. Its business predicate will also be applied if available,</typeparam>
         /// <param name="predicate">The filter predicate.</param>
         /// <returns></returns>
-        public int Count<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate)
+        public async Task<int> Count<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -221,7 +265,7 @@ namespace ED47.BusinessAccessLayer
             if (businessPredicate != null)
                 query = query.Where(businessPredicate);
 
-            return query.Count(predicate);
+            return await query.CountAsync(predicate);
         }
 
         /// <summary>
@@ -232,7 +276,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filter predicate.</param>
         /// <param name="selector">The selector function to select the field to sum.</param>
         /// <returns></returns>
-        public decimal? Sum<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, decimal?>> selector)
+        public async Task<decimal?> Sum<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, decimal?>> selector)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -243,7 +287,7 @@ namespace ED47.BusinessAccessLayer
             if (businessPredicate != null)
                 query = query.Where(businessPredicate);
 
-            return query.Where(predicate).Sum(selector);
+            return await query.Where(predicate).SumAsync(selector);
         }
 
         /// <summary>
@@ -254,7 +298,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filter predicate.</param>
         /// <param name="selector">The selector function to select the field to sum.</param>
         /// <returns></returns>
-        public int? Sum<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, int?>> selector)
+        public async Task<int?> Sum<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, int?>> selector)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -265,7 +309,7 @@ namespace ED47.BusinessAccessLayer
             if (businessPredicate != null)
                 query = query.Where(businessPredicate);
 
-            return query.Where(predicate).Sum(selector);
+            return await query.Where(predicate).SumAsync(selector);
         }
 
         /// <summary>
@@ -276,7 +320,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filter predicate.</param>
         /// <param name="selector">The selector function to select the field to get the maximum for.</param>
         /// <returns></returns>
-        public int? Max<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, int?>> selector)
+        public async Task<int?> Max<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, int?>> selector)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -287,7 +331,7 @@ namespace ED47.BusinessAccessLayer
             if (businessPredicate != null)
                 query = query.Where(businessPredicate);
 
-            return query.Where(predicate).Max(selector);
+            return await query.Where(predicate).MaxAsync(selector);
         }
 
         /// <summary>
@@ -317,7 +361,7 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TBusinessEntity">The Type of the Business Entity.</typeparam>
         /// <param name="includes">The optional includes.</param>
         /// <returns></returns>
-        public IEnumerable<TBusinessEntity> GetAll<TEntity, TBusinessEntity>(IEnumerable<string> includes = null)
+        public async Task<IEnumerable<TBusinessEntity>> GetAll<TEntity, TBusinessEntity>(IEnumerable<string> includes = null)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
@@ -328,7 +372,7 @@ namespace ED47.BusinessAccessLayer
             query = query.AsNoTracking();
             query = AddIncludes(query, includes);
             query = AddIncludes(query, GetBusinessIncludes<TBusinessEntity>());
-            return Convert<TEntity, TBusinessEntity>(query);
+            return Convert<TEntity, TBusinessEntity>(await query.ToArrayAsync());
         }
 
         /// <summary>
@@ -349,7 +393,7 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TEntity">The type of the entity to add.</typeparam>
         /// <typeparam name="TBusinessEntity">The Type of the business entity to add.</typeparam>
         /// <param name="businessEntity">The business entity to add to the repository.</param>
-        public void Add<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
+        public async Task Add<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
             where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
@@ -372,7 +416,7 @@ namespace ED47.BusinessAccessLayer
             EventProxy.NotifyAdd(businessEntity);
 
             ImmediateDbContext.Set<TEntity>().Add(newEntity);
-            ImmediateDbContext.SaveChanges();
+            await ImmediateDbContext.SaveChangesAsync();
             ImmediateDbContext.Entry(newEntity).State = EntityState.Detached;
             DbContext.Set<TEntity>().Attach(newEntity);
 
@@ -381,7 +425,6 @@ namespace ED47.BusinessAccessLayer
             businessEntity.Init();
 
             EventProxy.NotifyAdded(businessEntity);
-
         }
 
         /// <summary>
@@ -390,13 +433,13 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TEntity">The type of the entity to add.</typeparam>
         /// <typeparam name="TBusinessEntity">The Type of the business entity to add.</typeparam>
         /// <param name="businessEntities">The collection of business entities to add to the repository.</param>
-        public void Add<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
+        public async Task Add<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
             where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
             foreach (var businessEntity in businessEntities)
             {
-                Add<TEntity, TBusinessEntity>(businessEntity);
+                await Add<TEntity, TBusinessEntity>(businessEntity);
             }
         }
 
@@ -407,17 +450,16 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TBusinessEntity">The business entity type that's updating.</typeparam>
         /// <param name="businessEntity">The business entity that's updating.</param>
         /// <exception cref="RepositoryException">Fires this exception when the Entity is not found in the context.</exception>
-        public void Update<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
+        public async Task Update<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
             where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
-            IEnumerable<object> keys;
-            var originalEntity = GetEntityFromBusinessEntity<TEntity, TBusinessEntity>(businessEntity, out keys);
+            var originalEntity = await GetEntityFromBusinessEntity<TEntity, TBusinessEntity>(businessEntity);
 
             if (originalEntity == null)
             {
                 var exception = new RepositoryException(Resources.Repository_Update_UpdateFailed_NotFound);
-                exception.Data.Add("Entity Keys", keys);
+                //exception.Data.Add("Entity Keys", keys);
                 throw exception;
             }
 
@@ -443,13 +485,13 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TBusinessEntity">The business entity type that's updating.</typeparam>
         /// <param name="businessEntities">The business entity collections that's updating.</param>
         /// <exception cref="RepositoryException">Fires this exception when the Entity is not found in the context.</exception>
-        public void Update<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
+        public async Task Update<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
             where TEntity : DbEntity, new()
             where TBusinessEntity : BusinessEntity
         {
             foreach (var businessEntity in businessEntities)
             {
-                Update<TEntity, TBusinessEntity>(businessEntity);
+                await Update<TEntity, TBusinessEntity>(businessEntity);
             }
         }
 
@@ -469,6 +511,24 @@ namespace ED47.BusinessAccessLayer
             keys = businessEntity.GetKeyValues(keyMembers);
             var originalEntity = DbContext.Set<TEntity>().Find(keys.ToArray());
             return originalEntity;
+        }
+
+        /// <summary>
+        /// Gets an existing entity from a business entity.
+        /// </summary>
+        /// <typeparam name="TEntity">The Entity type.</typeparam>
+        /// <typeparam name="TBusinessEntity">The business entity type.</typeparam>
+        /// <param name="businessEntity">The business entity.</param>
+        /// <param name="keys">Returns the key values from the business entity.</param>
+        /// <returns>The Entity instance that corresponds to the passed business entity.</returns>
+        private async Task<TEntity> GetEntityFromBusinessEntity<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
+            where TEntity : DbEntity, new()
+            where TBusinessEntity : BusinessEntity
+        {
+            var keyMembers = MetadataHelper.GetKeyMembers<TEntity>(DbContext);
+            var keys = businessEntity.GetKeyValues(keyMembers);
+            var originalEntity = DbContext.Set<TEntity>().FindAsync(keys.ToArray());
+            return await originalEntity;
         }
 
         public void Delete<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
@@ -497,9 +557,10 @@ namespace ED47.BusinessAccessLayer
             if (source == null)
                 return null;
 
-            Type sourceType = typeof(TSource);
-            Type targetType = typeof(TResult);
+            var sourceType = typeof(TSource);
+            var targetType = typeof(TResult);
             TResult result = null;
+
             if (sourceType.IsSubclassOf(typeof(DbEntity))
                                && targetType.IsSubclassOf(typeof(BusinessEntity)))
             {

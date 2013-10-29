@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
@@ -154,7 +156,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             }
         }
 
-        public static IEnumerable<Multilingual> GetPropertyTranslations(string businessKey, string propertyName)
+        public async static Task<IEnumerable<Multilingual>> GetPropertyTranslations(string businessKey, string propertyName)
         {
             var context = BaseUserContext.Instance;
 
@@ -162,13 +164,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
             var languages = Lang.GetLanguages();
-            var translations = context.Repository.Where<Entities.Multilingual, Multilingual>(
-                el => el.Key == businessKey && el.PropertyName == propertyName).ToList();
-
+            var translations = context.Repository.WhereAsync<Entities.Multilingual, Multilingual>(el => el.Key == businessKey && el.PropertyName == propertyName);
             var results = new List<Multilingual>();
-            foreach (var language in languages)
+
+            foreach (var language in await languages)
             {
-                var translation = translations.SingleOrDefault(el => el.LanguageIsoCode == language.IsoCode);
+                var translation = (await translations).SingleOrDefault(el => el.LanguageIsoCode == language.IsoCode);
 
                 if(translation != null)
                 {
@@ -183,12 +184,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return results;
         }
 
-        public static void SaveTranslations(IEnumerable<Multilingual> translations)
+        public async static Task SaveTranslations(IEnumerable<Multilingual> translations)
         {
-            translations.ToList().ForEach(el => el.Save());
+            var saves = new List<Task>();
+            translations.ToList().ForEach(el => saves.Add(el.Save()));
+            Task.WaitAll(saves.ToArray(), TimeSpan.FromMinutes(5));
         }
 
-        private void Save()
+        private async Task Save()
         {
             var context = BaseUserContext.Instance;
 
@@ -202,11 +205,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 m.PropertyName == PropertyName);
             if (translation == null)
             {
-                context.Repository.Add<Entities.Multilingual, Multilingual>(this);
+                await context.Repository.Add<Entities.Multilingual, Multilingual>(this);
             } else
             {
                 translation.Text = Text;
-                context.Repository.Update<Entities.Multilingual, Multilingual>(translation);
+                await context.Repository.Update<Entities.Multilingual, Multilingual>(translation);
             }
         }
     }

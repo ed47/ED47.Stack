@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
@@ -24,11 +25,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public virtual string Name { get; set; }
 
 
-        public static IEnumerable<Lang> GetLanguages()
+        public async static Task<IEnumerable<Lang>> GetLanguages()
         {
             var context = BaseUserContext.Instance ?? BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            return context.Repository.GetAll<Entities.Language, Lang>().ToList();
+            return (await context.Repository.GetAll<Entities.Language, Lang>()).ToList();
         }
 
     }
