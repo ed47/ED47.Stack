@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -11,8 +9,8 @@ using Newtonsoft.Json;
 namespace ED47.Stack.Web
 {
     public delegate void ApplyDelegate(JsonObject jsonObject);
-     [Serializable]
-    public class JsonObjectList : IEnumerable,ISerializable
+    [Serializable]
+    public class JsonObjectList : IEnumerable, ISerializable
     {
         public int Tab;
         private readonly List<JsonObject> _items = new List<JsonObject>();
@@ -38,7 +36,7 @@ namespace ED47.Stack.Web
                     Add(new JsonObject(o) { TypeName = typename });
             }
         }
-        
+
         public JsonObject Parent
         {
             get { return _parent; }
@@ -82,7 +80,7 @@ namespace ED47.Stack.Web
             get { return _items.Count > 0 ? _items[_items.Count - 1] : null; }
         }
 
-       
+
 
         #region IEnumerable Members
 
@@ -136,7 +134,7 @@ namespace ED47.Stack.Web
                 switch (tname)
                 {
                     case "System.Int32":
-                        cmp = Comparer<Int32>.Default.Compare(Convert.ToInt32(oa, CultureInfo.InvariantCulture), Convert.ToInt32(ob,CultureInfo.InvariantCulture));
+                        cmp = Comparer<Int32>.Default.Compare(Convert.ToInt32(oa, CultureInfo.InvariantCulture), Convert.ToInt32(ob, CultureInfo.InvariantCulture));
                         break;
 
                     case "System.DateTime":
@@ -178,7 +176,7 @@ namespace ED47.Stack.Web
             }
         }
 
-     
+
 
         public JsonObjectList GroupBy(string[] groupFields, string[] groupNames)
         {
@@ -242,7 +240,7 @@ namespace ED47.Stack.Web
             var result = new List<JsonObject>();
             foreach (var o in _items)
             {
-                JsonObject.FindChildren(o, path,  result);
+                JsonObject.FindChildren(o, path, result);
             }
             return result;
         }
@@ -256,11 +254,11 @@ namespace ED47.Stack.Web
             {
                 if (pattern == "")
                 {
-                    JsonObject.FindAllChildren(o,  result);
+                    JsonObject.FindAllChildren(o, result);
                 }
                 else
                 {
-                    JsonObject.FindChildren(o, reg,  result);
+                    JsonObject.FindChildren(o, reg, result);
                 }
             }
             return result;
@@ -274,12 +272,12 @@ namespace ED47.Stack.Web
             }
         }
 
-        public IEnumerable<TResult> Apply<TResult>(Func<JsonObject,TResult> fn)
+        public IEnumerable<TResult> Apply<TResult>(Func<JsonObject, TResult> fn)
         {
             var res = new List<TResult>();
             foreach (var o in _items)
             {
-               res.AddRange(o.Apply(fn));
+                res.AddRange(o.Apply(fn));
             }
             return res;
         }
@@ -385,10 +383,10 @@ namespace ED47.Stack.Web
             return result;
         }
 
-       
+
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("data",Items);
+            info.AddValue("data", Items);
         }
 
         public override string ToString()

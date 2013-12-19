@@ -716,6 +716,7 @@ namespace ED47.BusinessAccessLayer
 
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
         public int ExecuteNonQuery(string storedProcedure, params SqlParameter[] parameters)
         {
             using (var conn = new SqlConnection(ConnectionString))
@@ -751,6 +752,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="keySelector">The key selector.</param>
         /// <param name="entitySelector">The entity selector.</param>
         /// <param name="dataSelector">The data selector.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized.")]
         public void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, IntKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null, IEnumerable<SqlParameter> parameters = null)
         {
             var idProp = typeof(TEntity).GetProperty("Id");
@@ -781,6 +783,7 @@ namespace ED47.BusinessAccessLayer
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
         protected internal void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, StringKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null)
         {
             var idProp = typeof(TEntity).GetProperty("Id");

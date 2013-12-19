@@ -39,7 +39,7 @@ namespace ED47.Stack.Web
 
         public static string GetResourceTextFile(string culture)
         {
-            using (Stream stream = typeof(CountryIsoNames).Assembly.GetManifestResourceStream("ED47.Stack.Web.CountriesList." + culture + ".xml"))
+            using (var stream = typeof(CountryIsoNames).Assembly.GetManifestResourceStream("ED47.Stack.Web.CountriesList." + culture + ".xml"))
             {
                 using (var sr = new StreamReader(stream))
                 {
