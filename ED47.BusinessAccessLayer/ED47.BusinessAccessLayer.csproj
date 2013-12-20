@@ -159,6 +159,7 @@
     <Compile Include="Excel\Reader\ExcelData.cs" />
     <Compile Include="Excel\Reader\ExcelDataReader.cs" />
     <Compile Include="Excel\Reader\ImportStatus.cs" />
+    <Compile Include="Excel\WorksheetConfig.cs" />
     <Compile Include="FileRepositoryHandler.cs" />
     <Compile Include="IFileRepository.cs" />
     <Compile Include="IntKey.cs" />

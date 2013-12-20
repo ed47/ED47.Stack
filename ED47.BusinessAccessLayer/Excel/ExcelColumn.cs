@@ -23,6 +23,8 @@ namespace ED47.BusinessAccessLayer.Excel
         public string DisplayName { get; set; }
         public Action<object, ExcelRange> Renderer { get; set; }
 
+        
+
         /// <summary>
         /// The number format for this column.
         /// </summary>

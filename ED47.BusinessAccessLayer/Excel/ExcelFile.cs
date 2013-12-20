@@ -34,7 +34,7 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <param name="data">The data to show in the sheet.</param>
         /// <param name="name">The sheet's name.</param>
         /// <returns>The new sheet</returns>
-        public ExcelSheet AddSheet(JsonObjectList data, string name = null)
+        public ExcelSheet AddSheet(JsonObjectList data, string name = null, WorksheetConfig config = null)
         {
             if (String.IsNullOrWhiteSpace(name))
             {
@@ -42,7 +42,7 @@ namespace ED47.BusinessAccessLayer.Excel
                 _sheetNameCounter++;
             }
 
-            var newSheet = new ExcelSheet(name)
+            var newSheet = new ExcelSheet(name, config)
                                {
                                    Data = data
                                };

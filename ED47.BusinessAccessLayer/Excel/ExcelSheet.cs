@@ -17,10 +17,11 @@ namespace ED47.BusinessAccessLayer.Excel
         /// The name of the sheet.
         /// </summary>
         public string Name { get; set; }
+        public WorksheetConfig WorksheetConfig { get; set; }
         public Action<object, ExcelRange> HeaderRenderer { get; set; }
         public List<ExcelColumn> Columns { get; private set; }
         public List<ExcelColumn> HeaderColumns { get; private set; }
-
+        
         /// <summary>
         /// Gets or sets the data to export.
         /// </summary>
@@ -33,8 +34,10 @@ namespace ED47.BusinessAccessLayer.Excel
         /// Initializes a new instance of the <see cref="ExcelSheet"/> class.
         /// </summary>
         /// <param name="name">The sheet's name.</param>
-        public ExcelSheet(string name)
+        /// <param name="config">Sheet configuration.</param>
+        public ExcelSheet(string name, WorksheetConfig config = null)
         {
+            WorksheetConfig = config ?? new WorksheetConfig();
             Columns = new List<ExcelColumn>();
             HeaderColumns = new List<ExcelColumn>();
             this.Name = name;
@@ -92,6 +95,10 @@ namespace ED47.BusinessAccessLayer.Excel
             var ws = CreateSheet(excelPackage);
             var cell = CreateColumns(ws);
             WriteCellData(ws, cell);
+            if (WorksheetConfig.AutoFilter)
+            {
+                ws.Cells[ws.Dimension.Address].AutoFilter = WorksheetConfig.AutoFilter;
+            }
         }
 
         /// <summary>
@@ -210,7 +217,7 @@ namespace ED47.BusinessAccessLayer.Excel
 
                     if (c.Format != null)
                         worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column].Style.Numberformat.Format = c.Format;
-
+                    
                     if (c.ColSpan.HasValue)
                     {
                         var cells = worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column, cellCoordinate.Row, cellCoordinate.Column + c.ColSpan.Value];
