@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Transactions;
 using Omu.ValueInjecter;
 
@@ -157,6 +158,35 @@ namespace ED47.BusinessAccessLayer
 
             query = AddIncludes(query, GetBusinessIncludes<TBusinessEntity>());
             query = AddIncludes(query, includes);
+            
+            return Convert<TEntity, TBusinessEntity>(query.Where(predicate));
+        }
+
+        /// <summary>
+        /// Searches for entities using a predicate.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type to get results in.</typeparam>
+        /// <typeparam name="TBusinessEntity">The business entity type. </typeparam>
+        /// <param name="predicate">The filtering predicate.</param>
+        /// <param name="includes">The optional includes for this query.</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<TBusinessEntity>> WhereAsync<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate, IEnumerable<string> includes = null, bool ignoreBusinessPredicate = false)
+            where TEntity : DbEntity
+            where TBusinessEntity : class, new()
+        {
+            var query = DbContext.Set<TEntity>().AsQueryable();
+
+            if (!ignoreBusinessPredicate)
+            {
+                var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
+
+                if (businessPredicate != null)
+                    query = query.Where(businessPredicate);
+            }
+
+            query = AddIncludes(query, GetBusinessIncludes<TBusinessEntity>());
+            query = AddIncludes(query, includes);
+            await query.LoadAsync();
 
             return Convert<TEntity, TBusinessEntity>(query.Where(predicate));
         }
@@ -222,6 +252,27 @@ namespace ED47.BusinessAccessLayer
                 query = query.Where(businessPredicate);
 
             return query.Count(predicate);
+        }
+
+        /// <summary>
+        /// Counts the items in a query.
+        /// </summary>
+        /// <typeparam name="TEntity">The Entity type.</typeparam>
+        /// <typeparam name="TBusinessEntity">The business entity type. Its business predicate will also be applied if available,</typeparam>
+        /// <param name="predicate">The filter predicate.</param>
+        /// <returns></returns>
+        public async Task<int> CountAsync<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate)
+            where TEntity : DbEntity
+            where TBusinessEntity : class, new()
+        {
+            var query = DbContext.Set<TEntity>().AsQueryable();
+
+            var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
+
+            if (businessPredicate != null)
+                query = query.Where(businessPredicate);
+
+            return await query.CountAsync(predicate);
         }
 
         /// <summary>
