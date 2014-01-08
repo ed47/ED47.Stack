@@ -42,7 +42,7 @@
                                 me.multilingualValues[i].Text = me.formPanel.getForm().findField(me.multilingualValues[i].LanguageIsoCode).getValue();
                             }
 
-                            ED47.Stack.Controllers.MultilingualController.SetTranslations(me.multilingualValues);
+                            ED47.Stack.Controllers.TranslatorApiController.SetTranslations(me.multilingualValues);
                             me.fireEvent('multilingualvalidated', me.multilingualValues);
                             me.close();
                         },

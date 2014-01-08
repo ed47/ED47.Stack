@@ -85,7 +85,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="dbContext">The EF DB Context.</param>
         /// <param name="key">The translation key to fetch.</param>
         /// <returns></returns>
-        internal static List<BusinessEntities.Multilingual> GetTranslations(string isoLanguageCode, string key, IObjectContextAdapter dbContext) {
+        internal static IEnumerable<Multilingual> GetTranslations(string isoLanguageCode, string key, IObjectContextAdapter dbContext) {
 
             if (string.IsNullOrWhiteSpace(key))
                 return new List<BusinessEntities.Multilingual>(0);
