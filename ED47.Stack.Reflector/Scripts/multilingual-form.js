@@ -14,7 +14,6 @@
 
             if (!config) throw "A configuration object is required.";
             if (!config.key) throw "MultilingualFormWindow requires a key.";
-            //if (!config.modelId) throw "MultilingualFormWindow requires a modelId.";
             if (!config.fieldName) throw "MultilingualFormWindow requires a field name.";
             if (!config.mtype) throw "MultilingualFormWindow requires a field type in 'mtype' property.";
             if (!config.getLanguagesFunc) throw "MultilingualFormWindow requires a languages array.";
