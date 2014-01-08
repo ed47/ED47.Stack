@@ -90,12 +90,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (string.IsNullOrWhiteSpace(key))
                 return new List<BusinessEntities.Multilingual>(0);
 
-            var set = dbContext.ObjectContext.CreateObjectSet<Entities.Multilingual>();
-            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key))
+            var objectSet = dbContext.ObjectContext.CreateObjectSet<Entities.Multilingual>();
+            var translations = objectSet.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key))
                 .OrderBy(m => m.Key)
                 .ThenBy(m => m.PropertyName);
 
-            return Repository.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(ma).ToList();
+            return Repository.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translations).ToList();
 
         }
        

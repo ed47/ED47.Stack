@@ -80,11 +80,15 @@ namespace ED47.BusinessAccessLayer.Multilingual
         /// <param name="businessEntity">The collection of entities to translate.</param>
         /// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
         /// <param name="repository">The Entity Framework DB Context.</param>
-        public static void Translate<TEntity, TBusinesEntity>(this Repository repository, TBusinesEntity businessEntity, string isoLanguageCode, string key)
+        public static void Translate<TEntity, TBusinesEntity>(this Repository repository, TBusinesEntity businessEntity, string isoLanguageCode)
             where TEntity : DbEntity
-            where TBusinesEntity : BusinessEntity, new() {
+            where TBusinesEntity : BusinessEntity, new() 
+        {
             if (businessEntity == null)
                 return;
+
+            var entityName = typeof(TBusinesEntity).Name;
+            var key = entityName + "[" + string.Join(",", businessEntity.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
 
             isoLanguageCode = isoLanguageCode.Trim().ToLower();
             var translations = BusinessEntities.Multilingual.GetTranslations(isoLanguageCode, key, repository.DbContext);
