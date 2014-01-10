@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Runtime.Caching;
-using System.Security.Policy;
-using System.Text;
 using System.Web;
 using System.Web.Helpers;
-using ED47.BusinessAccessLayer;
 
 
 namespace ED47.BusinessAccessLayer

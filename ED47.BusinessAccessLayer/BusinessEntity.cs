@@ -95,9 +95,6 @@ namespace ED47.BusinessAccessLayer
         /// Gets the keys name and value of a business entity.
         /// </summary>
         /// <typeparam name="TEntity">The underlying DbEntity type of the business entity.</typeparam>
-        /// <returns></returns>
-        
-
         public IEnumerable<KeyValuePair<string, object>> GetKeys<TEntity>() where TEntity : DbEntity
         {
             var entityType = GetType();

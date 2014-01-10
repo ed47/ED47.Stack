@@ -1,13 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Threading;
+using System.Web.Mvc;
+using ED47.BusinessAccessLayer.Multilingual;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
-    public class Multilingual : BusinessEntity
+    public class Multilingual : BusinessEntity, IMultilingual
     {
         /// <summary>
         /// The composite key for the translation entry in the following format: EntityName[Id]
@@ -31,31 +37,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// </summary>
         [StringLength(500)]
         public virtual string Text { get; set; }
-
-
-        ///// <summary>
-        ///// Translates a collection of entities.
-        ///// </summary>
-        ///// <typeparam name="TEntity">The type of the entities.</typeparam>
-        ///// <param name="entities">The collection of entities to translate.</param>
-        ///// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
-        ///// <param name="dbContext">The Entity Framework DB Context.</param>
-        //public static void Translate<TEntity>(IEnumerable<TEntity> entities, string isoLanguageCode) where TEntity : DbEntity
-        //{
-        //    if (!entities.Any())
-        //        return;
-
-        //    isoLanguageCode = isoLanguageCode.Trim().ToLower();
-        //    var entitiesWithKeys = entities.ToDictionary(e => e.GetKey(dbContext));
-        //    var translations = Multilingual.GetTranslations(isoLanguageCode, dbContext, entitiesWithKeys.Keys);
-
-        //    foreach (var entityWithKey in entitiesWithKeys)
-        //    {
-        //        var item = entityWithKey; //HACK: To prevent modified closure bug in .Net 4.0
-        //        Multilingual.ApplyTranslation(entityWithKey.Value, translations.Where(t => t.Key == item.Key));
-        //    }
-        //}
-
+        
         /// <summary>
         /// Gets the translations for a set of keys.
         /// </summary>
@@ -63,19 +45,19 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="dbContext">The EF DB Context.</param>
         /// <param name="keys">The translation keys to fetch.</param>
         /// <returns></returns>
-        internal static List<BusinessEntities.Multilingual> GetTranslations(string isoLanguageCode, IEnumerable<string> keys, IObjectContextAdapter dbContext) {
+        internal static IEnumerable<Multilingual> GetTranslations(string isoLanguageCode, IEnumerable<string> keys)
+        {
             Debug.Assert(keys != null, "keys != null");
             var keyList = keys as string[] ?? keys.ToArray();
             if (!keyList.Any())
-                return new List<BusinessEntities.Multilingual>(0);
+                return new List<Multilingual>(0);
 
-            var set = dbContext.ObjectContext.CreateObjectSet<Entities.Multilingual>();
+            var set = ((IObjectContextAdapter) BaseUserContext.Instance.Repository.DbContext).ObjectContext.CreateObjectSet<Entities.Multilingual>();
             var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode.ToLower() && keyList.Contains(m.Key))
                 .OrderBy(m => m.Key)
                 .ThenBy(m => m.PropertyName);
 
-            return Repository.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(ma).ToList();
-
+            return Repository.Convert<Entities.Multilingual, Multilingual>(ma).ToList();
         }
 
         /// <summary>
@@ -84,22 +66,23 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="isoLanguageCode">The ISO 2-letter language code.</param>
         /// <param name="dbContext">The EF DB Context.</param>
         /// <param name="key">The translation key to fetch.</param>
+        /// <param name="propertyName">The optional name of the property to get translations for. If none is specified, all properties of the entity are retrieved.</param>
         /// <returns></returns>
-        internal static IEnumerable<Multilingual> GetTranslations(string isoLanguageCode, string key, IObjectContextAdapter dbContext) {
+        internal static IEnumerable<Multilingual> GetTranslations(string isoLanguageCode, string key, string propertyName = null)
+        {
+            if (String.IsNullOrWhiteSpace(key))
+                return new List<Multilingual>(0);
 
-            if (string.IsNullOrWhiteSpace(key))
-                return new List<BusinessEntities.Multilingual>(0);
-
-            var objectSet = dbContext.ObjectContext.CreateObjectSet<Entities.Multilingual>();
-            var translations = objectSet.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key))
+            var objectSet = ((IObjectContextAdapter) BaseUserContext.Instance.Repository.DbContext).ObjectContext.CreateObjectSet<Entities.Multilingual>();
+            var translations = objectSet.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key) && (propertyName == null || m.PropertyName == propertyName))
                 .OrderBy(m => m.Key)
                 .ThenBy(m => m.PropertyName);
 
-            return Repository.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translations).ToList();
+            return Repository.Convert<Entities.Multilingual, Multilingual>(translations).ToList();
 
         }
-       
-       
+
+
         /// <summary>
         /// Applies a translation to an instance of the object.
         /// </summary>
@@ -113,7 +96,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 var property = translatedEntityType.GetProperty(translation.PropertyName);
 
-                var text = string.IsNullOrEmpty(translation.Text) ? "### Missing translation ###" : translation.Text;
+                var text = String.IsNullOrEmpty(translation.Text) ? "### Missing translation ###" : translation.Text;
 
                 if (property != null)
                     property.SetValue(entity, text, null);
@@ -128,15 +111,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="entities">The collection of entities.</param>
         /// <param name="dbContext">The EF DB Context</param>
         /// <param name="isoLanguageCode">The current ISO 2-letter language code.</param>
-        public static IEnumerable<Multilingual> GetMultilinguals<TEntity>(IEnumerable<TEntity> entities, IObjectContextAdapter dbContext, string isoLanguageCode) where TEntity : DbEntity
+        public static IEnumerable<Multilingual> GetMultilinguals<TEntity>(IEnumerable<TEntity> entities, string isoLanguageCode) where TEntity : DbEntity
         {
             var properties = MetadataHelper.GetMultilingualProperties<TEntity>();
 
-// ReSharper disable LoopCanBeConvertedToQuery
+            // ReSharper disable LoopCanBeConvertedToQuery
             foreach (var entity in entities)
-// ReSharper restore LoopCanBeConvertedToQuery
+            // ReSharper restore LoopCanBeConvertedToQuery
             {
-                var key = entity.GetKey(dbContext);
+                var key = entity.GetKey(BaseUserContext.Instance.Repository.DbContext);
 
                 foreach (var property in properties)
                 {
@@ -170,16 +153,16 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 var translation = translations.SingleOrDefault(el => el.LanguageIsoCode == language.IsoCode);
 
-                if(translation != null)
+                if (translation != null)
                 {
                     results.Add(translation);
                 }
                 else
                 {
-                    results.Add(new Multilingual { Key = businessKey, PropertyName = propertyName, LanguageIsoCode = language.IsoCode});
+                    results.Add(new Multilingual { Key = businessKey, PropertyName = propertyName, LanguageIsoCode = language.IsoCode });
                 }
             }
-            
+
             return results;
         }
 
@@ -203,11 +186,113 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (translation == null)
             {
                 context.Repository.Add<Entities.Multilingual, Multilingual>(this);
-            } else
+            }
+            else
             {
                 translation.Text = Text;
                 context.Repository.Update<Entities.Multilingual, Multilingual>(translation);
             }
+        }
+
+        public static MvcHtmlString T<TEntity, TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
+            where TBusinessEntity : BusinessEntity
+            where TEntity : DbEntity
+        {
+            if (isoLanguageCode == null)
+                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+
+            var bodyExpression = (MemberExpression)propertySelector.Body;
+            var propertyName = bodyExpression.Member.Name;
+            
+            var key = typeof(TEntity).Name + "[" + String.Join(",", entity.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
+            var translations = GetTranslations(isoLanguageCode, key, propertyName)
+                                .ToList();
+            var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
+
+            return new MvcHtmlString(translation);
+        }
+
+        public static MvcHtmlString T<TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
+            where TBusinessEntity : BusinessEntity
+        {
+            if (isoLanguageCode == null)
+                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+
+            var bodyExpression = (MemberExpression)propertySelector.Body;
+            var propertyName = bodyExpression.Member.Name;
+            var entityType = typeof (TBusinessEntity);
+            var key = entityType.Name + "[" + entityType.GetProperty("Id", BindingFlags.Public | BindingFlags.Instance).GetValue(entity, null) + "]";
+            var translations = GetTranslations(isoLanguageCode, key, propertyName)
+                                .ToList();
+            var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
+
+            return new MvcHtmlString(translation);
+        }
+
+        public static MvcHtmlString T(string entityName, string propertyName, int entityId, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
+        {
+            if (isoLanguageCode == null)
+                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+            
+            var key = entityName + "[" + entityId + "]";
+            var translations = GetTranslations(isoLanguageCode, key, propertyName)
+                                .ToList();
+            var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
+
+            return new MvcHtmlString(translation);
+        }
+        
+        /// <summary>
+        /// Translates a collection of entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entities.</typeparam>
+        /// <typeparam name="TBusinesEntity">The business entity type.</typeparam>
+        /// <param name="businessEntities">The collection of entities to translate.</param>
+        /// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
+        public static void Translate<TEntity, TBusinesEntity>(IEnumerable<TBusinesEntity> businessEntities, string isoLanguageCode)
+            where TEntity : DbEntity
+            where TBusinesEntity : BusinessEntity, new()
+        {
+            businessEntities = businessEntities.Where(b => b != null).ToList();
+
+            if (!businessEntities.Any())
+                return;
+
+            isoLanguageCode = isoLanguageCode.Trim().ToLower();
+            var entityName = typeof(TBusinesEntity).Name;
+
+            var keys = businessEntities.SelectMany(b => b.GetKeys<TEntity>().Select(kv => entityName + "[" + kv.Value + "]"));
+            var translations = GetTranslations(isoLanguageCode, keys);
+
+            foreach (var entity in businessEntities) {
+                var item = entity; //HACK: To prevent modified closure bug in .Net 4.0
+                
+                var key = entityName + "[" + String.Join(",", item.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
+                ApplyTranslation(item, translations.Where(t => t.Key.ToLower() == key.ToLower()));
+            }
+        }
+
+        /// <summary>
+        /// Translates a collection of entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entities.</typeparam>
+        /// <typeparam name="TBusinesEntity">The type of the entities.</typeparam>
+        /// <param name="businessEntity">The collection of entities to translate.</param>
+        /// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
+        /// <param name="repository">The Entity Framework DB Context.</param>
+        public static void Translate<TEntity, TBusinesEntity>(TBusinesEntity businessEntity, string isoLanguageCode)
+            where TEntity : DbEntity
+            where TBusinesEntity : BusinessEntity, new() 
+        {
+            if (businessEntity == null)
+                return;
+
+            var entityName = typeof(TBusinesEntity).Name;
+            var key = entityName + "[" + String.Join(",", businessEntity.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
+
+            isoLanguageCode = isoLanguageCode.Trim().ToLower();
+            var translations = GetTranslations(isoLanguageCode, key);
+            ApplyTranslation(businessEntity, translations.Where(t => t.Key.Contains(key)));
         }
     }
 }
