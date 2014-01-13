@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Web.Http;
 using ED47.BusinessAccessLayer;
 using ED47.BusinessAccessLayer.BusinessEntities;
@@ -12,7 +11,7 @@ namespace ED47.Stack.TranslatorApi.Controllers
 {
     public class TranslatorApiController : ApiController
     {
-        private readonly MultilingualRepository _multilingualRepository = new MultilingualRepository();
+        private readonly IMultilingualRepository _multilingualRepository = MultilingualRepositoryFactory.Create();
 
         [HttpPost]
         public CallResult GetTranslations(MultilingualEntry dto)

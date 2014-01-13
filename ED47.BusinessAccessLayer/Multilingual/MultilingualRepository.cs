@@ -154,11 +154,13 @@ namespace ED47.BusinessAccessLayer.Multilingual
             return new MvcHtmlString(translation);
         }
 
-        public MvcHtmlString T(string entityName, string propertyName, int entityId, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
+        public MvcHtmlString T(string entityName, int entityId, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
         {
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
+            var bodyExpression = (MemberExpression)propertySelector.Body;
+            var propertyName = bodyExpression.Member.Name.Replace(entityName, String.Empty); //By convention, parent entity property name is "entityname + propertyname" (i.e.e RiskDescription)
             var key = entityName + "[" + entityId + "]";
             var translations = GetTranslations(isoLanguageCode, key, propertyName)
                 .ToList();

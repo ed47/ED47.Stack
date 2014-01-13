@@ -8,6 +8,8 @@ namespace ED47.BusinessAccessLayer.Multilingual
 {
     public interface IMultilingualRepository
     {
+        IEnumerable<IMultilingual> GetPropertyTranslations(string businessKey, string propertyName);
+
         MvcHtmlString T<TEntity, TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
             where TBusinessEntity : IBusinessEntity
             where TEntity : DbEntity;
@@ -16,7 +18,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
             string isoLanguageCode = null)
             where TBusinessEntity : IBusinessEntity;
 
-        MvcHtmlString T(string entityName, string propertyName, int entityId, Expression<Func<string>> propertySelector,
+        MvcHtmlString T(string entityName, int entityId, Expression<Func<string>> propertySelector,
             string isoLanguageCode = null);
     }
 
