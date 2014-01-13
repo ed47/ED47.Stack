@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -61,7 +57,7 @@ namespace ED47.BusinessAccessLayer
         }
 
         public event EventHandler<EventArgs> Update;
-        public static bool NotifyUpdate<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : BusinessEntity
+        public static bool NotifyUpdate<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : IBusinessEntity
         {
             var proxy = GetSingleton<EventProxy>(typeof (TBusinessEntity));
 
@@ -81,7 +77,7 @@ namespace ED47.BusinessAccessLayer
 
         public event EventHandler<EventArgs> Updated;
 
-        public static bool NotifyUpdated<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : BusinessEntity
+        public static bool NotifyUpdated<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : IBusinessEntity
         {
             var proxy = GetSingleton<EventProxy>(typeof (TBusinessEntity));
 
@@ -98,7 +94,7 @@ namespace ED47.BusinessAccessLayer
 
         public event EventHandler<EventArgs> Add;
 
-        public static bool NotifyAdd<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : BusinessEntity
+        public static bool NotifyAdd<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : IBusinessEntity
         {
             var proxy = GetSingleton<EventProxy>(typeof (TBusinessEntity));
 
@@ -115,7 +111,7 @@ namespace ED47.BusinessAccessLayer
 
         public event EventHandler<EventArgs> Added;
 
-        public static bool NotifyAdded<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : BusinessEntity
+        public static bool NotifyAdded<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : IBusinessEntity
         {
             var proxy = GetSingleton<EventProxy>(typeof (TBusinessEntity));
 
@@ -132,7 +128,7 @@ namespace ED47.BusinessAccessLayer
 
         public event EventHandler<CancellableRepositoryEventArgs> Delete;
 
-        public static bool NotifyDelete<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : BusinessEntity
+        public static bool NotifyDelete<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : IBusinessEntity
         {
             var proxy = GetSingleton<EventProxy>(typeof (TBusinessEntity));
 
@@ -150,7 +146,7 @@ namespace ED47.BusinessAccessLayer
 
         public event EventHandler<EventArgs> Deleted;
 
-        public static bool NotifyDeleted<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : BusinessEntity
+        public static bool NotifyDeleted<TBusinessEntity>(TBusinessEntity sender) where TBusinessEntity : IBusinessEntity
         {
             var proxy = GetSingleton<EventProxy>(typeof (TBusinessEntity));
 

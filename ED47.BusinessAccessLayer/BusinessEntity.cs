@@ -4,15 +4,16 @@ using System.Runtime.Serialization;
 
 namespace ED47.BusinessAccessLayer
 {
-    public abstract class BusinessEntity
+    public abstract class BusinessEntity : IBusinessEntity
     {
         private BusinessEntityTracker _Tracker;
 
         [IgnoreDataMember]
-        public  EventProxy Events { get; set; }
+        public EventProxy Events { get; set; }
 
         [IgnoreDataMember]
         public ClientData ClientData { get; set; }
+
         /// <summary>
         ///   Inits this instance. This method is executed after the database load and instance creation.
         /// </summary>
@@ -24,9 +25,9 @@ namespace ED47.BusinessAccessLayer
         /// <summary>
         ///   Commits this instance by reseting the change tracker.
         /// </summary>
-        internal void Commit()
+        public void Commit()
         {
-            if(_Tracker != null)
+            if (_Tracker != null)
                 _Tracker.Reset();
         }
 
@@ -67,7 +68,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="args">The args.</param>
         public void NotifyPropertyChanged(PropertyChangedEventHandlerArgs args)
         {
-            if(PropertyChanged!=null)
+            if (PropertyChanged != null)
                 PropertyChanged(this, args);
         }
 
@@ -88,7 +89,7 @@ namespace ED47.BusinessAccessLayer
         public virtual bool IsValid
         {
             get { return true; }
-        } 
+        }
 
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace ED47.BusinessAccessLayer
             var keyMembers = MetadataHelper.GetKeyMembers<TEntity>(BaseUserContext.Instance.Repository.DbContext);
             return keyMembers.Select(k => new KeyValuePair<string, object>(k, entityType.GetProperty(k).GetValue(this, null)));
         }
-        
+
         /// <summary>
         /// Gets a copy of all the changes.
         /// </summary>

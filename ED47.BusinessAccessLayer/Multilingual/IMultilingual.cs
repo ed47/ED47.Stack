@@ -22,5 +22,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
         /// The translated text.
         /// </summary>
         string Text { get; set; }
+
+        void Save();
     }
 }

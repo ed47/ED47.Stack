@@ -161,6 +161,7 @@
     <Compile Include="Excel\Reader\ExcelDataReader.cs" />
     <Compile Include="Excel\Reader\ImportStatus.cs" />
     <Compile Include="FileRepositoryHandler.cs" />
+    <Compile Include="IBusinessEntity.cs" />
     <Compile Include="IFileRepository.cs" />
     <Compile Include="IntKey.cs" />
     <Compile Include="JsonDataFieldAttribute.cs" />
@@ -176,6 +177,8 @@
     <Compile Include="Message\Recipient.cs" />
     <Compile Include="MetadataHelper.cs" />
     <Compile Include="Multilingual\IMultilingual.cs" />
+    <Compile Include="Multilingual\IMultilingualRepository.cs" />
+    <Compile Include="Multilingual\MultilingualRepository.cs" />
     <Compile Include="PropertyChangedEventHandler.cs" />
     <Compile Include="PropertyChangedEventHandlerArgs.cs" />
     <Compile Include="QueryOptions.cs" />

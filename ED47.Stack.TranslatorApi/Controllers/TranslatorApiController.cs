@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Web.Http;
 using ED47.BusinessAccessLayer;
 using ED47.BusinessAccessLayer.BusinessEntities;
+using ED47.BusinessAccessLayer.Multilingual;
 using ED47.Stack.TranslatorApi.Models;
 using ED47.Stack.Web;
 using Ninject;
@@ -10,10 +12,12 @@ namespace ED47.Stack.TranslatorApi.Controllers
 {
     public class TranslatorApiController : ApiController
     {
+        private readonly MultilingualRepository _multilingualRepository = new MultilingualRepository();
+
         [HttpPost]
         public CallResult GetTranslations(MultilingualEntry dto)
         {
-            var result = Multilingual.GetPropertyTranslations(dto.Key, dto.PropertyName);
+            var result = _multilingualRepository.GetPropertyTranslations(dto.Key, dto.PropertyName);
             return new CallResult
             {
                 ResultData = new { Items = result }
@@ -28,7 +32,7 @@ namespace ED47.Stack.TranslatorApi.Controllers
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            Multilingual.SaveTranslations(translations);
+            _multilingualRepository.SaveTranslations(translations);
             context.Commit();
         }
 
@@ -41,7 +45,7 @@ namespace ED47.Stack.TranslatorApi.Controllers
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
             var listTemp = new List<Multilingual>() { translation };
-            Multilingual.SaveTranslations(listTemp);
+            _multilingualRepository.SaveTranslations(listTemp);
             context.Commit();
         }
     }
