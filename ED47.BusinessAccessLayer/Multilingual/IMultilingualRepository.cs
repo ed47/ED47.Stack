@@ -20,6 +20,8 @@ namespace ED47.BusinessAccessLayer.Multilingual
 
         MvcHtmlString T(string entityName, int entityId, Expression<Func<string>> propertySelector,
             string isoLanguageCode = null);
+
+        void Commit();
     }
 
     public static class MultilingualRepositoryExtensions

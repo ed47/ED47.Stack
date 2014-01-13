@@ -169,6 +169,16 @@ namespace ED47.BusinessAccessLayer.Multilingual
             return new MvcHtmlString(translation);
         }
 
+        public void Commit()
+        {
+            var context = BaseUserContext.Instance;
+
+            if (BaseUserContext.Instance == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
+                context = BusinessComponent.Kernel.Get<BaseUserContext>();
+            
+            context.Commit();
+        }
+
         /// <summary>
         /// Applies a translation to an instance of the object.
         /// </summary>
