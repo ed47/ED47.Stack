@@ -8,9 +8,11 @@ using System.Reflection;
 using System.Threading;
 using System.Web.Mvc;
 using ED47.BusinessAccessLayer.BusinessEntities;
+using ED47.BusinessAccessLayer.Multilingual;
 using Ninject;
+using Enumerable = System.Linq.Enumerable;
 
-namespace ED47.BusinessAccessLayer.Multilingual
+namespace ED47.BusinessAccessLayer.EF
 {
     public class MultilingualRepository : IMultilingualRepository
     {
@@ -75,7 +77,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
             var bodyExpression = (MemberExpression)propertySelector.Body;
             var propertyName = bodyExpression.Member.Name;
 
-            var key = typeof(TEntity).Name + "[" + String.Join(",", entity.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
+            var key = typeof(TEntity).Name + "[" + String.Join(",", Enumerable.Select<KeyValuePair<string, object>, object>(entity.GetKeys<TEntity>(), kv => kv.Value)) + "]";
             var translations = GetTranslations(isoLanguageCode, key, propertyName).ToList();
             var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
 
@@ -125,12 +127,12 @@ namespace ED47.BusinessAccessLayer.Multilingual
         internal IEnumerable<IMultilingual> GetTranslations(string isoLanguageCode, IEnumerable<string> keys)
         {
             Debug.Assert(keys != null, "keys != null");
-            var keyList = keys as string[] ?? keys.ToArray();
-            if (!keyList.Any())
+            var keyList = keys as string[] ?? Enumerable.ToArray(keys);
+            if (!Enumerable.Any(keyList))
                 return new List<BusinessEntities.Multilingual>(0);
 
             var set = ((IObjectContextAdapter)BaseUserContext.Instance.Repository.DbContext).ObjectContext.CreateObjectSet<Entities.Multilingual>();
-            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode.ToLower() && keyList.Contains(m.Key))
+            var ma = set.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode.ToLower() && Enumerable.Contains(keyList, m.Key))
                 .OrderBy(m => m.Key)
                 .ThenBy(m => m.PropertyName);
 
@@ -211,22 +213,22 @@ namespace ED47.BusinessAccessLayer.Multilingual
             where TEntity : DbEntity
             where TBusinesEntity : BusinessEntity, new()
         {
-            businessEntities = businessEntities.Where(b => b != null).ToList();
+            businessEntities = Enumerable.ToList(Enumerable.Where(businessEntities, b => b != null));
 
-            if (!businessEntities.Any())
+            if (!Enumerable.Any(businessEntities))
                 return;
 
             isoLanguageCode = isoLanguageCode.Trim().ToLower();
             var entityName = typeof(TBusinesEntity).Name;
 
-            var keys = businessEntities.SelectMany(b => b.GetKeys<TEntity>().Select(kv => entityName + "[" + kv.Value + "]"));
+            var keys = Enumerable.SelectMany(businessEntities, b => Enumerable.Select<KeyValuePair<string, object>, string>(b.GetKeys<TEntity>(), kv => entityName + "[" + kv.Value + "]"));
             var translations = GetTranslations(isoLanguageCode, keys);
 
             foreach (var entity in businessEntities)
             {
                 var item = entity; //HACK: To prevent modified closure bug in .Net 4.0
 
-                var key = entityName + "[" + String.Join(",", item.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
+                var key = entityName + "[" + String.Join(",", Enumerable.Select<KeyValuePair<string, object>, object>(item.GetKeys<TEntity>(), kv => kv.Value)) + "]";
                 ApplyTranslation(item, translations.Where(t => t.Key.ToLower() == key.ToLower()));
             }
         }
@@ -247,7 +249,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 return;
 
             var entityName = typeof(TBusinesEntity).Name;
-            var key = entityName + "[" + String.Join(",", businessEntity.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
+            var key = entityName + "[" + String.Join(",", Enumerable.Select<KeyValuePair<string, object>, object>(businessEntity.GetKeys<TEntity>(), kv => kv.Value)) + "]";
 
             isoLanguageCode = isoLanguageCode.Trim().ToLower();
             var translations = GetTranslations(isoLanguageCode, key);

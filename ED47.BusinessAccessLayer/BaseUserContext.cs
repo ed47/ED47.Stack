@@ -108,7 +108,7 @@ namespace ED47.BusinessAccessLayer
         /// <summary>
         /// Gets the current context's Repository.
         /// </summary>
-        protected internal Repository Repository
+        public Repository Repository
         {
             get { return GetRepository(); }
         }

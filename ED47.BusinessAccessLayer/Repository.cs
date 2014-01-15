@@ -17,7 +17,7 @@ namespace ED47.BusinessAccessLayer
         /// <summary>
         /// The current Entity Framework DbContext.
         /// </summary>
-        internal DbContext DbContext { get; set; }
+        public DbContext DbContext { get; set; }
 
         /// <summary>
         /// Gets or sets the immediate EF DbContext used for immediate operations (i.e. saving an entity without having to save all changes in the main context).

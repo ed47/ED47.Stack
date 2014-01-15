@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Web.Mvc;
 
@@ -22,13 +21,5 @@ namespace ED47.BusinessAccessLayer.Multilingual
             string isoLanguageCode = null);
 
         void Commit();
-    }
-
-    public static class MultilingualRepositoryExtensions
-    {
-        public static void SaveTranslations(this IMultilingualRepository repository, IEnumerable<Multilingual.IMultilingual> translations)
-        {
-            translations.ToList().ForEach(el => el.Save());
-        }
     }
 }

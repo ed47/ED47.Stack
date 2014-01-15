@@ -8,5 +8,11 @@ namespace ED47.BusinessAccessLayer.Multilingual
         {
             return BusinessComponent.Kernel.Get<IMultilingualRepository>();
         }
+
+        private static IMultilingualRepository _default;
+        public static IMultilingualRepository Default
+        {
+            get { return _default ?? (_default = BusinessComponent.Kernel.Get<IMultilingualRepository>()); }
+        }
     }
 }
