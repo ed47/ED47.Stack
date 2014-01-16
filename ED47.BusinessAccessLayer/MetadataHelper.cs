@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
-using System.Data.Objects;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -14,7 +12,6 @@ namespace ED47.BusinessAccessLayer
 		/// </summary>
 		/// <typeparam name="TEntity">The entity type.</typeparam>
 		/// <returns>The collection of key member names.</returns>
-		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 		public static IEnumerable<string> GetKeyMembers<TEntity>() where TEntity : class
 		{
 			IObjectContextAdapter context = BaseUserContext.Instance.Repository.DbContext;
@@ -25,22 +22,6 @@ namespace ED47.BusinessAccessLayer
 				.KeyMembers
 				.Select(k => k.Name);
 			return keyMembers;
-		}
-
-		/// <summary>
-		/// Gets the multilingual properties with values from an entity.
-		/// </summary>
-		/// <returns></returns>
-		[SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-		public static IEnumerable<PropertyInfo> GetMultilingualProperties<TEntity>() where TEntity : class
-		{
-			//Get the real object type in case a proxy object is passed.
-			var entityType = ObjectContext.GetObjectType(typeof(TEntity));
-			var properties = entityType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-
-			return properties.Where(p => p.GetCustomAttributes(inherit: false)
-											.OfType<MultilingualPropertyAttribute>()
-											.Any());
 		}
 
 		/// <summary>
@@ -56,7 +37,6 @@ namespace ED47.BusinessAccessLayer
 			var entityType = typeof(TEntity);
 			var key = entityType.Name + "[";
 			var hadPreviousKey = false;
-
 			
 			foreach(var keyMember in keyMembers)
 			{

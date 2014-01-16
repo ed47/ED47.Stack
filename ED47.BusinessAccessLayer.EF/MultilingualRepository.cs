@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Data.Objects;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -62,12 +63,11 @@ namespace ED47.BusinessAccessLayer.EF
                 .OrderBy(m => m.Key)
                 .ThenBy(m => m.PropertyName);
 
-            return Repository.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translations).ToList();
+            return RepositoryHelper.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translations).ToList();
         }
 
         public MvcHtmlString T<TEntity, TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
-            where TBusinessEntity : IBusinessEntity
-            where TEntity : DbEntity
+            where TBusinessEntity : IBusinessEntity where TEntity : BusinessAccessLayer.DbEntity
         {
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
@@ -83,6 +83,21 @@ namespace ED47.BusinessAccessLayer.EF
         }
 
         /// <summary>
+        /// Gets the multilingual properties with values from an entity.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<PropertyInfo> GetMultilingualProperties<TEntity>() where TEntity : class
+        {
+            //Get the real object type in case a proxy object is passed.
+            var entityType = ObjectContext.GetObjectType(typeof(TEntity));
+            var properties = entityType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            return properties.Where(p => p.GetCustomAttributes(inherit: false)
+                                            .OfType<MultilingualPropertyAttribute>()
+                                            .Any());
+        }
+
+        /// <summary>
         /// Gets the multilingual items from a collection of entity items using the values in their multilingual properties as the current translation.
         /// </summary>
         /// <typeparam name="TEntity">The entity types.</typeparam>
@@ -91,7 +106,7 @@ namespace ED47.BusinessAccessLayer.EF
         /// <param name="isoLanguageCode">The current ISO 2-letter language code.</param>
         public IEnumerable<IMultilingual> GetMultilinguals<TEntity>(IEnumerable<TEntity> entities, string isoLanguageCode) where TEntity : DbEntity
         {
-            var properties = MetadataHelper.GetMultilingualProperties<TEntity>();
+            var properties = GetMultilingualProperties<TEntity>();
 
             // ReSharper disable LoopCanBeConvertedToQuery
             foreach (var entity in entities)
