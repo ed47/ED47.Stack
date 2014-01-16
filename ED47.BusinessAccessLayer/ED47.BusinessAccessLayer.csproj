@@ -111,11 +111,12 @@
     <Compile Include="BusinessEntities\AuditFilter.cs" />
     <Compile Include="BusinessEntities\CommentAccessDeniedException.cs" />
     <Compile Include="BusinessEntities\CommentDiscussion.cs" />
+    <Compile Include="BusinessEntities\IEmail.cs" />
+    <Compile Include="BusinessEntities\IFile.cs" />
     <Compile Include="BusinessEntityHelper.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
     <Compile Include="BusinessEntities\CommentRepositoryExtension.cs" />
-    <Compile Include="BusinessEntities\File.cs" />
     <Compile Include="BusinessEntities\FileBox.cs" />
     <Compile Include="BusinessEntities\FileBoxItem.cs" />
     <Compile Include="BusinessEntities\ICommentItem.cs" />
@@ -160,10 +161,12 @@
     <Compile Include="Excel\Reader\ExcelData.cs" />
     <Compile Include="Excel\Reader\ExcelDataReader.cs" />
     <Compile Include="Excel\Reader\ImportStatus.cs" />
+    <Compile Include="FileRepositoryFactory.cs" />
     <Compile Include="FileRepositoryHandler.cs" />
     <Compile Include="IBusinessEntity.cs" />
     <Compile Include="IFileRepository.cs" />
     <Compile Include="IntKey.cs" />
+    <Compile Include="IRepository.cs" />
     <Compile Include="JsonDataFieldAttribute.cs" />
     <Compile Include="JsonDataFieldInjector.cs" />
     <Compile Include="LocalFileRepository.cs" />
@@ -185,17 +188,11 @@
     <Compile Include="QueryOptions.cs" />
     <Compile Include="QueueWorker.cs" />
     <Compile Include="ReaderInjection.cs" />
-    <Compile Include="Repository.cs" />
     <Compile Include="DbEntity.cs" />
     <Compile Include="Multilingual\MultilingualPropertyAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\RepositoryException.cs" />
     <Compile Include="CancellableRepositoryEventArgs.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="BaseUserContext.cs" />
     <Compile Include="Message\MessageFactoryHelper.cs" />
     <Compile Include="StringKey.cs" />
@@ -205,13 +202,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ED47.Stack.Reflector\ED47.Stack.Reflector.csproj">

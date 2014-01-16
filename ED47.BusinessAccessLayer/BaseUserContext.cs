@@ -101,14 +101,14 @@ namespace ED47.BusinessAccessLayer
             }   
         }
 
-        protected abstract Repository GetRepository();
+        protected abstract IRepository GetRepository();
       
       
 
         /// <summary>
         /// Gets the current context's Repository.
         /// </summary>
-        public Repository Repository
+        public IRepository Repository
         {
             get { return GetRepository(); }
         }
@@ -139,14 +139,14 @@ namespace ED47.BusinessAccessLayer
             return MemoryCache.Default;
         }
 
-        private static string GetKey<TDbEntity>(BusinessEntity entity) where TDbEntity : BaseDbEntity
+        private static string GetKey<TDbEntity>(IBusinessEntity entity) where TDbEntity : BaseDbEntity
         {
             return String.Join("&", entity.GetKeys<TDbEntity>().Select(el => el.Key + "=" + el.Value.ToString()));
         }
 
         public static TBusinessEntity GetStaticInstance<TDbEntity, TBusinessEntity>(int id, bool ignoreBusinessPredicate = false)
             where TDbEntity : BaseDbEntity
-            where TBusinessEntity : BusinessEntity, new()
+            where TBusinessEntity : class, IBusinessEntity, new()
         {
             var key = typeof(TBusinessEntity).FullName + String.Format(".StaticInstance?id={0}", id);
             lock (key)
@@ -159,8 +159,7 @@ namespace ED47.BusinessAccessLayer
                     entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id, ignoreBusinessPredicate: ignoreBusinessPredicate);
                     if (entity == null)
                         return null;
-                        //throw new NullReferenceException(String.Format("No entity {0} {1} found.", id,
-                        //                                               typeof(TBusinessEntity).FullName));
+                        
                     cache.Add(new CacheItem(key, entity), DataCacheItemPolicy);
                 }
                 return entity;
@@ -169,7 +168,7 @@ namespace ED47.BusinessAccessLayer
 
         public static void StoreDynamicInstance<TDbEntity, TBusinessEntity>(TBusinessEntity value)
             where TDbEntity : BaseDbEntity
-            where TBusinessEntity : BusinessEntity, new()
+            where TBusinessEntity : IBusinessEntity, new()
         {
             var key = typeof(TBusinessEntity).FullName + String.Format(".DynamicInstance?id={0}", value.GetKeys<TDbEntity>().Single(el => el.Key == "Id").Value);
             lock (Lock.Get(key))
@@ -180,7 +179,7 @@ namespace ED47.BusinessAccessLayer
         }
 
 
-        public static void StoreDynamicInstance(Type businessEntityType, BusinessEntity value)
+        public static void StoreDynamicInstance(Type businessEntityType, IBusinessEntity value)
 
         {
             var prop = businessEntityType.GetProperty("Id");
@@ -213,7 +212,7 @@ namespace ED47.BusinessAccessLayer
 
         public static void StoreDynamicInstances<TDbEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> values)
             where TDbEntity : BaseDbEntity
-            where TBusinessEntity : BusinessEntity, new()
+            where TBusinessEntity : IBusinessEntity, new()
         {
             foreach (var entity in values)
             {
@@ -224,7 +223,7 @@ namespace ED47.BusinessAccessLayer
 
         public static TBusinessEntity GetDynamicInstance<TDbEntity, TBusinessEntity>(int id, bool ignoreBusinessPredicate = false)
             where TDbEntity : BaseDbEntity
-            where TBusinessEntity : BusinessEntity, new()
+            where TBusinessEntity : class, IBusinessEntity, new()
         {
             var key = typeof(TBusinessEntity).FullName + String.Format(".DynamicInstance?id={0}", id);
             lock (Lock.Get(key))
@@ -241,13 +240,13 @@ namespace ED47.BusinessAccessLayer
         }
 
 
-        public static BusinessEntity TryGetDynamicInstance(Type businessEntityType, int id)
+        public static IBusinessEntity TryGetDynamicInstance(Type businessEntityType, int id)
            
         {
             var key = businessEntityType.FullName + String.Format(".DynamicInstance?id={0}", id);
             lock (Lock.Get(key))
             {
-                return Retrieve(key) as BusinessEntity;
+                return Retrieve(key) as IBusinessEntity;
             }
         }
     }

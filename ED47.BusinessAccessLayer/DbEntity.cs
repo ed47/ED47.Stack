@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace ED47.BusinessAccessLayer
 {
     public abstract class DbEntity
     {
         [NotMapped]
-        internal IBusinessEntity BusinessEntity { get; set; }
+        [IgnoreDataMember]
+        public IBusinessEntity BusinessEntity { get; set; }
     }
 }

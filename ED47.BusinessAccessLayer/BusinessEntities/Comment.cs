@@ -92,7 +92,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
             foreach (var fileId in fileIds)
             {
-                var file = File.Get(fileId);
+                var file = FileRepositoryFactory.Default.Get(fileId);
 
                 if (file == null) 
                     continue;
@@ -157,7 +157,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             Notifiers.ToList().ForEach(el => el.TryNotify(this, CommentActionType.Delete));
         }
 
-        public void AddFile(File file)
+        public void AddFile(IFile file)
         {
             var filebox = GetOrCreateFileBox();
             FileBoxItem.CreateNew(filebox.Id, file);
@@ -187,7 +187,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             else
                 query = query.OrderBy(el => el.CreationDate);
 
-            return Repository.Convert<Entities.Comment, TComment>(query).ToList();
+            return RepositoryHelper.Convert<Entities.Comment, TComment>(query).ToList();
         }
     }
 

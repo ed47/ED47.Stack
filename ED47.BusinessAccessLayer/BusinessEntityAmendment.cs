@@ -21,7 +21,7 @@ namespace ED47.BusinessAccessLayer
     /// <summary>
     /// Amends Business Entities to raise events on primitive property changes.
     /// </summary>
-    public class BusinessEntityAmendment<TType> : Amendment<TType, BusinessEntity> where TType : BusinessEntity
+    public class BusinessEntityAmendment<TType> : Amendment<TType, IBusinessEntity> where TType : IBusinessEntity
     {
         public override void Amend<TProperty>(Property<TProperty> property)
         {
@@ -55,7 +55,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="propertyName">Name of the property.</param>
         /// <param name="oldValue">The old value.</param>
         /// <param name="newValue">The new value.</param>
-        public static TProperty OnPropertyChange<TProperty>(BusinessEntity instance, string propertyName, TProperty oldValue, TProperty newValue)
+        public static TProperty OnPropertyChange<TProperty>(IBusinessEntity instance, string propertyName, TProperty oldValue, TProperty newValue)
         {
             instance.NotifyPropertyChange(new PropertyChangedEventHandlerArgs { PropertyName = propertyName, Value = newValue });
             return newValue;
@@ -69,7 +69,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="oldValue">The old value.</param>
         /// <param name="value">The value.</param>
         /// <param name="newValue">The new value.</param>
-        public static void OnPropertyChanged<TProperty>(BusinessEntity instance, string propertyName, TProperty oldValue, TProperty value, TProperty newValue)
+        public static void OnPropertyChanged<TProperty>(IBusinessEntity instance, string propertyName, TProperty oldValue, TProperty value, TProperty newValue)
         {
             instance.NotifyPropertyChanged(new PropertyChangedEventHandlerArgs { PropertyName = propertyName, Value = newValue });
         }

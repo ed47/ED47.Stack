@@ -2,7 +2,6 @@
 using System.Web;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
-
 namespace ED47.BusinessAccessLayer
 {
     /// <summary>
@@ -30,7 +29,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="context">The HttpContext.</param>
         public void ProcessRequest(HttpContext context)
         {
-            File file;
+            IFile file;
             var token = context.Request["token"];
 
             if (String.IsNullOrWhiteSpace(token))
@@ -43,12 +42,12 @@ namespace ED47.BusinessAccessLayer
             int fileId;
             if (Int32.TryParse(context.Request["id"], out fileId))
             {
-                file = File.Get(fileId);
+                file = FileRepositoryFactory.Default.Get(fileId);
             }
             else
             {
                 var businessKey = context.Request["key"];
-                file = File.GetFileByKey<File>(businessKey);
+                file = FileRepositoryFactory.Default.GetFileByKey(businessKey);
 
             }
 

@@ -5,11 +5,10 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
-    public class Email : BusinessEntity
+    public class Email : BusinessEntity, IEmail
     {
         public Email()
         {
@@ -98,7 +97,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             
         }
 
-        private IEnumerable<Stream> AddAttachments(MailMessage mailMessage)
+        public IEnumerable<Stream> AddAttachments(MailMessage mailMessage)
         {
             var streams = new List<Stream>();
             
@@ -112,7 +111,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return streams;
         }
 
-        private void AddRecipients(MailMessage mailMessage)
+        public void AddRecipients(MailMessage mailMessage)
         {
             var emailTestSettings = ConfigurationManager.AppSettings["TestEmailRecipients"];
             if (!String.IsNullOrWhiteSpace(emailTestSettings))

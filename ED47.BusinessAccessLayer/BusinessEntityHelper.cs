@@ -9,7 +9,7 @@ namespace ED47.BusinessAccessLayer
 {
     public static class BusinessEntityHelper
     {
-        public static UpdateResult Differences(this BusinessEntity original, BusinessEntity updatedObject)
+        public static UpdateResult Differences(this IBusinessEntity original, IBusinessEntity updatedObject)
         {
             var results = new UpdateResult();
             var type = original.GetType();

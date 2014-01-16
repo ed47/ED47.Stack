@@ -10,9 +10,37 @@ using System.Reflection;
 using System.Transactions;
 using Omu.ValueInjecter;
 
-namespace ED47.BusinessAccessLayer
+namespace ED47.BusinessAccessLayer.EF
 {
-    public class Repository : IDisposable
+    public interface ISqlRepository : IRepository
+    {
+        /// <summary>
+        /// The current Entity Framework DbContext.
+        /// </summary>
+        DbContext DbContext { get; set; }
+
+        IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params object[] parameters) where TBusinessEntity : class;
+        IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params object[] parameters) where TBusinessEntity : class;
+        IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params SqlParameter[] parameters) where TBusinessEntity : class;
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
+        int ExecuteNonQuery(string storedProcedure, params SqlParameter[] parameters);
+
+        /// <summary>
+        /// Execute a stored procedure and apply the result on the collection
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="storedProcedure">The stored procedure.</param>
+        /// <param name="idParameter">The id parameter.</param>
+        /// <param name="entities">The entities.</param>
+        /// <param name="keySelector">The key selector.</param>
+        /// <param name="entitySelector">The entity selector.</param>
+        /// <param name="dataSelector">The data selector.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized.")]
+        void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, IntKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null, IEnumerable<SqlParameter> parameters = null);
+    }
+
+    public class Repository : IRepository, ISqlRepository
     {
         /// <summary>
         /// The current Entity Framework DbContext.
@@ -350,7 +378,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="businessEntity">The business entity to add to the repository.</param>
         public void Add<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
             where TEntity : DbEntity, new()
-            where TBusinessEntity : BusinessEntity
+            where TBusinessEntity : IBusinessEntity
         {
             var newEntity = new TEntity();
             newEntity.InjectFrom(businessEntity);
@@ -391,7 +419,7 @@ namespace ED47.BusinessAccessLayer
         /// <param name="businessEntities">The collection of business entities to add to the repository.</param>
         public void Add<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
             where TEntity : DbEntity, new()
-            where TBusinessEntity : BusinessEntity
+            where TBusinessEntity : IBusinessEntity
         {
             foreach (var businessEntity in businessEntities)
             {
@@ -408,7 +436,7 @@ namespace ED47.BusinessAccessLayer
         /// <exception cref="RepositoryException">Fires this exception when the Entity is not found in the context.</exception>
         public void Update<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
             where TEntity : DbEntity, new()
-            where TBusinessEntity : BusinessEntity
+            where TBusinessEntity : IBusinessEntity
         {
             IEnumerable<object> keys;
             var originalEntity = GetEntityFromBusinessEntity<TEntity, TBusinessEntity>(businessEntity, out keys);
@@ -444,7 +472,7 @@ namespace ED47.BusinessAccessLayer
         /// <exception cref="RepositoryException">Fires this exception when the Entity is not found in the context.</exception>
         public void Update<TEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> businessEntities)
             where TEntity : DbEntity, new()
-            where TBusinessEntity : BusinessEntity
+            where TBusinessEntity : IBusinessEntity
         {
             foreach (var businessEntity in businessEntities)
             {
@@ -462,9 +490,9 @@ namespace ED47.BusinessAccessLayer
         /// <returns>The Entity instance that corresponds to the passed business entity.</returns>
         private TEntity GetEntityFromBusinessEntity<TEntity, TBusinessEntity>(TBusinessEntity businessEntity, out IEnumerable<object> keys)
             where TEntity : DbEntity, new()
-            where TBusinessEntity : BusinessEntity
+            where TBusinessEntity : IBusinessEntity
         {
-            var keyMembers = MetadataHelper.GetKeyMembers<TEntity>(DbContext);
+            var keyMembers = MetadataHelper.GetKeyMembers<TEntity>();
             keys = businessEntity.GetKeyValues(keyMembers);
             var originalEntity = DbContext.Set<TEntity>().Find(keys.ToArray());
             return originalEntity;
@@ -472,7 +500,7 @@ namespace ED47.BusinessAccessLayer
 
         public void Delete<TEntity, TBusinessEntity>(TBusinessEntity businessEntity)
             where TEntity : DbEntity, new()
-            where TBusinessEntity : BusinessEntity
+            where TBusinessEntity : IBusinessEntity
         {
 
             IEnumerable<object> keys;
@@ -496,11 +524,12 @@ namespace ED47.BusinessAccessLayer
             if (source == null)
                 return null;
 
-            Type sourceType = typeof(TSource);
-            Type targetType = typeof(TResult);
+            var sourceType = typeof(TSource);
+            var targetType = typeof(TResult);
             TResult result = null;
+
             if (sourceType.IsSubclassOf(typeof(DbEntity))
-                               && targetType.IsSubclassOf(typeof(BusinessEntity)))
+                               && targetType.IsSubclassOf(typeof(IBusinessEntity)))
             {
                 var idprop = sourceType.GetProperty("Id");
                 if (idprop != null && idprop.PropertyType == typeof(Int32))
@@ -513,13 +542,13 @@ namespace ED47.BusinessAccessLayer
             if (result == null)
             {
                 result = new TResult();
-                if (result is BusinessEntity)
-                    BaseUserContext.StoreDynamicInstance(targetType, result as BusinessEntity);
+                if (result is IBusinessEntity)
+                    BaseUserContext.StoreDynamicInstance(targetType, result as IBusinessEntity);
             }
             result.InjectFrom<CustomFlatLoopValueInjection>(source);
             result.ReadJsonData(source);
             Cryptography.DecryptProperties(result);
-            var businessEntity = result as BusinessEntity;
+            var businessEntity = result as IBusinessEntity;
             var dbEntity = source as DbEntity;
             if (businessEntity != null && dbEntity != null)
             {
@@ -614,8 +643,8 @@ namespace ED47.BusinessAccessLayer
             }
 
         }
-
-        protected internal IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params object[] parameters) where TBusinessEntity : class
+        
+        public IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params object[] parameters) where TBusinessEntity : class
         {
             using (var conn = new SqlConnection(ConnectionString))
             {
@@ -643,7 +672,7 @@ namespace ED47.BusinessAccessLayer
 
         }
 
-        protected internal IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params object[] parameters) where TBusinessEntity : class
+        public IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params object[] parameters) where TBusinessEntity : class
         {
             using (var conn = new SqlConnection(ConnectionString))
             {

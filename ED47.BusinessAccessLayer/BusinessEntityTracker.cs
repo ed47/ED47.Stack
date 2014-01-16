@@ -1,16 +1,6 @@
-﻿// ************************************
-// * Created by arie
-// * Created on 09.08.2012
-// * Last modification 09.08.2012
-// **************************************/
-
-#region
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-#endregion
 
 namespace ED47.BusinessAccessLayer
 {
@@ -19,16 +9,16 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     internal class BusinessEntityTracker
     {
-        private readonly BusinessEntity _TrackedEntity;
-        private readonly Dictionary<string, object> _Values = new Dictionary<string, object>();
+        private readonly IBusinessEntity _trackedEntity;
+        private readonly IDictionary<string, object> _values = new Dictionary<string, object>();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="BusinessEntityTracker" /> class.
         /// </summary>
         /// <param name="trackedEntity"> The tracked entity. </param>
-        internal BusinessEntityTracker(BusinessEntity trackedEntity)
+        internal BusinessEntityTracker(IBusinessEntity trackedEntity)
         {
-            _TrackedEntity = trackedEntity;
+            _trackedEntity = trackedEntity;
 
             TrackedEntity.PropertyChange += TrackedEntityPropertyChange;
         }
@@ -36,9 +26,9 @@ namespace ED47.BusinessAccessLayer
         /// <summary>
         ///   Gets the tracked entity.
         /// </summary>
-        internal BusinessEntity TrackedEntity
+        internal IBusinessEntity TrackedEntity
         {
-            get { return _TrackedEntity; }
+            get { return _trackedEntity; }
         }
 
         /// <summary>
@@ -50,8 +40,8 @@ namespace ED47.BusinessAccessLayer
         {
             if (sender != TrackedEntity) return;
 
-            if (!_Values.ContainsKey(eventArgs.PropertyName))
-                _Values[eventArgs.PropertyName] = GetCurrentValue(eventArgs.PropertyName);
+            if (!_values.ContainsKey(eventArgs.PropertyName))
+                _values[eventArgs.PropertyName] = GetCurrentValue(eventArgs.PropertyName);
         }
 
 
@@ -62,7 +52,7 @@ namespace ED47.BusinessAccessLayer
         /// <returns> <c>true</c> if the specified property value has changed; otherwise, <c>false</c> . </returns>
         internal bool HasChanged(string propertyName)
         {
-            return (_Values.ContainsKey(propertyName) && GetInitValue(propertyName) != (GetCurrentValue(propertyName)));
+            return (_values.ContainsKey(propertyName) && GetInitValue(propertyName) != (GetCurrentValue(propertyName)));
         }
 
 
@@ -119,11 +109,11 @@ namespace ED47.BusinessAccessLayer
             if (pinfo == null)
                 throw new InvalidOperationException(String.Format("The property {0} doesn't belong to type {1}",
                                                                   propertyName, type.FullName));
-            if (!_Values.ContainsKey(propertyName) && pinfo.CanRead)
+            if (!_values.ContainsKey(propertyName) && pinfo.CanRead)
                 return (TValue) pinfo.GetValue(TrackedEntity, null);
 
 
-            return (TValue) _Values[propertyName];
+            return (TValue) _values[propertyName];
         }
 
 
@@ -132,15 +122,15 @@ namespace ED47.BusinessAccessLayer
         /// </summary>
         internal void Reset()
         {
-            _Values.Clear();
+            _values.Clear();
         }
 
         /// <summary>
         /// Returns a dictionary with a copy of all the changes.
         /// </summary>
-        public Dictionary<string, object> GetAllChanges()
+        public IDictionary<string, object> GetAllChanges()
         {
-            return _Values.ToDictionary(el => el.Key, el => el.Value);
+            return _values.ToDictionary(el => el.Key, el => el.Value);
         }
     }
 }

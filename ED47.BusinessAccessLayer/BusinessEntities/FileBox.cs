@@ -59,8 +59,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             if(file == null || file.ContentLength == 0)
                 return null;
-            
-            var newFile = File.CreateNewFile<File>(System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId);
+
+            var newFile = FileRepositoryFactory.Default.CreateNewFile(System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId);
 
             using (var fileStream = newFile.OpenWrite())
             {
@@ -71,7 +71,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return FileBoxItem.CreateNew(Id, newFile, comment);
         }
 
-        public FileBoxItem AddFile(File file, string comment = null)
+        public FileBoxItem AddFile(IFile file, string comment = null)
         {
             return FileBoxItem.CreateNew(Id, file, comment);
         }

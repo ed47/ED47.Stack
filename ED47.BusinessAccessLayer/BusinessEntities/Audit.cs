@@ -33,8 +33,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="auditFilters"></param>
         public static void Add(string actionName, string sender, object jsonData, object auditFilters)
         {
-            var audit = new Audit()
-                            {
+            var audit = new Audit
+            {
                                 ActionName = actionName,
                                 SenderName = sender,
                                 CreationDate = DateTime.Now,

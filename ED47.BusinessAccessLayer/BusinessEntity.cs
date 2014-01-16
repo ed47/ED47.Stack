@@ -6,7 +6,7 @@ namespace ED47.BusinessAccessLayer
 {
     public abstract class BusinessEntity : IBusinessEntity
     {
-        private BusinessEntityTracker _Tracker;
+        private BusinessEntityTracker _tracker;
 
         [IgnoreDataMember]
         public EventProxy Events { get; set; }
@@ -19,7 +19,7 @@ namespace ED47.BusinessAccessLayer
         /// </summary>
         public virtual void Init()
         {
-            _Tracker = new BusinessEntityTracker(this);
+            _tracker = new BusinessEntityTracker(this);
         }
 
         /// <summary>
@@ -27,8 +27,8 @@ namespace ED47.BusinessAccessLayer
         /// </summary>
         public void Commit()
         {
-            if (_Tracker != null)
-                _Tracker.Reset();
+            if (_tracker != null)
+                _tracker.Reset();
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace ED47.BusinessAccessLayer
         /// <returns> <c>true</c> if the specified property has changed; otherwise, <c>false</c> . </returns>
         public bool HasChanged(string propertyName)
         {
-            return _Tracker.HasChanged(propertyName);
+            return _tracker.HasChanged(propertyName);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace ED47.BusinessAccessLayer
         /// <returns></returns>
         public TValue GetInitialValue<TValue>(string propertyName)
         {
-            return _Tracker.GetInitValue<TValue>(propertyName);
+            return _tracker.GetInitValue<TValue>(propertyName);
         }
 
         /// <summary>
@@ -99,16 +99,16 @@ namespace ED47.BusinessAccessLayer
         public IEnumerable<KeyValuePair<string, object>> GetKeys<TEntity>() where TEntity : DbEntity
         {
             var entityType = GetType();
-            var keyMembers = MetadataHelper.GetKeyMembers<TEntity>(BaseUserContext.Instance.Repository.DbContext);
+            var keyMembers = MetadataHelper.GetKeyMembers<TEntity>();
             return keyMembers.Select(k => new KeyValuePair<string, object>(k, entityType.GetProperty(k).GetValue(this, null)));
         }
 
         /// <summary>
         /// Gets a copy of all the changes.
         /// </summary>
-        public Dictionary<string, object> GetAllChanges()
+        public IDictionary<string, object> GetAllChanges()
         {
-            return _Tracker.GetAllChanges();
+            return _tracker.GetAllChanges();
         }
     }
 }

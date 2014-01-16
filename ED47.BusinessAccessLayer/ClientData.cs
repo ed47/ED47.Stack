@@ -39,7 +39,7 @@ namespace ED47.BusinessAccessLayer
 
             target.InjectFrom<DictionaryInjection>(filter);
 
-            var businessEntity = target as BusinessEntity;
+            var businessEntity = target as IBusinessEntity;
             if (businessEntity != null)
                 businessEntity.ClientData = this;
 

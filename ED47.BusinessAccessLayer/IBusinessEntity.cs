@@ -15,5 +15,25 @@ namespace ED47.BusinessAccessLayer
 
         [IgnoreDataMember]
         EventProxy Events { get; set; }
+
+        /// <summary>
+        ///   Occurs before a primitive property change.
+        /// </summary>
+        event PropertyChangedEventHandler PropertyChange;
+
+        void NotifyPropertyChange(PropertyChangedEventHandlerArgs args);
+
+        /// <summary>
+        /// Method to raise events as events can only be called within instance.
+        /// </summary>
+        /// <param name="args">The args.</param>
+        void NotifyPropertyChanged(PropertyChangedEventHandlerArgs args);
+
+        ClientData ClientData { get; set; }
+
+        /// <summary>
+        ///   Inits this instance. This method is executed after the database load and instance creation.
+        /// </summary>
+        void Init();
     }
 }

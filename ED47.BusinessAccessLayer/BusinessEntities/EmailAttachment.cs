@@ -10,10 +10,10 @@
 
         public virtual int FileId { get; set; }
 
-        private File _file;
-        public virtual File File
+        private IFile _file;
+        public virtual IFile File
         {
-            get { return _file ?? (_file = File.Get(FileId)); }
+            get { return _file ?? (_file = FileRepositoryFactory.Default.Get(FileId)); }
         }
         
         public virtual int EmailId { get; set; }
