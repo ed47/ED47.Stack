@@ -48,7 +48,6 @@ namespace ED47.BusinessAccessLayer
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public Repository(DbContext dbcontext, DbContext immediateDbcontext, string userName = "[anonymous]")
         {
-
             DbContext = dbcontext;
             ImmediateDbContext = immediateDbcontext;
 
