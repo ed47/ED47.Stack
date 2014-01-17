@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="File.cs" />
+    <Compile Include="ISqlRepository.cs" />
     <Compile Include="LocalFileRepository.cs" />
     <Compile Include="MultilingualRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
