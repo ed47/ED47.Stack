@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Web.Mvc;
 
 namespace ED47.BusinessAccessLayer.Multilingual
@@ -21,5 +22,12 @@ namespace ED47.BusinessAccessLayer.Multilingual
             string isoLanguageCode = null);
 
         void Commit();
+
+        IEnumerable<IMultilingual> GetTranslations(IDictionary<string, object> keys, string isoLanguageCode = null, IEnumerable<string> properties = null, bool includeMissingTranslations = false);
+
+        string GeTranslationtKey<TEntity, TBusinesEntity>(string entityName, TBusinesEntity item)
+            where TEntity : DbEntity where TBusinesEntity : IBusinessEntity, new();
+
+        IEnumerable<PropertyInfo> GetMultilingualProperties<TEntity>() where TEntity : class;
     }
 }
