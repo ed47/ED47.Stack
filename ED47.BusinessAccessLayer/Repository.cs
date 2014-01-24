@@ -296,16 +296,19 @@ namespace ED47.BusinessAccessLayer
         /// <typeparam name="TEntity">The Entity type.</typeparam>
         /// <typeparam name="TBusinessEntity">The Business Entity type.</typeparam>
         /// <returns>A queryable set prefiltered by the business predicate.</returns>
-        public IQueryable<TEntity> GetQueryableSet<TEntity, TBusinessEntity>()
+        public IQueryable<TEntity> GetQueryableSet<TEntity, TBusinessEntity>(bool ignoreBusinessPredicate = false)
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
             var query = DbContext.Set<TEntity>().AsQueryable();
             query = AddIncludes(query, GetBusinessIncludes<TBusinessEntity>());
+            if (!ignoreBusinessPredicate)
+            {
 
-            var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
-            if (businessPredicate != null)
-                query = query.Where(businessPredicate);
+                var businessPredicate = GetBusinessWherePredicate<TEntity, TBusinessEntity>();
+                if (businessPredicate != null)
+                    query = query.Where(businessPredicate);
+            }
 
             return query;
         }
