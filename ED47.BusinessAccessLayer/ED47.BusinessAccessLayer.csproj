@@ -181,6 +181,7 @@
     <Compile Include="MetadataHelper.cs" />
     <Compile Include="Multilingual\IMultilingual.cs" />
     <Compile Include="Multilingual\IMultilingualRepository.cs" />
+    <Compile Include="Multilingual\TranslationRepositoryExtensions.cs" />
     <Compile Include="Multilingual\MultilingualRepositoryExtensions.cs" />
     <Compile Include="Multilingual\MultilingualRepositoryFactory.cs" />
     <Compile Include="PropertyChangedEventHandler.cs" />

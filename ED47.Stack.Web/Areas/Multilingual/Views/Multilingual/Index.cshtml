@@ -1,4 +1,4 @@
-﻿@model IDictionary<string, ED47.Stack.Web.Multilingual.TranslationItem>
+﻿@model IEnumerable<ED47.Stack.Web.Multilingual.TranslationItem>
 
 @{
     Layout = null;
@@ -16,14 +16,14 @@
     using (Ajax.BeginForm("Update", "Multilingual", new { area = "Multilingual" }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "saveSuccess(data, '#" + formId + "' )" }, new { id = formId }))
     {
         @Html.Hidden("key", translation.Key)
-        @Html.Hidden("fileName", translation.Value.FileName)
+        @Html.Hidden("fileName", translation.File.FullName)
 
         <div  style="margin-bottom:12px;">
             <label style="margin-bottom: 4px;">
                 <b>@Html.Label(translation.Key, translation.Key)</b>
             </label>    
             <div class="w100">
-                <textarea name="value" rows="1" style="width:100%;">@Html.Raw(translation.Value.Text)</textarea>
+                <textarea name="value" rows="1" style="width:100%;">@Html.Raw(translation.Value)</textarea>
             </div>
             <div class="w10"><input type="submit" value="Save" class="btn btn-normal" /></div>
             <div class="clear"></div>  

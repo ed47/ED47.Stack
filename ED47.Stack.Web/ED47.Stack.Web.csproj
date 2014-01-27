@@ -174,8 +174,9 @@
     <Compile Include="MimeTypeHelper.cs" />
     <Compile Include="Multilingual\Multilingual.cs" />
     <Compile Include="Multilingual\MultilingualHandler.cs" />
-    <Compile Include="Multilingual\TranslationFileInfo.cs" />
     <Compile Include="Multilingual\TranslationItem.cs" />
+    <Compile Include="Multilingual\TranslationRepository.cs" />
+    <Compile Include="Multilingual\TranslationDictionary.cs" />
     <Compile Include="PdfDocument.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

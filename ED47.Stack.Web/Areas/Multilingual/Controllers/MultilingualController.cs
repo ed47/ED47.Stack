@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using ED47.Stack.Web.Multilingual;
 
 namespace ED47.Stack.Web.Areas.Multilingual.Controllers
 {
@@ -9,12 +12,14 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
     {
         public ActionResult Index(string root = null, string language = "en")
         {
-            var model = Web.Multilingual.Multilingual.GetLanguage(language);
+            var dict = Web.Multilingual.Multilingual.GetLanguage(language);
+
+            IEnumerable<TranslationItem> res = null;
 
             if (!String.IsNullOrWhiteSpace(root))
-                model = model.Where(el => el.Key.StartsWith(root)).ToDictionary(el => el.Key, el => el.Value);
+                res = dict.Where(el => el.Key.StartsWith(root)).Select(el=>el.Value);
 
-            return View(model);
+            return View(res ?? dict.Values);
         }
 
         [HttpPost]
