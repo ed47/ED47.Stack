@@ -27,5 +27,6 @@ namespace ED47.BusinessAccessLayer.Excel
         public int? ColSpan { get; set; }
 
         public int? HeaderColSpan { get; set; }
+        public bool IsReadOnly { get; set; }
     }
 }

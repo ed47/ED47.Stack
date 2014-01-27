@@ -205,6 +205,9 @@ namespace ED47.BusinessAccessLayer.Excel
                 {
                     var value = d.GetValue(c.PropertyName);
 
+                    if (c.IsReadOnly)
+                        worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column].Style.Locked = true;
+
                     if (c.Format == null && value is DateTime)
                         worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column].Style.Numberformat.Format = "dd.mm.yyyy";
 

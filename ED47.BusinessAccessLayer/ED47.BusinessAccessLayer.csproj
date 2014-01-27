@@ -184,6 +184,7 @@
     <Compile Include="Multilingual\TranslationRepositoryExtensions.cs" />
     <Compile Include="Multilingual\MultilingualRepositoryExtensions.cs" />
     <Compile Include="Multilingual\MultilingualRepositoryFactory.cs" />
+    <Compile Include="Multilingual\TranslationExportHelper.cs" />
     <Compile Include="PropertyChangedEventHandler.cs" />
     <Compile Include="PropertyChangedEventHandlerArgs.cs" />
     <Compile Include="QueryOptions.cs" />
