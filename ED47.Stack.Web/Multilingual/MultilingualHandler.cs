@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Runtime.Caching;
+using System.Text;
 using System.Web;
 using Newtonsoft.Json;
 
@@ -37,22 +41,51 @@ namespace ED47.Stack.Web.Multilingual
                 return;
             }
 
-            context.Response.Write("var addkey = function(key){ $.post('/MultilingualHandler.axd?addKey=' + key); };");
-            callAddKey = "addkey(s);";
-            #endif
-
-            if (String.IsNullOrEmpty(context.Request["lang"]))
+            var lan = context.Request["lang"];
+            var cache = Multilingual.Repository.GetFromCache("MultilingualHandler?lan=" + lan);
+            if (string.IsNullOrEmpty(cache))
             {
-                context.Response.Write("throw new Error('Especify a language via the [lang] parameter.');");
-                return;
+
+                context.Response.ContentType = "text/javascript";
+                var httpResponse = new StringBuilder();
+                httpResponse.AppendLine(
+                    "var addkey = function(key){ $.post('/MultilingualHandler.axd?addKey=' + key); };");
+                callAddKey = "addkey(s);";
+#endif
+
+                if (String.IsNullOrEmpty(context.Request["lang"]))
+                {
+                    httpResponse.AppendLine("throw new Error('Especify a language via the [lang] parameter.');");
+                    return;
+                }
+
+
+                httpResponse.AppendLine(
+                    "var lang = $('html').attr('lang');var i8n = {}; i8n.n = function(s){ if(translations[s]) return translations[s].Text; else " +
+                    callAddKey + "};");
+
+
+                httpResponse.AppendLine("var translations = ");
+               
+
+
+                var allKeys = Multilingual.GetAllKeys();
+                var dict = new Dictionary<string, string>();
+                foreach (var k in allKeys)
+                {
+                    dict.Add(k, Multilingual.N2(k, lan));
+                }
+                httpResponse.AppendLine(JsonConvert.SerializeObject(dict));
+                httpResponse.AppendLine(";");
+                cache = httpResponse.ToString();
+
+                Multilingual.Repository.CacheData("MultilingualHandler?lan=" + lan, cache, lan);
+
             }
 
-            context.Response.ContentType = "text/javascript";
-            context.Response.Write("var lang = $('html').attr('lang');var i8n = {}; i8n.n = function(s){ if(translations[s]) return translations[s].Text; else " + callAddKey + "};");
+            context.Response.Write(cache); 
+            
 
-            context.Response.Write("var translations = ");
-            context.Response.Write(JsonConvert.SerializeObject(Multilingual.GetLanguage(context.Request["lang"])));
-            context.Response.Write(";");
         }
     }
 }

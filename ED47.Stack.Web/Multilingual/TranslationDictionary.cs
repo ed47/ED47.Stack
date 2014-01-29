@@ -1,19 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using evointernal;
+
 
 namespace ED47.Stack.Web.Multilingual
 {
-    public class TranslationFile
-    {
-        public string Language { get; set; }
-        public FileInfo FileInfo { get; set; }
-    }
-
-    public class TranslationDictionary : Dictionary<string, TranslationItem>
+    public class TranslationDictionary : Dictionary<string, TranslationEntry>
     {
         public bool AutoAddEntry { get; set; }
         public TranslationRepository Repository { get; set; }
@@ -21,18 +14,21 @@ namespace ED47.Stack.Web.Multilingual
         {
             Fallback = fallback;
             Language = language;
-            XmlFiles = new Dictionary<string, TranslationFile>();
+            TranslationFiles = new Dictionary<string, TranslationFile>();
         }
 
         internal readonly object WriteLock = new object();
-        public TranslationFile DefaultXmlFile { get; set; }
-        public Dictionary<string, TranslationFile> XmlFiles { get; set; }
-        public string Language { get; set; }
+        
+        public TranslationFile DefaultTranslationFile { get; set; }
+        public Dictionary<string, TranslationFile> TranslationFiles { get; set; }
+        
+        public string Language { get; private set; }
+
         public TranslationDictionary Fallback { get; set; }
 
         public string GetValue(string key, params object[] args)
         {
-            TranslationItem item;
+            TranslationEntry item;
             if (TryGetValue(key, out item))
                 return args.Length > 0 ? String.Format(item.Value, args) : item.Value;
 
@@ -40,33 +36,33 @@ namespace ED47.Stack.Web.Multilingual
             {
                 var e = AddEntry(key, String.Format("[{0}]", key));
                 if (e != null) return e.Value;
-                return String.Format("?{0}?");
+                return String.Format("?{0}?", key);
             }
             
-            if(Fallback != null) GetValue(key, args);
+            if(Fallback != null && Fallback != this) return Fallback.GetValue(key, args);
 
             return null;
         }
 
-        public TranslationItem GetEntry(string key)
+        public TranslationEntry GetEntry(string key)
         {
-            TranslationItem item;
-            TryGetValue(key, out item);
-            return item;
+            TranslationEntry entry;
+            TryGetValue(key, out entry);
+            return entry;
         }
 
         /// <summary>
         /// Loads a translation file.
         /// </summary>
-        public void LoadXElement(TranslationFile file, XElement root, string path = "")
+        public void LoadFile(TranslationFile file, XElement root)
         {
-            LoadXElements(root.Elements(), file, path);
+            LoadXElements(root.Elements(), file);
         }
 
         /// <summary>
         /// Recursively traverse the XDocument and add properties when a bottom element is found.
         /// </summary>
-        public void LoadXElements(IEnumerable<XElement> elements, TranslationFile file, string path = "")
+        private void LoadXElements(IEnumerable<XElement> elements, TranslationFile file, string path = "")
         {
             foreach (var element in elements)
             {
@@ -77,7 +73,7 @@ namespace ED47.Stack.Web.Multilingual
                 }
                 else
                 {
-                    var e = GetEntry(nextPath) ?? new TranslationItem()
+                    var e = GetEntry(nextPath) ?? new TranslationEntry
                     {
                         Dictionary = this,
                         File = file,
@@ -89,7 +85,7 @@ namespace ED47.Stack.Web.Multilingual
             }
         }
 
-        public TranslationItem UpdateEntry(string key, string value, TranslationFile file = null , object attributes = null )
+        public TranslationEntry UpdateEntry(string key, string value, TranslationFile file = null , object attributes = null )
         {
             var entry = GetEntry(key);
             if (entry == null && file == null)
@@ -99,15 +95,15 @@ namespace ED47.Stack.Web.Multilingual
             }
             if (entry == null)
             {
-                entry = new TranslationItem()
+                entry = new TranslationEntry()
                 {
                     Dictionary = this,
                     File = file,
                     Key = key
                 };
                 Add(key, entry);
-                if (!XmlFiles.ContainsKey(file.FileInfo.FullName)) 
-                    XmlFiles.Add(file.FileInfo.FullName, file);
+                if (!TranslationFiles.ContainsKey(file.FileInfo.FullName)) 
+                    TranslationFiles.Add(file.FileInfo.FullName, file);
             }
 
             entry.Update(value, attributes);
@@ -115,7 +111,7 @@ namespace ED47.Stack.Web.Multilingual
         }
 
 
-        public TranslationItem AddEntry(string key, string value, object attributes = null)
+        public TranslationEntry AddEntry(string key, string value, object attributes = null)
         {
             var file = GetFile(key);
             if (file == null)
@@ -128,16 +124,16 @@ namespace ED47.Stack.Web.Multilingual
         private TranslationFile GetFile(string key)
         {
             var subkeys = key.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            if (subkeys.Count == 1) return DefaultXmlFile;
+            if (subkeys.Count == 1) return DefaultTranslationFile;
             for (int i = subkeys.Count - 2; i >= 0; i--)
             {
                 var pattern = String.Join(".", subkeys.Take(i));
-                var file = XmlFiles.Values.Where(el => el.FileInfo.Name.StartsWith(pattern) && el.Language == Language)
+                var file = TranslationFiles.Values.Where(el => el.FileInfo.Name.StartsWith(pattern) && el.Language == Language)
                         .OrderBy(el => el.FileInfo.FullName.Length)
                         .FirstOrDefault();
                 if (file != null) return file;
             }
-            return DefaultXmlFile;
+            return DefaultTranslationFile;
         }
 
        

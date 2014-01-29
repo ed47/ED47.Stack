@@ -1,19 +1,18 @@
-using System.IO;
 using System.Xml.Linq;
 
 namespace ED47.Stack.Web.Multilingual
 {
-    public class TranslationItem
+    public class TranslationEntry
     {
         public TranslationDictionary Dictionary { get; set; }
         public string Key { get; set; }
         public TranslationFile File { get; set; }
         public string Value { get; set; }
         
-        public void Update(string value, object attributes)
+        public void Update(string value, object attributes = null)
         {
             Value = value;
-            Save();
+            Save(attributes);
         }
 
         private void Save(object attributes = null)
@@ -23,10 +22,10 @@ namespace ED47.Stack.Web.Multilingual
             {
                 var document = XDocument.Load(File.FileInfo.FullName);
                 var currentElement = document.Root;
-                if (document.Root == null)
+                if (currentElement == null)
                     return;
 
-                // ReSharper disable LoopCanBeConvertedToQuery
+                
                 foreach (var node in splitPath)
                 {
                     var nextElement = currentElement.Element(node);
@@ -42,14 +41,13 @@ namespace ED47.Stack.Web.Multilingual
 
                     currentElement = nextElement;
                 }
-                // ReSharper restore LoopCanBeConvertedToQuery
-                if (currentElement != null)
-                {
-                    var data = new XCData(Value);
-                    currentElement.RemoveNodes();
-                    currentElement.Add(data);
-                }
+             
+                var data = new XCData(Value);
+                currentElement.RemoveNodes();
+                currentElement.Add(data);
+               
                 document.Save(File.FileInfo.FullName);
+                Dictionary.Repository.ClearCache(Dictionary.Language);
             }
         }
     }

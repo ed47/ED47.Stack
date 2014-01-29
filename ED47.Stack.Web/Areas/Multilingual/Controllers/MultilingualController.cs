@@ -14,7 +14,7 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
         {
             var dict = Web.Multilingual.Multilingual.GetLanguage(language);
 
-            IEnumerable<TranslationItem> res = null;
+            IEnumerable<TranslationEntry> res = null;
 
             if (!String.IsNullOrWhiteSpace(root))
                 res = dict.Where(el => el.Key.StartsWith(root)).Select(el=>el.Value);

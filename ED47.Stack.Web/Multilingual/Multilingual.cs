@@ -1,16 +1,12 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.Caching;
-using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Mvc;
-using evointernal;
 using Ionic.Zip;
 
 namespace ED47.Stack.Web.Multilingual
 {
-    public class Multilingual
+    public static class Multilingual
     {
         public const string TranslationFilesRelativePath = "/App_Data/Translations/";
 
@@ -27,10 +23,6 @@ namespace ED47.Stack.Web.Multilingual
                 return _translations ??
                        (_translations =
                            new TranslationRepository(HttpContext.Current.Server.MapPath(TranslationFilesRelativePath)));
-            }
-            set
-            {
-                _translations = value;
             }
         }
 

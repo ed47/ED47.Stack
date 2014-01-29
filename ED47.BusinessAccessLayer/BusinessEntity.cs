@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -7,7 +8,7 @@ namespace ED47.BusinessAccessLayer
     public abstract class BusinessEntity : IBusinessEntity
     {
         private BusinessEntityTracker _tracker;
-
+        
         [IgnoreDataMember]
         public EventProxy Events { get; set; }
 

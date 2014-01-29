@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Xml.Linq;
+
 
 namespace ED47.Stack.Web.Multilingual
 {
     public class TranslationRepository : Dictionary<string, TranslationDictionary>
     {
-        private static readonly object WriteFileLock = new object();
+
         public string TranslationsPath { get; set; }
         public TranslationDictionary DefaultDictionnary { get; set; }
         public bool AutoAddEntry { get; set; }
@@ -24,18 +25,23 @@ namespace ED47.Stack.Web.Multilingual
         internal  string GetCurrentLanguage()
         {
             return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
-            ;
+            
         }
 
         public IEnumerable<string> GetAllKeys(string language = null)
         {
             var allKeys = new HashSet<string>();
 
-            foreach (var dictionary in Values)
+            foreach (var dictionary in Values.Where(el=> String.IsNullOrWhiteSpace(language) || el.Language == language))
             {
                 allKeys.UnionWith(dictionary.Keys);
             }
             return allKeys;
+        }
+
+        public TranslationDictionary AddLanguage(string language)
+        {
+            return GetOrCreateDictionary(language);
         }
 
         public TranslationDictionary GetDictionary(string langage)
@@ -60,6 +66,56 @@ namespace ED47.Stack.Web.Multilingual
             return dictionary;
         }
 
+        private readonly Dictionary<string,HashSet<string>> _cacheKeys = new Dictionary<string, HashSet<string>>();
+
+        public string GetFromCache(string key)
+        {
+            lock (_cacheLock)
+            {
+                if (!MemoryCache.Default.Contains(key))
+                    return null;
+
+                var data = MemoryCache.Default.Get(key);
+
+                return data != null ? data.ToString() : null;
+            }
+        }
+
+        public void CacheData(string key, string data, string language)
+        {
+            lock (_cacheLock)
+            {
+                if (!_cacheKeys.ContainsKey(language))
+                {
+                    _cacheKeys.Add(language, new HashSet<string>());
+                }
+
+                if (!_cacheKeys[language].Contains(key)) _cacheKeys[language].Add(key);
+
+                MemoryCache.Default.Add(key, data, new CacheItemPolicy
+                {
+                    SlidingExpiration = new TimeSpan(6, 0, 0)
+                });
+            }
+
+        }
+
+        public readonly object _cacheLock = new object();
+        public void ClearCache(string language)
+        {
+            language = language.ToLowerInvariant();
+            if (!_cacheKeys.ContainsKey(language)) return;
+
+            lock (_cacheLock)
+            {
+                foreach (var cacheKey in _cacheKeys[language])
+                {
+                    MemoryCache.Default.Remove(cacheKey);
+
+                }
+                _cacheKeys[language].Clear();
+            }
+        }
 
         public IEnumerable<string> GetAvailableLanguages()
         {
@@ -80,26 +136,31 @@ namespace ED47.Stack.Web.Multilingual
 
                 var language = document.Root.Attribute("lang").Value;
                 var dictionary = GetOrCreateDictionary(language);
-                var tfile = new TranslationFile()
+                var tfile = new TranslationFile
                     {
                         FileInfo = file,
                         Language = language
                     };
 
-                if (dictionary.DefaultXmlFile == null)
-                    dictionary.DefaultXmlFile = tfile;
+                if (dictionary.DefaultTranslationFile == null)
+                    dictionary.DefaultTranslationFile = tfile;
             
-                if(!dictionary.XmlFiles.ContainsKey(file.FullName))
-                    dictionary.XmlFiles.Add(file.FullName, tfile);
+                if(!dictionary.TranslationFiles.ContainsKey(file.FullName))
+                    dictionary.TranslationFiles.Add(file.FullName, tfile);
 
                
-                dictionary.LoadXElement( tfile, document.Root);
+                dictionary.LoadFile( tfile, document.Root);
             }
 
             TranslationDictionary defaultDictionary;
-            TryGetValue(Properties.Settings.Default.DefaultLanguage, out defaultDictionary);
-            DefaultDictionnary = defaultDictionary ?? Values.FirstOrDefault() ?? new TranslationDictionary(Properties.Settings.Default.DefaultLanguage);
+            TryGetValue(GetDefaultLanguage(), out defaultDictionary);
+            DefaultDictionnary = defaultDictionary ?? Values.FirstOrDefault() ?? new TranslationDictionary(GetDefaultLanguage());
             DefaultDictionnary.AutoAddEntry = AutoAddEntry;
+        }
+
+        private static string GetDefaultLanguage()
+        {
+            return Properties.Settings.Default.DefaultLanguage;
         }
 
         /// <summary>
