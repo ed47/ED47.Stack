@@ -29,5 +29,6 @@ namespace ED47.BusinessAccessLayer.Multilingual
             where TEntity : DbEntity where TBusinesEntity : IBusinessEntity, new();
 
         IEnumerable<PropertyInfo> GetMultilingualProperties<TEntity>() where TEntity : class;
+        void Upsert(IEnumerable<IMultilingual> multilinguals);
     }
 }

@@ -98,6 +98,26 @@ namespace ED47.BusinessAccessLayer.EF
                                             .Any());
         }
 
+        public void Upsert(IEnumerable<IMultilingual> multilinguals)
+        {
+            if (multilinguals == null || !multilinguals.Any())
+                return;
+
+            foreach (var multilingual in multilinguals)
+            {
+                if (String.IsNullOrWhiteSpace(multilingual.Text))
+                    continue;
+
+                multilingual.Save();
+            }
+        }
+        
+        public IMultilingual Find(string key, string propertyName, string languageIsoCode)
+        {
+            return BaseUserContext.Instance.Repository
+                    .Find<Entities.Multilingual, BusinessEntities.Multilingual>(el => el.Key == key && el.PropertyName == propertyName && el.LanguageIsoCode == languageIsoCode);
+        }
+
         public IEnumerable<IMultilingual> GetTranslations(IDictionary<string, object> keys, string isoLanguageCode = null, IEnumerable<string> properties = null, bool includeMissingTranslations = false)
         {
             var defaultLanguage = "en"; //TODO: MOVE THIS
@@ -127,11 +147,15 @@ namespace ED47.BusinessAccessLayer.EF
                 {
                     foreach (var property in propertyNames)
                     {
-                        var master = key.Value
+                        var masterValue = key.Value
                                         .GetType()
                                         .GetProperty(property, BindingFlags.Public | BindingFlags.Instance)
-                                        .GetValue(key.Value, null)
-                                        .ToString();
+                                        .GetValue(key.Value, null);
+
+                        if (masterValue == null)
+                            continue;
+
+                        var master = masterValue.ToString();
 
                         multilinguals.Add(new BusinessEntities.Multilingual
                         {
@@ -167,7 +191,7 @@ namespace ED47.BusinessAccessLayer.EF
                 }
             }
 
-            return multilinguals;
+            return multilinguals.Where(el => !String.IsNullOrWhiteSpace(el.Text));
         }
 
         public IEnumerable<IMultilingual> GetTranslations(IEnumerable<string> keys, string isoLanguageCode = null)

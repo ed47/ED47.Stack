@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Entity.Infrastructure;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using ED47.BusinessAccessLayer.Multilingual;
 using Ninject;
 
