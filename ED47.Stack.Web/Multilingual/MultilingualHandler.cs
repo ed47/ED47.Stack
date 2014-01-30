@@ -61,7 +61,7 @@ namespace ED47.Stack.Web.Multilingual
 
 
                 httpResponse.AppendLine(
-                    "var lang = $('html').attr('lang');var i8n = {}; i8n.n = function(s){ if(translations[s]) return translations[s].Text; else " +
+                    "var lang = $('html').attr('lang');var i8n = {}; i8n.n = function(s){ if(translations[s]) return translations[s]; else " +
                     callAddKey + "};");
 
 
