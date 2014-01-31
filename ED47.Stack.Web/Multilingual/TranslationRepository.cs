@@ -11,18 +11,17 @@ namespace ED47.Stack.Web.Multilingual
 {
     public class TranslationRepository : Dictionary<string, TranslationDictionary>
     {
-
         public string TranslationsPath { get; set; }
         public TranslationDictionary DefaultDictionnary { get; set; }
-        public bool AutoAddEntry { get; set; }
+        public static bool AutoAddEntry { get; set; }
 
         public TranslationRepository(string path)
         {
             TranslationsPath = path;
             LoadXmlTranslations();
         }
-
-        internal  string GetCurrentLanguage()
+        
+        internal string GetCurrentLanguage()
         {
             return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
             
@@ -91,10 +90,16 @@ namespace ED47.Stack.Web.Multilingual
                 }
 
                 if (!_cacheKeys[language].Contains(key)) _cacheKeys[language].Add(key);
-
+                
                 MemoryCache.Default.Add(key, data, new CacheItemPolicy
                 {
-                    SlidingExpiration = new TimeSpan(6, 0, 0)
+#if !DEBUG
+                    SlidingExpiration = TimeSpan.FromHours(6)
+#endif
+#if DEBUG
+                    SlidingExpiration = TimeSpan.FromSeconds(15)
+#endif
+
                 });
             }
 
