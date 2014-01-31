@@ -80,8 +80,7 @@ namespace ED47.BusinessAccessLayer.EF
 
             return context.Repository
                     .Where<Entities.File, File>(el => !el.IsDeleted && el.BusinessKey == businessKey)
-                    .OrderByDescending(el => el.Version);
-
+                    .OrderByDescending(el => el.CreationDate);
         }
 
         public IFile Upload(string businessKey, int groupId = 0)
