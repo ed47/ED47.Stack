@@ -28,16 +28,19 @@ namespace ED47.Stack.Web.Multilingual
 
         public void ProcessRequest(HttpContext context)
         {
-// ReSharper disable RedundantAssignment
+            // ReSharper disable RedundantAssignment
             var callAddKey = "return;";
-// ReSharper restore RedundantAssignment
+            // ReSharper restore RedundantAssignment
 
-            #if DEBUG
             var addKey = context.Request["addkey"];
-
             if (!String.IsNullOrWhiteSpace(addKey))
             {
-                Multilingual.AddMissingKey(addKey);
+                if (TranslationRepository.AutoAddEntry)
+                {
+                    Multilingual.AddMissingKey(addKey);
+                    return;
+                }
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 return;
             }
 
@@ -48,10 +51,11 @@ namespace ED47.Stack.Web.Multilingual
 
                 context.Response.ContentType = "text/javascript";
                 var httpResponse = new StringBuilder();
+
                 httpResponse.AppendLine(
                     "var addkey = function(key){ $.post('/MultilingualHandler.axd?addKey=' + key); };");
                 callAddKey = "addkey(s);";
-#endif
+
 
                 if (String.IsNullOrEmpty(context.Request["lang"]))
                 {
@@ -66,7 +70,7 @@ namespace ED47.Stack.Web.Multilingual
 
 
                 httpResponse.AppendLine("var translations = ");
-               
+
 
 
                 var allKeys = Multilingual.GetAllKeys();
@@ -83,8 +87,8 @@ namespace ED47.Stack.Web.Multilingual
 
             }
 
-            context.Response.Write(cache); 
-            
+            context.Response.Write(cache);
+
 
         }
     }
