@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using ED47.Stack.Reflector.Attributes;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
@@ -8,6 +9,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
     /// <summary>
     /// Class containing all the language codes used in an application.
     /// </summary>
+    [Model]
     public class Lang : BusinessEntity
     {
         /// <summary>
