@@ -29,6 +29,9 @@ namespace ED47.BusinessAccessLayer.Excel
         /// </value>
         public ICollection<ExcelSheet> Sheets { get; private set; }
 
+        public string FileName { get; set; }
+        public string BusinessKey { get; set; }
+
         /// <summary>
         /// Adds a new sheet.
         /// </summary>
@@ -116,5 +119,17 @@ namespace ED47.BusinessAccessLayer.Excel
             }
         }
 
+        public IFile ToFile()
+        {
+            var file = FileRepositoryFactory.Default.CreateNewFile(FileName, BusinessKey);
+            
+            using (var fileStream = file.OpenWrite())
+            {
+                Write(fileStream);
+                fileStream.Flush();
+            }
+
+            return file;
+        }
     }
 }

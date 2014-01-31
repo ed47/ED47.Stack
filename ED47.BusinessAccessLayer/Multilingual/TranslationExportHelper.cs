@@ -9,7 +9,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
 {
     public static class TranslationExportHelper
     {
-        public static IFile ExportTranslations<TEntity, TBusinessEntity>(this IEnumerable<TBusinessEntity> entities) where TEntity : DbEntity where TBusinessEntity : class, IBusinessEntity, new()
+        public static ExcelFile ExportTranslations<TEntity, TBusinessEntity>(this IEnumerable<TBusinessEntity> entities, ExcelFile existingFile = null) where TEntity : DbEntity where TBusinessEntity : class, IBusinessEntity, new()
         {
             var keys = entities.ToDictionary(el => MultilingualRepositoryFactory.Default.GetTranslationtKey<TEntity, TBusinessEntity>(typeof(TEntity).Name, el), el => (object)el);
             var multilingualProperties = MultilingualRepositoryFactory.Default
@@ -53,8 +53,13 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 }
             }
 
-            var excelFile = new ExcelFile();
-            var sheet = excelFile.AddSheet(jEntities, "Translations " + typeof(TBusinessEntity).Name);
+            var excelFile = existingFile ?? new ExcelFile
+            {
+                FileName = "TranslationExport" + typeof(TBusinessEntity).Name + ".xlsx",
+                BusinessKey = "TranslationExport"
+            };
+
+            var sheet = excelFile.AddSheet(jEntities, typeof(TBusinessEntity).Name);
 
             sheet.AddColumns(
                 new ExcelColumn {PropertyName = "Key", DisplayName = "Key", IsReadOnly = true },
@@ -64,15 +69,8 @@ namespace ED47.BusinessAccessLayer.Multilingual
             {
                 sheet.AddColumns(new ExcelColumn { PropertyName = languageColumn, DisplayName = languageColumn });
             }
-
-            var file = FileRepositoryFactory.Default.CreateNewFile("TranslationExport" + typeof (TBusinessEntity).Name + ".xlsx", "TranslationExport");
-            using (var fileStream = file.OpenWrite())
-            {
-                excelFile.Write(fileStream);
-                fileStream.Flush();
-            }
-
-            return file;
+            
+            return excelFile;
         }
     }
 }
