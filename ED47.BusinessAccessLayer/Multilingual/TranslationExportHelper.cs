@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.Excel;
 using ED47.Stack.Web;
 
@@ -65,7 +64,10 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 new ExcelColumn {PropertyName = "Key", DisplayName = "Key", IsReadOnly = true },
                 new ExcelColumn {PropertyName = "Property", DisplayName = "Property", IsReadOnly = true  });
 
-            foreach (var languageColumn in languageColumns)
+            var masterColumn = languageColumns.Single(el => el.Contains("MASTER"));
+            sheet.AddColumns(new ExcelColumn { PropertyName = masterColumn, DisplayName = masterColumn });
+
+            foreach (var languageColumn in languageColumns.Where(el => !el.Contains("MASTER")))
             {
                 sheet.AddColumns(new ExcelColumn { PropertyName = languageColumn, DisplayName = languageColumn });
             }
