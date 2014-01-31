@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using ED47.BusinessAccessLayer.BusinessEntities;
@@ -86,6 +87,7 @@ namespace ED47.BusinessAccessLayer
 
         public abstract IFile CreateNewFile(string name, string businessKey, int? groupId, bool requiresLogin = true, string langId = null, bool encrypted = false);
         public abstract IFile GetFileByKey(string businessKey, int? version = null);
+        public abstract IEnumerable<IFile> GetHistoryFilesByKey(string businessKey);
 
         /// <summary>
         /// Gets the download URL for a file.

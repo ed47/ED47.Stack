@@ -71,7 +71,7 @@ namespace ED47.BusinessAccessLayer.EF
             return context.Repository.GetAll<Entities.File, File>();
         }
 
-        public IEnumerable<IFile> GetHistoryFilesByKey(string businessKey)
+        public override IEnumerable<IFile> GetHistoryFilesByKey(string businessKey)
         {
             var context = BaseUserContext.Instance;
 

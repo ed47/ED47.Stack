@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
 namespace ED47.BusinessAccessLayer
@@ -14,6 +15,7 @@ namespace ED47.BusinessAccessLayer
         IFile Get(int fileId);
         IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false);
         IFile GetFileByKey(string businessKey, int? version = null);
+        IEnumerable<IFile> GetHistoryFilesByKey(string businessKey);
         string GetUrl(IFile file, bool specificVersion = true);
     }
 }
