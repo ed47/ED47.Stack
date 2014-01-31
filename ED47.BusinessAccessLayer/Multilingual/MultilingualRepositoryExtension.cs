@@ -12,7 +12,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
         private const int PropertyNameColumn = 2;
         private const int MasterColumn = 3;
 
-        public static void ImportExcel(this IMultilingualRepository repository, Stream stream)
+        public static void ImportExcel(this IMultilingualRepository repository, Stream stream, bool archiveFile = true)
         {
             var multilinguals = new List<BusinessEntities.Multilingual>();
 
@@ -54,6 +54,12 @@ namespace ED47.BusinessAccessLayer.Multilingual
             }
 
             repository.Upsert(multilinguals);
+
+            if (archiveFile)
+            {
+                var file = FileRepositoryFactory.Default.CreateNewFile("TranslationImport.xlsx", "TranslationImport");
+                file.Write(stream);
+            }
         }
 
         private static IDictionary<int, string> GetLanguageColumns(ExcelWorksheet sheet)
