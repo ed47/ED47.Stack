@@ -165,6 +165,15 @@ namespace ED47.BusinessAccessLayer.EF
 			}
 		}
 
+        public void Write(Stream stream)
+        {
+            using (var s = OpenWrite())
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.CopyTo(s);
+                s.Flush();
+            }
+        }
 
 		/// <summary>
 		/// Gets the mime type of the file.

@@ -66,6 +66,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="file">The file to be copied.</param>
         void Write(FileInfo file);
 
+        void Write(Stream stream);
+
         /// <summary>
         /// Gets the mime type of the file.
         /// </summary>
