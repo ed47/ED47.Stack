@@ -190,7 +190,7 @@ namespace ED47.BusinessAccessLayer.EF
                 }
             }
 
-            return multilinguals.Where(el => !String.IsNullOrWhiteSpace(el.Text));
+            return multilinguals;
         }
 
         public IEnumerable<IMultilingual> GetTranslations(IEnumerable<string> keys, string isoLanguageCode = null)
