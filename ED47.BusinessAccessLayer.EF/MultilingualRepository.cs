@@ -230,7 +230,11 @@ namespace ED47.BusinessAccessLayer.EF
             var translations = GetTranslations(isoLanguageCode, key, propertyName)
                 .ToList();
             var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
-
+            
+#if DEBUG
+            translation = "***" + translation;
+#endif
+            
             return translation;
         }
 
