@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
-using System.Web.Mvc;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.Multilingual;
 using Ninject;
@@ -66,7 +65,7 @@ namespace ED47.BusinessAccessLayer.EF
             return RepositoryHelper.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translations).ToList();
         }
 
-        public MvcHtmlString T<TEntity, TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
+        public string T<TEntity, TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
             where TBusinessEntity : IBusinessEntity
             where TEntity : BusinessAccessLayer.DbEntity
         {
@@ -80,7 +79,7 @@ namespace ED47.BusinessAccessLayer.EF
             var translations = GetTranslations(isoLanguageCode, key, propertyName).ToList();
             var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
 
-            return new MvcHtmlString(translation);
+            return translation;
         }
 
         /// <summary>
@@ -215,9 +214,12 @@ namespace ED47.BusinessAccessLayer.EF
             return multilinguals;
         }
 
-        public MvcHtmlString T<TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
+        public string T<TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
             where TBusinessEntity : IBusinessEntity
         {
+            if (entity == null)
+                return String.Empty;
+
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
@@ -229,10 +231,10 @@ namespace ED47.BusinessAccessLayer.EF
                 .ToList();
             var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
 
-            return new MvcHtmlString(translation);
+            return translation;
         }
 
-        public MvcHtmlString T(string entityName, int entityId, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
+        public string T(string entityName, int entityId, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
         {
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
@@ -244,7 +246,7 @@ namespace ED47.BusinessAccessLayer.EF
                 .ToList();
             var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
 
-            return new MvcHtmlString(translation);
+            return translation;
         }
 
         public void Commit()
@@ -285,16 +287,22 @@ namespace ED47.BusinessAccessLayer.EF
         /// <typeparam name="TBusinesEntity">The business entity type.</typeparam>
         /// <param name="businessEntities">The collection of entities to translate.</param>
         /// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
-        public void Translate<TEntity, TBusinesEntity>(IEnumerable<TBusinesEntity> businessEntities, string isoLanguageCode)
+        public void Translate<TEntity, TBusinesEntity>(IEnumerable<TBusinesEntity> businessEntities, string isoLanguageCode = null)
             where TEntity : DbEntity
             where TBusinesEntity : IBusinessEntity, new()
         {
+            if (businessEntities == null)
+                return;
+            
             businessEntities = businessEntities.Where(b => b != null).ToList();
 
             if (!businessEntities.Any())
                 return;
 
-            isoLanguageCode = isoLanguageCode.Trim().ToLower();
+            if (String.IsNullOrWhiteSpace(isoLanguageCode))
+                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+
+            isoLanguageCode = isoLanguageCode.Trim().ToLowerInvariant();
             var entityName = typeof(TBusinesEntity).Name;
 
             var keys = businessEntities.SelectMany(b => b.GetKeys<TEntity>().Select(kv => entityName + "[" + kv.Value + "]"));
@@ -304,12 +312,12 @@ namespace ED47.BusinessAccessLayer.EF
             {
                 var item = entity; //HACK: To prevent modified closure bug in .Net 4.0
 
-                var key = GeTranslationtKey<TEntity, TBusinesEntity>(entityName, item);
+                var key = GetTranslationtKey<TEntity, TBusinesEntity>(entityName, item);
                 ApplyTranslation(item, translations.Where(t => t.Key.ToLower() == key.ToLower()));
             }
         }
 
-        public string GeTranslationtKey<TEntity, TBusinesEntity>(string entityName, TBusinesEntity item)
+        public string GetTranslationtKey<TEntity, TBusinesEntity>(string entityName, TBusinesEntity item)
             where TEntity : DbEntity
             where TBusinesEntity : IBusinessEntity, new()
         {
@@ -324,12 +332,15 @@ namespace ED47.BusinessAccessLayer.EF
         /// <param name="businessEntity">The collection of entities to translate.</param>
         /// <param name="isoLanguageCode">The 2-letter ISO code for the language to translate to.</param>
         /// <param name="repository">The Entity Framework DB Context.</param>
-        public void Translate<TEntity, TBusinesEntity>(TBusinesEntity businessEntity, string isoLanguageCode)
+        public void Translate<TEntity, TBusinesEntity>(TBusinesEntity businessEntity, string isoLanguageCode = null)
             where TEntity : DbEntity
             where TBusinesEntity : BusinessEntity, new()
         {
             if (businessEntity == null)
                 return;
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode))
+                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
             var entityName = typeof(TBusinesEntity).Name;
             var key = entityName + "[" + String.Join(",", businessEntity.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";

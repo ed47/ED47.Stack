@@ -11,7 +11,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
     {
         public static IFile ExportTranslations<TEntity, TBusinessEntity>(this IEnumerable<TBusinessEntity> entities) where TEntity : DbEntity where TBusinessEntity : class, IBusinessEntity, new()
         {
-            var keys = entities.ToDictionary(el => MultilingualRepositoryFactory.Default.GeTranslationtKey<TEntity, TBusinessEntity>(typeof(TEntity).Name, el), el => (object)el);
+            var keys = entities.ToDictionary(el => MultilingualRepositoryFactory.Default.GetTranslationtKey<TEntity, TBusinessEntity>(typeof(TEntity).Name, el), el => (object)el);
             var multilingualProperties = MultilingualRepositoryFactory.Default
                                             .GetMultilingualProperties<TEntity>()
                                             .Select(el => el.Name);
