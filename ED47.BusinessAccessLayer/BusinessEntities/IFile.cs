@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using ED47.Stack.Reflector.Attributes;
 
@@ -31,6 +30,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         int Id { get; set; }
         void Write(string content);
         string ReadText(bool addView = true);
+        DateTime CreationDate { get; }
         
         /// <summary>
         /// Copy the content of the file into the destination stream.

@@ -33,6 +33,8 @@ namespace ED47.BusinessAccessLayer.EF
 		internal static readonly IFileRepository FileRepository = BusinessComponent.Kernel.Get<IFileRepository>();
 
 		public virtual bool Encrypted { get; set; }
+
+        public virtual DateTime CreationDate { get; set; }
 		
 		private string _Url;
 		public string Url
