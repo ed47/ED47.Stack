@@ -16,7 +16,7 @@
     using (Ajax.BeginForm("Update", "Multilingual", new { area = "Multilingual" }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "saveSuccess(data, '#" + formId + "' )" }, new { id = formId }))
     {
         @Html.Hidden("key", translation.Key)
-        @Html.Hidden("fileName", translation.File.FullName)
+        @Html.Hidden("fileName", translation.File.FileInfo.FullName)
 
         <div  style="margin-bottom:12px;">
             <label style="margin-bottom: 4px;">
