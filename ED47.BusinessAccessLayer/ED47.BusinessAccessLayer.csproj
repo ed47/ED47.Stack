@@ -171,6 +171,10 @@
     <Compile Include="JsonDataFieldInjector.cs" />
     <Compile Include="LocalFileRepository.cs" />
     <Compile Include="Lock.cs" />
+    <Compile Include="Message\EmailFactory.cs" />
+    <Compile Include="Message\EmailHandler.cs" />
+    <Compile Include="Message\EmailRepository.cs" />
+    <Compile Include="Message\IEmailRepository.cs" />
     <Compile Include="Message\MessageFailureEventArgs.cs" />
     <Compile Include="Message\MessageActionEventArgs.cs" />
     <Compile Include="Message\AttachmentMode.cs" />

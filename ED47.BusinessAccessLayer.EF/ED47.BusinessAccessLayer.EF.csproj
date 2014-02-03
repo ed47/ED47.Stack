@@ -84,6 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmailRepository.cs" />
     <Compile Include="File.cs" />
     <Compile Include="ISqlRepository.cs" />
     <Compile Include="LocalFileRepository.cs" />

@@ -17,6 +17,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public virtual int Id { get; set; }
 
+        public virtual Guid Guid { get; set; }
+
         [MaxLength(250)]
         public virtual string BusinessKey { get; set; }
 
