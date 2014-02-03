@@ -33,5 +33,17 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return context.Repository.GetAll<Entities.Language, Lang>().ToList();
         }
 
+        public static void AddLanguage(Lang language)
+        {
+            var languages = GetLanguages();
+
+            language.IsoCode = language.IsoCode.Trim().ToLowerInvariant();
+
+            if (languages.Any(el => el.IsoCode.ToLowerInvariant() == language.IsoCode))
+                return;
+
+            var context = BaseUserContext.Instance ?? BusinessComponent.Kernel.Get<BaseUserContext>();
+            context.Repository.Add<Entities.Language, Lang>(language);
+        }
     }
 }
