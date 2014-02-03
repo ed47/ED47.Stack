@@ -360,7 +360,9 @@ namespace ED47.BusinessAccessLayer.EF
             var baseDbEntity = newEntity as BaseDbEntity;
             if (baseDbEntity != null)
             {
-                baseDbEntity.Guid = Guid.NewGuid();
+                if(baseDbEntity.Guid == Guid.Empty)
+                    baseDbEntity.Guid = Guid.NewGuid();
+
                 baseDbEntity.CreationDate = DateTime.UtcNow.ToUniversalTime();
                 baseDbEntity.CreatorUsername = UserName;
                 baseDbEntity.UpdateDate = baseDbEntity.CreationDate;

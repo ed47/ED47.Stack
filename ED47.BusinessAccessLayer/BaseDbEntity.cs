@@ -46,7 +46,9 @@ namespace ED47.BusinessAccessLayer
             UpdaterUsername = username;
             IsDeleted = false;
             IsReadOnly = false;
-            Guid = Guid.NewGuid();
+            
+            if(Guid == Guid.Empty)
+                Guid = Guid.NewGuid();
 
             return this as TBusinessEntity;
 

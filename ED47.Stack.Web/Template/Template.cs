@@ -197,8 +197,8 @@ namespace ED47.Stack.Web.Template
             if (!(name.EndsWith(".html") || name.EndsWith(".cshtml")))
             {
                 var tplText = String.IsNullOrEmpty(languageCode)
-                    ? Multilingual.Multilingual.N("templates." + name)
-                    : Multilingual.Multilingual.N2("templates." + name, languageCode);
+                    ? Multilingual.Multilingual.N("templates." + name.ToLowerInvariant())
+                    : Multilingual.Multilingual.N2("templates." + nameWithoutLanguage.ToLowerInvariant(), languageCode);
 
                 if (!string.IsNullOrEmpty(tplText))
                     return new Template(tplText);
