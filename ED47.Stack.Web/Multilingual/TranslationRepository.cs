@@ -6,10 +6,9 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Xml.Linq;
 
-
 namespace ED47.Stack.Web.Multilingual
 {
-    public class TranslationRepository : Dictionary<string, TranslationDictionary>
+    public class TranslationRepository : Dictionary<string, TranslationDictionary>, ITranslationRepository
     {
         public string TranslationsPath { get; set; }
         public TranslationDictionary DefaultDictionnary { get; set; }
@@ -99,7 +98,6 @@ namespace ED47.Stack.Web.Multilingual
 #if DEBUG
                     SlidingExpiration = TimeSpan.FromSeconds(15)
 #endif
-
                 });
             }
 
@@ -177,7 +175,6 @@ namespace ED47.Stack.Web.Multilingual
             if (dictionary == null) return;
 
             dictionary.UpdateEntry(key, value, null, attributes);
-
         }
 
         public string GetCurrentTranslation(string key, params object[] args)
@@ -216,7 +213,5 @@ namespace ED47.Stack.Web.Multilingual
             key = key + (pluralizeCount <= 1 ? ".single" : ".many");
             return GetTranslation(key, language, args);
         }
-
-
     }
 }

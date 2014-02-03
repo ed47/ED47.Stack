@@ -172,6 +172,7 @@
     <Compile Include="Json\JsonObjectSerialization.cs" />
     <Compile Include="Json\Utilities.cs" />
     <Compile Include="MimeTypeHelper.cs" />
+    <Compile Include="Multilingual\ITranslationRepository.cs" />
     <Compile Include="Multilingual\Multilingual.cs" />
     <Compile Include="Multilingual\MultilingualHandler.cs" />
     <Compile Include="Multilingual\TranslationFile.cs" />

@@ -95,7 +95,7 @@ namespace ED47.Stack.Web.Multilingual
             }
             if (entry == null)
             {
-                entry = new TranslationEntry()
+                entry = new TranslationEntry
                 {
                     Dictionary = this,
                     File = file,
@@ -125,9 +125,9 @@ namespace ED47.Stack.Web.Multilingual
         {
             var subkeys = key.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries).ToList();
             if (subkeys.Count == 1) return DefaultTranslationFile;
-            for (int i = subkeys.Count - 2; i >= 0; i--)
+            for (int i = 0; i < subkeys.Count; i++)
             {
-                var pattern = String.Join(".", subkeys.Take(i));
+                var pattern = String.Join(".", subkeys.Take(i+1));
                 var file = TranslationFiles.Values.Where(el => el.FileInfo.Name.StartsWith(pattern) && el.Language == Language)
                         .OrderBy(el => el.FileInfo.FullName.Length)
                         .FirstOrDefault();
