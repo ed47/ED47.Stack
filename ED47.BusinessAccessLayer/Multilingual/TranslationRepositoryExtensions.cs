@@ -12,20 +12,17 @@ namespace ED47.BusinessAccessLayer.Multilingual
 {
     public static class TranslationRepositoryExtensions
     {
-        public static void ImportXls(this ITranslationRepository repository, FileInfo fileInfo)
+        public static void ImportXls(this ITranslationRepository repository, Stream stream)
         {
             using (var file = new ExcelPackage())
             {
-                using (var stream = fileInfo.OpenRead())
-                {
-                    file.Load(stream);
-                }
-
+                file.Load(stream);
+                
                 var sheet = file.Workbook.Worksheets.First();
-                for (int i = 2; i <= sheet.Dimension.End.Row; i++)
+                for (var i = 2; i <= sheet.Dimension.End.Row; i++)
                 {
                     var key = sheet.Cells[i, 1].GetValue<string>();
-                    for (int j = 2; j <= sheet.Dimension.End.Column; j++)
+                    for (var j = 2; j <= sheet.Dimension.End.Column; j++)
                     {
                         var title = sheet.Cells[1, j].GetValue<string>();
                         if (String.IsNullOrEmpty(title)) continue;
@@ -40,6 +37,9 @@ namespace ED47.BusinessAccessLayer.Multilingual
                     }
                 }
             }
+
+            var archiveFile = FileRepositoryFactory.Default.CreateNewFile("LabelImport.xlsx", "LabelImport");
+            archiveFile.Write(stream);
         }
 
         public static ExcelFile ExportXls(this ITranslationRepository repository, string pattern = null)
