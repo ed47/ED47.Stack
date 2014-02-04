@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Caching;
 using System.Threading;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.Multilingual;
@@ -57,12 +58,31 @@ namespace ED47.BusinessAccessLayer.EF
             if (String.IsNullOrWhiteSpace(key))
                 return new List<BusinessEntities.Multilingual>(0);
 
-            var objectSet = ((IObjectContextAdapter)BaseUserContext.Instance.Repository.DbContext).ObjectContext.CreateObjectSet<Entities.Multilingual>();
-            var translations = objectSet.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key) && (propertyName == null || m.PropertyName == propertyName))
-                .OrderBy(m => m.Key)
-                .ThenBy(m => m.PropertyName);
+            var cacheKey = String.Concat("Translation", isoLanguageCode, key, propertyName);
+            var translations = MemoryCache.Default.Get(cacheKey) as IEnumerable<IMultilingual>;
 
-            return RepositoryHelper.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translations).ToList();
+            if (translations == null)
+            {
+                var objectSet = ((IObjectContextAdapter) BaseUserContext.Instance.Repository.DbContext).ObjectContext.CreateObjectSet<Entities.Multilingual>();
+                var translationQuery = objectSet.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key) &&
+                        (propertyName == null || m.PropertyName == propertyName))
+                    .OrderBy(m => m.Key)
+                    .ThenBy(m => m.PropertyName);
+
+                translations = RepositoryHelper.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translationQuery).ToList();
+
+                MemoryCache.Default.Add(new CacheItem(cacheKey, translations), new CacheItemPolicy
+                {
+                    #if !DEBUG
+                    Priority = CacheItemPriority.NotRemovable
+                    #endif
+                    #if DEBUG
+                    AbsoluteExpiration = DateTime.Now.AddSeconds(10)   
+                    #endif
+                });
+            }
+
+            return translations;
         }
 
         public string T<TEntity, TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
