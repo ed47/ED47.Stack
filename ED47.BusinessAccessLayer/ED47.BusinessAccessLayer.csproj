@@ -185,6 +185,7 @@
     <Compile Include="MetadataHelper.cs" />
     <Compile Include="Multilingual\IMultilingual.cs" />
     <Compile Include="Multilingual\IMultilingualRepository.cs" />
+    <Compile Include="Multilingual\MultilingualRepository.cs" />
     <Compile Include="Multilingual\MultilingualRepositoryExtension.cs" />
     <Compile Include="Multilingual\TranslationRepositoryExtensions.cs" />
     <Compile Include="Multilingual\MultilingualRepositoryExtensions.cs" />
