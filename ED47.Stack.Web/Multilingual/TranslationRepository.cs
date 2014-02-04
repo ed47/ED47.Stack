@@ -12,25 +12,24 @@ namespace ED47.Stack.Web.Multilingual
     {
         public string TranslationsPath { get; set; }
         public TranslationDictionary DefaultDictionnary { get; set; }
-        public static bool AutoAddEntry { get; set; }
 
         public TranslationRepository(string path)
         {
             TranslationsPath = path;
             LoadXmlTranslations();
         }
-        
+
         internal string GetCurrentLanguage()
         {
             return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
-            
+
         }
 
         public IEnumerable<string> GetAllKeys(string language = null)
         {
             var allKeys = new HashSet<string>();
 
-            foreach (var dictionary in Values.Where(el=> String.IsNullOrWhiteSpace(language) || el.Language == language))
+            foreach (var dictionary in Values.Where(el => String.IsNullOrWhiteSpace(language) || el.Language == language))
             {
                 allKeys.UnionWith(dictionary.Keys);
             }
@@ -57,15 +56,14 @@ namespace ED47.Stack.Web.Multilingual
             {
                 dictionary = new TranslationDictionary(lan)
                 {
-                    Repository = this,
-                    AutoAddEntry = TranslationRepository.AutoAddEntry
+                    Repository = this
                 };
                 Add(lan, dictionary);
             }
             return dictionary;
         }
 
-        private readonly Dictionary<string,HashSet<string>> _cacheKeys = new Dictionary<string, HashSet<string>>();
+        private readonly Dictionary<string, HashSet<string>> _cacheKeys = new Dictionary<string, HashSet<string>>();
 
         public string GetFromCache(string key)
         {
@@ -90,7 +88,7 @@ namespace ED47.Stack.Web.Multilingual
                 }
 
                 if (!_cacheKeys[language].Contains(key)) _cacheKeys[language].Add(key);
-                
+
                 MemoryCache.Default.Add(key, data, new CacheItemPolicy
                 {
 #if !DEBUG
@@ -148,18 +146,17 @@ namespace ED47.Stack.Web.Multilingual
 
                 if (dictionary.DefaultTranslationFile == null)
                     dictionary.DefaultTranslationFile = tfile;
-            
-                if(!dictionary.TranslationFiles.ContainsKey(file.FullName))
+
+                if (!dictionary.TranslationFiles.ContainsKey(file.FullName))
                     dictionary.TranslationFiles.Add(file.FullName, tfile);
 
-               
-                dictionary.LoadFile( tfile, document.Root);
+
+                dictionary.LoadFile(tfile, document.Root);
             }
 
             TranslationDictionary defaultDictionary;
             TryGetValue(GetDefaultLanguage(), out defaultDictionary);
             DefaultDictionnary = defaultDictionary ?? Values.FirstOrDefault() ?? new TranslationDictionary(GetDefaultLanguage());
-            DefaultDictionnary.AutoAddEntry = AutoAddEntry;
         }
 
         private static string GetDefaultLanguage()
@@ -173,7 +170,13 @@ namespace ED47.Stack.Web.Multilingual
         public void UpdateEntry(string language, string key, string value, object attributes = null)
         {
             var dictionary = GetDictionary(language);
-            if (dictionary == null) return;
+            if (dictionary == null)
+            {
+                var file = CreateFile(key, language);
+                var languageDictionary = AddLanguage(language);
+                languageDictionary.TranslationFiles = new Dictionary<string, TranslationFile> { { key.Split('.').First(), file } };
+                dictionary = languageDictionary;
+            }
 
             dictionary.UpdateEntry(key, value, null, attributes);
         }
@@ -194,22 +197,9 @@ namespace ED47.Stack.Web.Multilingual
             if (TryGetValue(language, out dictionary))
                 return dictionary.GetValue(key, args);
 
-            lock (String.Format("Lock" + language))
-            {
-                var newLanguage = AddLanguage(language);
-                
-                if (DefaultDictionnary != null)
-                {
-                    var defaultEntry = DefaultDictionnary.GetEntry(key);
-                    newLanguage.CreateFile(defaultEntry);
-                    newLanguage.AddEntry(key, key);
-
-                    return newLanguage.GetValue(key, args);
-                }
-            }
+            if (DefaultDictionnary != null) return DefaultDictionnary.GetValue(key, args);
 
             var defaultValue = String.Format("[{0}]", key);
-
             return defaultValue;
 
         }
@@ -223,6 +213,25 @@ namespace ED47.Stack.Web.Multilingual
             var language = GetCurrentLanguage();
             key = key + (pluralizeCount <= 1 ? ".single" : ".many");
             return GetTranslation(key, language, args);
+        }
+
+        public TranslationFile CreateFile(string key, string language)
+        {
+            var defaultFile = DefaultDictionnary.GetFile(key);
+            var newLanguageFileName = Path.ChangeExtension(defaultFile.FileInfo.FullName, "." + language + ".xml");
+
+            var doc = new XDocument();
+            var root = new XElement("translations");
+            root.SetAttributeValue("lang", language);
+            doc.Add(root);
+            doc.Save(newLanguageFileName);
+
+            return
+                    new TranslationFile
+                    {
+                        Language = language,
+                        FileInfo = new FileInfo(newLanguageFileName)
+                    };
         }
     }
 }

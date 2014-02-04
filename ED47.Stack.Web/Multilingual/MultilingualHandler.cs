@@ -33,7 +33,7 @@ namespace ED47.Stack.Web.Multilingual
             var addKey = context.Request["addkey"];
             if (!String.IsNullOrWhiteSpace(addKey))
             {
-                if (TranslationRepository.AutoAddEntry)
+                if (Multilingual.Repository.DefaultDictionnary.AutoAddEntry)
                 {
                     Multilingual.AddMissingKey(addKey);
                     return;

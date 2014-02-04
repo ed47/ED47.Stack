@@ -41,7 +41,7 @@ namespace ED47.Stack.Web.Multilingual
 
             if (Fallback != null && Fallback != this) return Fallback.GetValue(key, args);
 
-            return null;
+            return Multilingual.Repository.DefaultDictionnary.GetValue(key, args);
         }
 
         public TranslationEntry GetEntry(string key)
@@ -91,8 +91,8 @@ namespace ED47.Stack.Web.Multilingual
             if (entry == null && file == null)
             {
                 return AddEntry(key, value, attributes);
-
             }
+
             if (entry == null)
             {
                 entry = new TranslationEntry
@@ -101,9 +101,8 @@ namespace ED47.Stack.Web.Multilingual
                     File = file,
                     Key = key
                 };
+                
                 Add(key, entry);
-                if (!TranslationFiles.ContainsKey(file.FileInfo.FullName))
-                    TranslationFiles.Add(file.FileInfo.FullName, file);
             }
 
             entry.Update(value, attributes);
@@ -114,14 +113,11 @@ namespace ED47.Stack.Web.Multilingual
         public TranslationEntry AddEntry(string key, string value, object attributes = null)
         {
             var file = GetFile(key);
-            if (file == null)
-            {
-                return null;
-            }
+            
             return UpdateEntry(key, value, file, attributes);
         }
 
-        private TranslationFile GetFile(string key)
+        internal TranslationFile GetFile(string key)
         {
             var subkeys = key.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries).ToList();
             if (subkeys.Count == 1) return DefaultTranslationFile;
@@ -133,34 +129,7 @@ namespace ED47.Stack.Web.Multilingual
                         .FirstOrDefault();
                 if (file != null) return file;
             }
-            return DefaultTranslationFile;
-        }
-
-
-        public void CreateFile(TranslationEntry defaultEntry)
-        {
-            var newLanguageFileName = Path.ChangeExtension(defaultEntry.File.FileInfo.FullName, "." + Language + ".xml");
-
-            if (File.Exists(newLanguageFileName))
-                return;
-
-            var doc = new XDocument();
-            var root = new XElement("translations");
-            root.SetAttributeValue("lang", Language);
-            doc.Add(root);
-            doc.Save(newLanguageFileName);
-            
-            TranslationFiles = new Dictionary<string, TranslationFile>
-            {
-                {
-                    defaultEntry.Key.Split('.').First(),
-                    new TranslationFile
-                    {
-                        Language = Language,
-                        FileInfo = new FileInfo(newLanguageFileName)
-                    }
-                }
-            };
+            return null;
         }
     }
 }
