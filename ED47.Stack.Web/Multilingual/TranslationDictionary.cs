@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-
 
 namespace ED47.Stack.Web.Multilingual
 {
@@ -18,10 +18,10 @@ namespace ED47.Stack.Web.Multilingual
         }
 
         internal readonly object WriteLock = new object();
-        
+
         public TranslationFile DefaultTranslationFile { get; set; }
         public Dictionary<string, TranslationFile> TranslationFiles { get; set; }
-        
+
         public string Language { get; private set; }
 
         public TranslationDictionary Fallback { get; set; }
@@ -36,10 +36,10 @@ namespace ED47.Stack.Web.Multilingual
             {
                 var e = AddEntry(key, String.Format("[{0}]", key));
                 if (e != null) return e.Value;
-                return String.Format("?{0}?", key);
+                return String.Format("[{0}]", key);
             }
-            
-            if(Fallback != null && Fallback != this) return Fallback.GetValue(key, args);
+
+            if (Fallback != null && Fallback != this) return Fallback.GetValue(key, args);
 
             return null;
         }
@@ -85,13 +85,13 @@ namespace ED47.Stack.Web.Multilingual
             }
         }
 
-        public TranslationEntry UpdateEntry(string key, string value, TranslationFile file = null , object attributes = null )
+        public TranslationEntry UpdateEntry(string key, string value, TranslationFile file = null, object attributes = null)
         {
             var entry = GetEntry(key);
             if (entry == null && file == null)
             {
                 return AddEntry(key, value, attributes);
-                
+
             }
             if (entry == null)
             {
@@ -102,7 +102,7 @@ namespace ED47.Stack.Web.Multilingual
                     Key = key
                 };
                 Add(key, entry);
-                if (!TranslationFiles.ContainsKey(file.FileInfo.FullName)) 
+                if (!TranslationFiles.ContainsKey(file.FileInfo.FullName))
                     TranslationFiles.Add(file.FileInfo.FullName, file);
             }
 
@@ -127,7 +127,7 @@ namespace ED47.Stack.Web.Multilingual
             if (subkeys.Count == 1) return DefaultTranslationFile;
             for (int i = 0; i < subkeys.Count; i++)
             {
-                var pattern = String.Join(".", subkeys.Take(i+1));
+                var pattern = String.Join(".", subkeys.Take(i + 1));
                 var file = TranslationFiles.Values.Where(el => el.FileInfo.Name.StartsWith(pattern) && el.Language == Language)
                         .OrderBy(el => el.FileInfo.FullName.Length)
                         .FirstOrDefault();
@@ -136,7 +136,31 @@ namespace ED47.Stack.Web.Multilingual
             return DefaultTranslationFile;
         }
 
-       
 
+        public void CreateFile(TranslationEntry defaultEntry)
+        {
+            var newLanguageFileName = Path.ChangeExtension(defaultEntry.File.FileInfo.FullName, "." + Language + ".xml");
+
+            if (File.Exists(newLanguageFileName))
+                return;
+
+            var doc = new XDocument();
+            var root = new XElement("translations");
+            root.SetAttributeValue("lang", Language);
+            doc.Add(root);
+            doc.Save(newLanguageFileName);
+            
+            TranslationFiles = new Dictionary<string, TranslationFile>
+            {
+                {
+                    defaultEntry.Key.Split('.').First(),
+                    new TranslationFile
+                    {
+                        Language = Language,
+                        FileInfo = new FileInfo(newLanguageFileName)
+                    }
+                }
+            };
+        }
     }
 }

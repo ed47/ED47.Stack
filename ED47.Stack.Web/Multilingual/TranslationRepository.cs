@@ -57,7 +57,8 @@ namespace ED47.Stack.Web.Multilingual
             {
                 dictionary = new TranslationDictionary(lan)
                 {
-                    Repository = this
+                    Repository = this,
+                    AutoAddEntry = TranslationRepository.AutoAddEntry
                 };
                 Add(lan, dictionary);
             }
@@ -179,7 +180,6 @@ namespace ED47.Stack.Web.Multilingual
 
         public string GetCurrentTranslation(string key, params object[] args)
         {
-            
             return GetTranslation(key, GetCurrentLanguage(), args);
         }
 
@@ -194,8 +194,19 @@ namespace ED47.Stack.Web.Multilingual
             if (TryGetValue(language, out dictionary))
                 return dictionary.GetValue(key, args);
 
-            if (DefaultDictionnary != null)
-                return DefaultDictionnary.GetValue(key, args);
+            lock (String.Format("Lock" + language))
+            {
+                var newLanguage = AddLanguage(language);
+                
+                if (DefaultDictionnary != null)
+                {
+                    var defaultEntry = DefaultDictionnary.GetEntry(key);
+                    newLanguage.CreateFile(defaultEntry);
+                    newLanguage.AddEntry(key, key);
+
+                    return newLanguage.GetValue(key, args);
+                }
+            }
 
             var defaultValue = String.Format("[{0}]", key);
 
