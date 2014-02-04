@@ -2,7 +2,7 @@ using System.Xml.Linq;
 
 namespace ED47.Stack.Web.Multilingual
 {
-    public class TranslationEntry
+    public class TranslationEntry : ITranslationEntry
     {
         public TranslationDictionary Dictionary { get; set; }
         public string Key { get; set; }

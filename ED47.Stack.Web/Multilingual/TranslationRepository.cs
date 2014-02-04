@@ -102,7 +102,7 @@ namespace ED47.Stack.Web.Multilingual
 
         }
 
-        public readonly object _cacheLock = new object();
+        private readonly object _cacheLock = new object();
         public void ClearCache(string language)
         {
             language = language.ToLowerInvariant();
@@ -113,7 +113,6 @@ namespace ED47.Stack.Web.Multilingual
                 foreach (var cacheKey in _cacheKeys[language])
                 {
                     MemoryCache.Default.Remove(cacheKey);
-
                 }
                 _cacheKeys[language].Clear();
             }

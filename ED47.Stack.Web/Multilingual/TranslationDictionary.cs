@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace ED47.Stack.Web.Multilingual
 {
-    public class TranslationDictionary : Dictionary<string, TranslationEntry>
+    public class TranslationDictionary : Dictionary<string, ITranslationEntry>
     {
         public bool AutoAddEntry { get; set; }
-        public TranslationRepository Repository { get; set; }
+        public ITranslationRepository Repository { get; set; }
         public TranslationDictionary(string language, TranslationDictionary fallback = null)
         {
             Fallback = fallback;
@@ -20,7 +19,7 @@ namespace ED47.Stack.Web.Multilingual
         internal readonly object WriteLock = new object();
 
         public TranslationFile DefaultTranslationFile { get; set; }
-        public Dictionary<string, TranslationFile> TranslationFiles { get; set; }
+        public IDictionary<string, TranslationFile> TranslationFiles { get; set; }
 
         public string Language { get; private set; }
 
@@ -28,7 +27,7 @@ namespace ED47.Stack.Web.Multilingual
 
         public string GetValue(string key, params object[] args)
         {
-            TranslationEntry item;
+            ITranslationEntry item;
             if (TryGetValue(key, out item))
                 return args.Length > 0 ? String.Format(item.Value, args) : item.Value;
 
@@ -44,9 +43,9 @@ namespace ED47.Stack.Web.Multilingual
             return Multilingual.Repository.DefaultDictionnary.GetValue(key, args);
         }
 
-        public TranslationEntry GetEntry(string key)
+        public ITranslationEntry GetEntry(string key)
         {
-            TranslationEntry entry;
+            ITranslationEntry entry;
             TryGetValue(key, out entry);
             return entry;
         }
@@ -85,7 +84,7 @@ namespace ED47.Stack.Web.Multilingual
             }
         }
 
-        public TranslationEntry UpdateEntry(string key, string value, TranslationFile file = null, object attributes = null)
+        public ITranslationEntry UpdateEntry(string key, string value, TranslationFile file = null, object attributes = null)
         {
             var entry = GetEntry(key);
             if (entry == null && file == null)
@@ -110,7 +109,7 @@ namespace ED47.Stack.Web.Multilingual
         }
 
 
-        public TranslationEntry AddEntry(string key, string value, object attributes = null)
+        public ITranslationEntry AddEntry(string key, string value, object attributes = null)
         {
             var file = GetFile(key);
             

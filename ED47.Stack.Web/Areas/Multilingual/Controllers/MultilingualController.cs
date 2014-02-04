@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,7 +13,7 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
         {
             var dict = Web.Multilingual.Multilingual.GetLanguage(language);
 
-            IEnumerable<TranslationEntry> res = null;
+            IEnumerable<ITranslationEntry> res = null;
 
             if (!String.IsNullOrWhiteSpace(root))
                 res = dict.Where(el => el.Key.StartsWith(root)).Select(el=>el.Value);

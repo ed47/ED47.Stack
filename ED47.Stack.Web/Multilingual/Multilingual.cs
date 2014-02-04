@@ -3,6 +3,8 @@ using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using Ionic.Zip;
+using Ninject;
+using Ninject.Parameters;
 
 namespace ED47.Stack.Web.Multilingual
 {
@@ -10,23 +12,26 @@ namespace ED47.Stack.Web.Multilingual
     {
         public const string TranslationFilesRelativePath = "/App_Data/Translations/";
 
-        public static void UpdateEntry(string language, string key, string value, object attributes = null)
+        private static KernelBase _kernel;
+        public static KernelBase Kernel
         {
-            Repository.UpdateEntry(language, key, value,  attributes);
+            get { return _kernel ?? (_kernel = new StandardKernel()); }
         }
 
-        private static TranslationRepository _translations;
-        public static TranslationRepository Repository
+        public static void UpdateEntry(string language, string key, string value, object attributes = null)
+        {
+            Repository.UpdateEntry(language, key, value, attributes);
+        }
+
+        private static ITranslationRepository _translations;
+        public static ITranslationRepository Repository
         {
             get
             {
                 return _translations ??
-                       (_translations =
-                           new TranslationRepository(HttpContext.Current.Server.MapPath(TranslationFilesRelativePath)));
+                       (_translations = Kernel.Get<ITranslationRepository>(new ConstructorArgument("path", HttpContext.Current.Server.MapPath(TranslationFilesRelativePath))));
             }
         }
-
-
 
         public static IEnumerable<string> GetAllKeys(string language = null)
         {
