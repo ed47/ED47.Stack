@@ -57,31 +57,30 @@ namespace ED47.BusinessAccessLayer.EF
             if (String.IsNullOrWhiteSpace(key))
                 return new List<BusinessEntities.Multilingual>(0);
 
-            var cacheKey = String.Concat("Translation", isoLanguageCode, key, propertyName);
+            var cacheKey = BusinessEntities.Multilingual.GetCacheKey(isoLanguageCode, key);
             var translations = MemoryCache.Default.Get(cacheKey) as IEnumerable<IMultilingual>;
 
             if (translations == null)
             {
-                var objectSet = ((IObjectContextAdapter) BaseUserContext.Instance.Repository.DbContext).ObjectContext.CreateObjectSet<Entities.Multilingual>();
-                var translationQuery = objectSet.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key) &&
-                        (propertyName == null || m.PropertyName == propertyName))
-                    .OrderBy(m => m.Key)
-                    .ThenBy(m => m.PropertyName);
+                var objectSet = ((IObjectContextAdapter)BaseUserContext.Instance.Repository.DbContext).ObjectContext.CreateObjectSet<Entities.Multilingual>();
+                var translationQuery = objectSet.Where(m => m.LanguageIsoCode.ToLower() == isoLanguageCode && m.Key.Contains(key))
+                                                .OrderBy(m => m.Key)
+                                                .ThenBy(m => m.PropertyName);
 
                 translations = RepositoryHelper.Convert<Entities.Multilingual, BusinessEntities.Multilingual>(translationQuery).ToList();
 
                 MemoryCache.Default.Add(new CacheItem(cacheKey, translations), new CacheItemPolicy
                 {
-                    #if !DEBUG
+#if !DEBUG
                     Priority = CacheItemPriority.NotRemovable
-                    #endif
-                    #if DEBUG
-                    AbsoluteExpiration = DateTime.Now.AddSeconds(10)   
-                    #endif
+#endif
+#if DEBUG
+                    AbsoluteExpiration = DateTime.Now.AddSeconds(10)
+#endif
                 });
             }
 
-            return translations;
+            return translations.Where(el => propertyName == null || el.PropertyName == propertyName);
         }
 
         public string T<TEntity, TBusinessEntity>(TBusinessEntity entity, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
@@ -129,9 +128,10 @@ namespace ED47.BusinessAccessLayer.EF
                     continue;
 
                 multilingual.Save();
+                MemoryCache.Default.Remove(BusinessEntities.Multilingual.GetCacheKey(multilingual.LanguageIsoCode, multilingual.Key));
             }
         }
-        
+
         public IMultilingual Find(string key, string propertyName, string languageIsoCode)
         {
             return BaseUserContext.Instance.Repository
@@ -141,7 +141,7 @@ namespace ED47.BusinessAccessLayer.EF
         public IEnumerable<IMultilingual> GetTranslations(IDictionary<string, object> keys, string isoLanguageCode = null, IEnumerable<string> properties = null, bool includeMissingTranslations = false)
         {
             Debug.Assert(keys != null, "keys != null");
-            
+
             if (!keys.Any())
                 return new List<BusinessEntities.Multilingual>(0);
 
@@ -183,10 +183,10 @@ namespace ED47.BusinessAccessLayer.EF
                             Text = master
                         });
 
-                        foreach (var language in languages)    
+                        foreach (var language in languages)
                         {
-                            if (!multilinguals.Any(el => 
-                                el.Key == key.Key 
+                            if (!multilinguals.Any(el =>
+                                el.Key == key.Key
                                 && el.PropertyName == property
                                 && el.LanguageIsoCode.ToLowerInvariant() == language.IsoCode.ToLowerInvariant()))
                             {
@@ -243,11 +243,11 @@ namespace ED47.BusinessAccessLayer.EF
             var translations = GetTranslations(isoLanguageCode, key, propertyName)
                 .ToList();
             var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
-            
+
 #if DEBUG
             translation = "***" + translation;
 #endif
-            
+
             return translation;
         }
 
@@ -310,7 +310,7 @@ namespace ED47.BusinessAccessLayer.EF
         {
             if (businessEntities == null)
                 return;
-            
+
             businessEntities = businessEntities.Where(b => b != null).ToList();
 
             if (!businessEntities.Any())

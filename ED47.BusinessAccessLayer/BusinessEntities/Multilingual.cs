@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Caching;
 using ED47.BusinessAccessLayer.Multilingual;
 using Ninject;
 
@@ -29,8 +31,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         [StringLength(500)]
         public virtual string Text { get; set; }
 
-        
-
         public void Save()
         {
             var context = BaseUserContext.Instance;
@@ -52,8 +52,29 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 translation.Text = Text;
                 context.Repository.Update<Entities.Multilingual, Multilingual>(translation);
             }
+
+            MemoryCache.Default.Add(new CacheItem(GetCacheKey(LanguageIsoCode, Key), Text), CacheItemPolicy);
         }
-        
-        
+
+        public static string GetCacheKey(string language, string key)
+        {
+            return String.Concat("Translation", language, key);
+        }
+
+        public static CacheItemPolicy CacheItemPolicy
+        {
+            get
+            {
+                return new CacheItemPolicy
+                {
+#if !DEBUG
+                        Priority = CacheItemPriority.NotRemovable
+#endif
+#if DEBUG
+                    AbsoluteExpiration = DateTime.Now.AddSeconds(10)
+#endif
+                };
+            }
+        }
     }
 }
