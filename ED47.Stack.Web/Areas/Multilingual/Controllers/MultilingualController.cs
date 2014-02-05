@@ -11,13 +11,24 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
     {
         public ActionResult Index(string root = null, string language = "en")
         {
+            ViewBag.Root = root;
+            ViewBag.Language = language;
+
+            return View();
+        }
+
+        public ActionResult Translations(string root = null, string language = "en", string search = null)
+        {
             var dict = Web.Multilingual.Multilingual.GetLanguage(language);
             IEnumerable<ITranslationEntry> res = null;
 
-            if (!String.IsNullOrWhiteSpace(root))
-                res = dict.Where(el => el.Key.StartsWith(root)).Select(el=>el.Value);
+            if (!String.IsNullOrWhiteSpace(root) && !String.IsNullOrWhiteSpace(search))
+            {
+                search = search.ToLowerInvariant();
+                res = dict.Where(el => el.Key.StartsWith(root) && (el.Key.ToLowerInvariant().Contains(search) || el.Value.Value.ToLowerInvariant().Contains(search))).Select(el => el.Value);
+            }
 
-            return View(res ?? dict.Values);
+            return PartialView("_Translations", res ?? dict.Values);
         }
 
         [HttpPost]

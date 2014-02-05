@@ -3,35 +3,20 @@
 @{
     Layout = null;
     Page.Title = "Labels";
-    var itemCounter = 0;
 }
 
 <div style="padding-bottom: 20px;">
-    @Html.Label("search-text", "Search:") <input type="text" name="search-text" id="search-text"/>
-</div>
-
-@foreach (var translation in Model)
-{
-    var formId = "form-" + itemCounter++;
-    using (Ajax.BeginForm("Update", "Multilingual", new { area = "Multilingual" }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "saveSuccess(data, '#" + formId + "' )" }, new { id = formId }))
+    @using (Ajax.BeginForm("Translations", new AjaxOptions { HttpMethod = "GET", UpdateTargetId = "translations", InsertionMode = InsertionMode.Replace }))
     {
-        @Html.Hidden("key", translation.Key)
-        @Html.Hidden("fileName", translation.File.FileInfo.FullName)
-
-        <div  style="margin-bottom:12px;">
-            <label style="margin-bottom: 4px;">
-                <b>@Html.Label(translation.Key, translation.Key)</b>
-            </label>    
-            <div class="w100">
-                <textarea name="value" rows="1" style="width:100%;">@Html.Raw(translation.Value)</textarea>
-            </div>
-            <div class="w10"><input type="submit" value="Save" class="btn btn-normal" /></div>
-            <div class="clear"></div>  
-        </div>  
-    
+        <input type="hidden" name="language" value="@ViewBag.Language" />
+        <input type="hidden" name="root" value="@ViewBag.Root" />
+        @Html.Label("search-text", "Search:")
+        <input type="text" name="search" id="search" placeholder="Type something to search" class="large" style="width:300px" />
     }
-}
-
+</div>
+<div id="translations">
+    <p>Please type something in the search field</p>
+</div>
 <script>
     $(function () {
         window.fields = $("textarea");
@@ -44,27 +29,11 @@
             $(this).parents("form").find("input[type=submit]").show();
         });
 
-        $(document).on("keydown", "#search-text", function (eventData) {
-            if (eventData.keyCode != 13) return;
-
-            var me = $(this);
-            var searchValue = me.val();
-
-
-            $.each(window.fields, function (index, item) {
-                if (item.value.toLowerCase().indexOf(searchValue.toLowerCase()) == -1)
-                    $(item).parents("form").hide();
-                else
-                    $(item).parents("form").show();
-            });
-
-            $.each(window.keys, function (index, item) {
-                if (item.value.toLowerCase().indexOf(searchValue.toLowerCase()) != -1)
-                    $(item).parents("form").show();
-            });
+        $(document).on("keydown", "#search", function (eventData) {
+            $(this).closest("form").submit();
         });
     });
-    
+
     function saveSuccess(data, formId) {
         $(formId).find("input[type=submit]").hide();
     }

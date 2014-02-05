@@ -492,6 +492,7 @@
     <EmbeddedResource Include="HelperTemplates\ClientPageView.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Areas\Multilingual\Views\Multilingual\_Translations.cshtml" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
