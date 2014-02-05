@@ -12,7 +12,6 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
         public ActionResult Index(string root = null, string language = "en")
         {
             var dict = Web.Multilingual.Multilingual.GetLanguage(language);
-
             IEnumerable<ITranslationEntry> res = null;
 
             if (!String.IsNullOrWhiteSpace(root))
@@ -29,7 +28,7 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
             if (allowedRoles != null && !User.IsInRole(allowedRoles))
                 return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
-            Web.Multilingual.Multilingual.UpdateEntry(key, value, fileName);
+            Web.Multilingual.Multilingual.UpdateEntry(ED47.Stack.Web.Properties.Settings.Default.DefaultLanguage, key, value, fileName);
 
             if (Request.IsAjaxRequest())
                 return new EmptyResult();
