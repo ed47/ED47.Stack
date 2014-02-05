@@ -64,8 +64,9 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 new ExcelColumn {PropertyName = "Key", DisplayName = "Key", IsReadOnly = true },
                 new ExcelColumn {PropertyName = "Property", DisplayName = "Property", IsReadOnly = true  });
 
-            var masterColumn = languageColumns.Single(el => el.Contains("MASTER"));
-            sheet.AddColumns(new ExcelColumn { PropertyName = masterColumn, DisplayName = masterColumn });
+            var masterColumn = languageColumns.SingleOrDefault(el => el.Contains("MASTER"));
+            if (masterColumn != null)
+                sheet.AddColumns(new ExcelColumn { PropertyName = masterColumn, DisplayName = masterColumn });
 
             foreach (var languageColumn in languageColumns.Where(el => !el.Contains("MASTER")))
             {
