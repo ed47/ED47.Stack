@@ -128,7 +128,6 @@ namespace ED47.BusinessAccessLayer.EF
                     continue;
 
                 multilingual.Save();
-                MemoryCache.Default.Remove(BusinessEntities.Multilingual.GetCacheKey(multilingual.LanguageIsoCode, multilingual.Key));
             }
         }
 

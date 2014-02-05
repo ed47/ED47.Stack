@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Runtime.Caching;
 using ED47.BusinessAccessLayer.Multilingual;
 using Ninject;
@@ -33,19 +34,21 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public void Save()
         {
-            var context = BaseUserContext.Instance;
+            var context = BaseUserContext.Instance ?? BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
-                context = BusinessComponent.Kernel.Get<BaseUserContext>();
+            var translations = context.Repository
+                    .Where<Entities.Multilingual, Multilingual>(m =>
+                        m.Key == Key &&
+                        m.LanguageIsoCode == LanguageIsoCode &&
+                        m.PropertyName == PropertyName)
+                    .ToList();
 
-            var translation = context.Repository.Find<Entities.Multilingual, Multilingual>(
-                m =>
-                m.Key == Key &&
-                m.LanguageIsoCode == LanguageIsoCode &&
-                m.PropertyName == PropertyName);
+            var translation = translations.SingleOrDefault(el => el.PropertyName == PropertyName);
+
             if (translation == null)
             {
                 context.Repository.Add<Entities.Multilingual, Multilingual>(this);
+                translations.Add(this);
             }
             else
             {
@@ -53,7 +56,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 context.Repository.Update<Entities.Multilingual, Multilingual>(translation);
             }
 
-            MemoryCache.Default.Add(new CacheItem(GetCacheKey(LanguageIsoCode, Key), Text), CacheItemPolicy);
+            MemoryCache.Default.Set(new CacheItem(GetCacheKey(LanguageIsoCode, Key), translations), CacheItemPolicy);
         }
 
         public static string GetCacheKey(string language, string key)
@@ -68,7 +71,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 return new CacheItemPolicy
                 {
 #if !DEBUG
-                        Priority = CacheItemPriority.NotRemovable
+                    Priority = CacheItemPriority.NotRemovable
 #endif
 #if DEBUG
                     AbsoluteExpiration = DateTime.Now.AddSeconds(10)

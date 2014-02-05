@@ -24,7 +24,7 @@ namespace ED47.Stack.TranslatorApi.Controllers
         [HttpPost]
         public void SetTranslations(IEnumerable<Multilingual> translations)
         {
-            _multilingualRepository.SaveTranslations(translations);
+            _multilingualRepository.Upsert(translations);
             _multilingualRepository.Commit();
         }
 
@@ -32,7 +32,7 @@ namespace ED47.Stack.TranslatorApi.Controllers
         public void SetTranslation(Multilingual translation)
         {
             var listTemp = new List<Multilingual> { translation };
-            _multilingualRepository.SaveTranslations(listTemp);
+            _multilingualRepository.Upsert(listTemp);
             _multilingualRepository.Commit();
         }
     }
