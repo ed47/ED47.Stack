@@ -48,7 +48,8 @@ namespace ED47.BusinessAccessLayer.Multilingual
                             jEntity[newTranslation] = String.Empty;
                     }
 
-                    jEntities.Add(jEntity);
+                    if (!String.IsNullOrWhiteSpace(jEntity["MASTER[ORIG]"].ToString()))
+                        jEntities.Add(jEntity);
                 }
             }
 
