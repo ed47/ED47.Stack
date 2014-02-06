@@ -149,7 +149,6 @@
     <Compile Include="Entities\Multilingual.cs" />
     <Compile Include="EventProxy.cs" />
     <Compile Include="EnumerableExtension.cs" />
-    <Compile Include="Excel\CollectionExtension.cs" />
     <Compile Include="Excel\ExcelColumn.cs" />
     <Compile Include="Excel\ExcelFile.cs" />
     <Compile Include="Entities\File.cs" />
@@ -206,6 +205,7 @@
     <Compile Include="TypeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
