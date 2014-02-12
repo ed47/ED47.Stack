@@ -12,7 +12,7 @@ namespace ED47.Stack.Web.Multilingual
     {
         public string TranslationsPath { get; set; }
         public TranslationDictionary DefaultDictionnary { get; set; }
-
+        
         public TranslationRepository(string path)
         {
             TranslationsPath = path;

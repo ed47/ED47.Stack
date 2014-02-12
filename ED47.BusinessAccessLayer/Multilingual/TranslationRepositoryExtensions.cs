@@ -42,9 +42,9 @@ namespace ED47.BusinessAccessLayer.Multilingual
             archiveFile.Write(stream);
         }
 
-        public static ExcelFile ExportXls(this ITranslationRepository repository, string pattern = null)
+        public static ExcelFile ExportXls(this ITranslationRepository repository, string pattern = null, IEnumerable<string> translatableLanguages = null)
         {
-            var lans = repository.GetAvailableLanguages().ToList();
+            var lans = (translatableLanguages ?? repository.GetAvailableLanguages()).ToList();
             lans.Remove(repository.DefaultDictionnary.Language);
             lans.Insert(0,repository.DefaultDictionnary.Language);
             
@@ -59,7 +59,12 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 el.AddProperty("property",key);
                 foreach (var lan in lans)
                 {
-                    var entry = repository.GetDictionary(lan).GetEntry(key);
+                    var dictionnary = repository.GetDictionary(lan);
+
+                    if (dictionnary == null)
+                        continue;
+
+                    var entry = dictionnary.GetEntry(key);
                     el.AddProperty(lan + "_orig", entry != null ? entry.Value : "");
                     el.AddProperty(lan + "_new", "");
                 }
@@ -94,8 +99,8 @@ namespace ED47.BusinessAccessLayer.Multilingual
 
             var excelFile = new ExcelFile
             {
-                FileName = "Export" + pattern + ".xlsx",
-                BusinessKey = "Export" + pattern
+                FileName = "LabelExport" + pattern + ".xlsx",
+                BusinessKey = "LabelExport" + pattern
             };
             excelFile.AddSheet(sheet);
             
