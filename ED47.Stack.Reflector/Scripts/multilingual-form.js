@@ -14,7 +14,6 @@
 
             if (!config) throw "A configuration object is required.";
             if (!config.key) throw "MultilingualFormWindow requires a key.";
-            //if (!config.modelId) throw "MultilingualFormWindow requires a modelId.";
             if (!config.fieldName) throw "MultilingualFormWindow requires a field name.";
             if (!config.mtype) throw "MultilingualFormWindow requires a field type in 'mtype' property.";
             if (!config.getLanguagesFunc) throw "MultilingualFormWindow requires a languages array.";
@@ -42,7 +41,7 @@
                                 me.multilingualValues[i].Text = me.formPanel.getForm().findField(me.multilingualValues[i].LanguageIsoCode).getValue();
                             }
 
-                            ED47.Stack.Controllers.MultilingualController.SetTranslations(me.multilingualValues);
+                            ED47.Stack.Controllers.TranslatorApiController.SetTranslations(me.multilingualValues);
                             me.fireEvent('multilingualvalidated', me.multilingualValues);
                             me.close();
                         },

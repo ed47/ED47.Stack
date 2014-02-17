@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using ED47.Stack.Web.Multilingual;
 
 namespace ED47.Stack.Web.Areas.Multilingual.Controllers
 {
@@ -9,12 +11,24 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
     {
         public ActionResult Index(string root = null, string language = "en")
         {
-            var model = Web.Multilingual.Multilingual.GetLanguage(language);
+            ViewBag.Root = root;
+            ViewBag.Language = language;
 
-            if (!String.IsNullOrWhiteSpace(root))
-                model = model.Where(el => el.Key.StartsWith(root)).ToDictionary(el => el.Key, el => el.Value);
+            return View();
+        }
 
-            return View(model);
+        public ActionResult Translations(string root = null, string language = "en", string search = null)
+        {
+            var dict = Web.Multilingual.Multilingual.GetLanguage(language);
+            IEnumerable<ITranslationEntry> res = null;
+
+            if (!String.IsNullOrWhiteSpace(root) && !String.IsNullOrWhiteSpace(search))
+            {
+                search = search.ToLowerInvariant();
+                res = dict.Where(el => el.Key.StartsWith(root) && (el.Key.ToLowerInvariant().Contains(search) || el.Value.Value.ToLowerInvariant().Contains(search))).Select(el => el.Value);
+            }
+
+            return PartialView("_Translations", res ?? dict.Values);
         }
 
         [HttpPost]
@@ -25,7 +39,7 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
             if (allowedRoles != null && !User.IsInRole(allowedRoles))
                 return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
-            Web.Multilingual.Multilingual.UpdateEntry(key, value, fileName);
+            Web.Multilingual.Multilingual.UpdateEntry(ED47.Stack.Web.Properties.Settings.Default.DefaultLanguage, key, value, fileName);
 
             if (Request.IsAjaxRequest())
                 return new EmptyResult();

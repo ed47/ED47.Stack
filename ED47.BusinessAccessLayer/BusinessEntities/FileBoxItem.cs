@@ -28,12 +28,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         private static readonly string[] Includes = new[] { "File" };
 
-        private File _File;
+        private IFile _File;
 
         [JsonIgnore]
-        public File File
+        public IFile File
         {
-            get { return _File ?? (_File = File.Get(FileId)); }
+            get { return _File ?? (_File = FileRepositoryFactory.Default.Get(FileId)); }
         }
 
         public static IEnumerable<FileBoxItem> GetByFileBoxId(int id)
@@ -44,7 +44,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     .ToList();
         }
 
-        public static FileBoxItem CreateNew(int fileBoxId, File file, string comment = null)
+        public static FileBoxItem CreateNew(int fileBoxId, IFile file, string comment = null)
         {
             var fileBoxItem = new FileBoxItem()
             {
@@ -58,9 +58,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return fileBoxItem;
         }
 
-        private File LoadFile()
+        private IFile LoadFile()
         {
-            return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.File, File>(el => el.Id == this.FileId);
+            return FileRepositoryFactory.Default.Get(FileId);
         }
 
         public static FileBoxItem Get(int id)

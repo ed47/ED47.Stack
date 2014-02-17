@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -47,7 +46,9 @@ namespace ED47.BusinessAccessLayer
             UpdaterUsername = username;
             IsDeleted = false;
             IsReadOnly = false;
-            Guid = Guid.NewGuid();
+            
+            if(Guid == Guid.Empty)
+                Guid = Guid.NewGuid();
 
             return this as TBusinessEntity;
 

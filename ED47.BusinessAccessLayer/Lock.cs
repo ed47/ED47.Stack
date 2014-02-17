@@ -45,7 +45,7 @@ namespace ED47.BusinessAccessLayer
         }
 
 
-        public static object Get<TEntity>(BusinessEntity entity) where  TEntity : DbEntity
+        public static object Get<TEntity>(IBusinessEntity entity) where  TEntity : DbEntity
         {
             var key = String.Join("&",entity.GetKeys<TEntity>().Select(el=>el.Key + "=" + el.Value.ToString()));
             return Get(String.Format("{0}?{1}", typeof (TEntity).FullName, key));

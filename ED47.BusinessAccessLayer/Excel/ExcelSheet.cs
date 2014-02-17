@@ -205,6 +205,9 @@ namespace ED47.BusinessAccessLayer.Excel
                 {
                     var value = d.GetValue(c.PropertyName);
 
+                    if (c.IsReadOnly)
+                        worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column].Style.Locked = true;
+
                     if (c.Format == null && value is DateTime)
                         worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column].Style.Numberformat.Format = "dd.mm.yyyy";
 
@@ -220,8 +223,8 @@ namespace ED47.BusinessAccessLayer.Excel
                     }
                     else
                         c.Render(value, worksheet.Cells[cellCoordinate.Row, cellCoordinate.Column]);
-
-                    worksheet.Column(cellCoordinate.Column).AutoFit();
+                    
+                    //worksheet.Column(cellCoordinate.Column).AutoFit();
                     cellCoordinate.Column++;
                 }
                 

@@ -64,7 +64,7 @@ namespace ED47.Stack.Reflector
                 return;
             }
 
-            var assemblyNameArray = assemblyNames.Split(';');
+            var assemblyNameArray = assemblyNames.Split(new []{";"}, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var assemblyName in assemblyNameArray)
             {

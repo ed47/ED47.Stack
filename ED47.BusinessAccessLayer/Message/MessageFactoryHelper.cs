@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Linq;
 using ED47.BusinessAccessLayer.BusinessEntities;
-using File = ED47.BusinessAccessLayer.BusinessEntities.File;
 
 namespace ED47.BusinessAccessLayer.Message
 {

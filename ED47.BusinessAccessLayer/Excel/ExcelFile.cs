@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Web.Mvc;
+using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.Stack.Web;
 using OfficeOpenXml;
 
@@ -27,6 +28,9 @@ namespace ED47.BusinessAccessLayer.Excel
         /// The sheets.
         /// </value>
         public ICollection<ExcelSheet> Sheets { get; private set; }
+
+        public string FileName { get; set; }
+        public string BusinessKey { get; set; }
 
         /// <summary>
         /// Adds a new sheet.
@@ -95,12 +99,12 @@ namespace ED47.BusinessAccessLayer.Excel
             }
         }
 
-        public BusinessEntities.File Write(string name, string businessKey)
+        public IFile Write(string name, string businessKey)
         {
             var file = new FileInfo(Path.GetTempFileName());
             file.Delete();
             Write(file);
-            var f = BusinessEntities.File.CreateNewFile<BusinessEntities.File>(name, businessKey, 0);
+            var f = FileRepositoryFactory.Default.CreateNewFile(name, businessKey, 0);
             f.Write(file);
             File.Delete(file.FullName);
             return f;
@@ -115,5 +119,17 @@ namespace ED47.BusinessAccessLayer.Excel
             }
         }
 
+        public IFile ToFile()
+        {
+            var file = FileRepositoryFactory.Default.CreateNewFile(FileName, BusinessKey);
+            
+            using (var fileStream = file.OpenWrite())
+            {
+                Write(fileStream);
+                fileStream.Flush();
+            }
+
+            return file;
+        }
     }
 }

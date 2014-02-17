@@ -1,15 +1,5 @@
-﻿// ************************************
-// * Created by arie
-// * Created on 07.08.2012
-// * Last modification 08.08.2012
-// **************************************/
-
-#region
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Ninject;
-
-#endregion
 
 namespace ED47.BusinessAccessLayer
 {

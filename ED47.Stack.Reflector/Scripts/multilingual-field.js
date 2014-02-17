@@ -9,7 +9,7 @@
 
             me.fieldName = config.name;
             me.mtype = config.mtype;
-            me.getLanguagesFunc = config.getLanguagesFunc || ED47.Stack.Controllers.MultilingualController.GetTranslations;
+            me.getLanguagesFunc = config.getLanguagesFunc || ED47.Stack.Controllers.TranslatorApiController.GetTranslations;
             me.fieldConfig = config.fieldConfig || {};
 
             var defaultConfig = {
@@ -44,7 +44,7 @@
                                     Text: this.getValue()
                                 };
 
-                                ED47.Stack.Controllers.MultilingualController.SetTranslation(multilingualValue);
+                                ED47.Stack.Controllers.TranslatorApiController.SetTranslation(multilingualValue);
                             }
                         }
                     }, {

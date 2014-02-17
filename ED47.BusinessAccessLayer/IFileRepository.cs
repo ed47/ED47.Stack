@@ -1,15 +1,21 @@
-﻿using System.IO;
-using File = ED47.BusinessAccessLayer.BusinessEntities.File;
+﻿using System.Collections.Generic;
+using System.IO;
+using ED47.BusinessAccessLayer.BusinessEntities;
 
 namespace ED47.BusinessAccessLayer
 {
     public interface IFileRepository
     {
-        bool Write(File file,  byte[] content);
-        bool Append(File file, byte[] content);
-        bool Delete(File file);
-        bool Exist(File file);
-        Stream OpenWrite(File file);
-        Stream OpenRead(File file);
+        bool Write(IFile file, byte[] content);
+        bool Append(IFile file, byte[] content);
+        bool Delete(IFile file);
+        bool Exist(IFile file);
+        Stream OpenWrite(IFile file);
+        Stream OpenRead(IFile file);
+        IFile Get(int fileId);
+        IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false);
+        IFile GetFileByKey(string businessKey, int? version = null);
+        IEnumerable<IFile> GetHistoryFilesByKey(string businessKey);
+        string GetUrl(IFile file, bool specificVersion = true);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.Stack.Web;
 using ED47.Stack.Web.Template;
 
@@ -10,8 +11,6 @@ namespace ED47.BusinessAccessLayer.Message
 {
     public class MessageFactory
     {
-       
-
         public const string EmailRegex = @"^(\w+)([\-+.][\w]+)*@(\w[\-\w]*\.){1,5}([A-Za-z]){2,6}$";
 
 
@@ -178,22 +177,21 @@ namespace ED47.BusinessAccessLayer.Message
         {
             if(!File.Exists(filename)) return;
 
-            var f = BusinessEntities.File.CreateNewFile<BusinessEntities.File>(Path.GetFileName(filename), "Attachment",
-                                                                               0, requireLogin);
+            var f = FileRepositoryFactory.Default.CreateNewFile(Path.GetFileName(filename), "Attachment", 0, requireLogin);
 
             f.Write(new FileInfo(filename));
 
             Attachments.Add(new Attachment {File = f, SpecificVersion = true});
         }
 
-        public void AddAttachment(BusinessEntities.File file, bool specificVersion = true)
+        public void AddAttachment(IFile file, bool specificVersion = true)
         {
             Attachments.Add(new Attachment { File = file, SpecificVersion = true });
         }
 
         public void AddAttachment(string businessKey)
         {
-            var f = BusinessEntities.File.GetFileByKey<BusinessEntities.File>(businessKey);
+            var f = FileRepositoryFactory.Default.GetFileByKey(businessKey);
             if(f != null)
                 Attachments.Add(new Attachment { File = f, SpecificVersion = true });
         }

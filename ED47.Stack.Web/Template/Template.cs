@@ -193,7 +193,17 @@ namespace ED47.Stack.Web.Template
             Template tpl;
             var originalName = name;
             name = name.ToLowerInvariant();
-            
+
+            if (!(name.EndsWith(".html") || name.EndsWith(".cshtml")))
+            {
+                var tplText = String.IsNullOrEmpty(languageCode)
+                    ? Multilingual.Multilingual.N("templates." + name.ToLowerInvariant())
+                    : Multilingual.Multilingual.N2("templates." + nameWithoutLanguage.ToLowerInvariant(), languageCode);
+
+                if (!string.IsNullOrEmpty(tplText))
+                    return new Template(tplText);
+            }
+
             if (Templates.ContainsKey(name) && File.Exists(Templates[name]))
             {
                 tpl = new Template(File.ReadAllText(Templates[name]))
@@ -271,7 +281,6 @@ namespace ED47.Stack.Web.Template
             if (!Directory.Exists(path))
                 return;
 
-
             foreach (var filename in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
             {
                 var tplName = Path.GetFileNameWithoutExtension(filename);
@@ -287,7 +296,6 @@ namespace ED47.Stack.Web.Template
                 Register(tplName, filename);
             }
         }
-
 
         public void AddFunction(string name, TemplateFuncDelegate func)
         {

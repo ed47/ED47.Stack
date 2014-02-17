@@ -13,7 +13,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="repository">The repository.</param>
         /// <param name="currentCommentId">The current comment.</param>
         /// <param name="businessKey">The comment's business key.</param>
-        public static void MakePreviousCommentReadOnly(this Repository repository, int currentCommentId, string businessKey)
+        public static void MakePreviousCommentReadOnly(this IRepository repository, int currentCommentId, string businessKey)
         {
             var comments = repository
                                 .GetQueryableSet<Entities.Comment, Comment>()
