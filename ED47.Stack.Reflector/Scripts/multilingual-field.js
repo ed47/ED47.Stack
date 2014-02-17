@@ -19,6 +19,7 @@
                         xtype: me.mtype,
                         name: me.fieldName,
                         flex: 2,
+                        rows: me.fieldConfig.rows,
                         listeners: {
                             blur: function() {
                                 if (!this.getValue())
@@ -60,7 +61,7 @@
                         height: 24
                     }]
             };
-
+            
             Ext.apply(defaultConfig, config);
             ED47.ui.Button.superclass.constructor.call(this, defaultConfig);
 
@@ -95,13 +96,16 @@
             } else { // grid cellEditor
                 me.key = me.getOwnerCt().editingPlugin.activeEditor.editorId + "[" + me.getOwnerCt().editingPlugin.activeRecord.data.Id + "]";
             }
+
+            var scroll = $(document).scrollTop();
+
             var multilingualFormWindow = new ED47.ui.MultilingualFormWindow({
                 fieldName: me.fieldName,
                 fieldConfig: this.fieldConfig,
                 mtype: me.mtype,
                 key: me.definedKey || me.key,
                 getLanguagesFunc: this.getLanguagesFunc,
-                y: 200
+                y: 200 + scroll
             });
 
             multilingualFormWindow.on('multilingualvalidated', function(mls) {

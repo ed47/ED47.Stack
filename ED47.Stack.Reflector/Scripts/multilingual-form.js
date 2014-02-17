@@ -57,8 +57,8 @@
                 header: false,
             resizable: true,
                 layout: "fit",
-                width: 400,
-                height: 400,
+                width: 700,
+                height: 500,
                 modal: true,
                 items: [
                     me.formPanel
