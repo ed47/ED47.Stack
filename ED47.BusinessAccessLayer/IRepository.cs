@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Omu.ValueInjecter;
 
 namespace ED47.BusinessAccessLayer
@@ -77,6 +78,10 @@ namespace ED47.BusinessAccessLayer
         /// <param name="predicate">The filter predicate.</param>
         /// <returns></returns>
         int Count<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> predicate)
+            where TEntity : DbEntity
+            where TBusinessEntity : class, new();
+
+        Task<int> CountAsync<TEntity, TBusinessEntity>(Expression<Func<TEntity, bool>> func)
             where TEntity : DbEntity
             where TBusinessEntity : class, new();
 

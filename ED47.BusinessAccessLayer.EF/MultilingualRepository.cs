@@ -244,7 +244,7 @@ namespace ED47.BusinessAccessLayer.EF
             var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
 
 #if DEBUG
-            translation = "***" + translation;
+            //translation = "***" + translation;
 #endif
 
             return translation;
