@@ -129,7 +129,7 @@ namespace ED47.BusinessAccessLayer
             where TEntity : DbEntity
             where TBusinessEntity : class, new()
         {
-            return Where<TEntity, TBusinessEntity>(predicate, includes).SingleOrDefault();
+            return Where<TEntity, TBusinessEntity>(predicate, includes, true).SingleOrDefault();
         }
 
 
