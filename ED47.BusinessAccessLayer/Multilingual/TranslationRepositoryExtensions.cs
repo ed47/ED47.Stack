@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.Excel;
 using ED47.Stack.Web;
 using ED47.Stack.Web.Multilingual;
@@ -19,12 +20,12 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 file.Load(stream);
                 
                 var sheet = file.Workbook.Worksheets.First();
-                for (var i = 2; i <= sheet.Dimension.End.Row; i++)
+                for (var i = 3; i <= sheet.Dimension.End.Row; i++)
                 {
                     var key = sheet.Cells[i, 1].GetValue<string>();
                     for (var j = 2; j <= sheet.Dimension.End.Column; j++)
                     {
-                        var title = sheet.Cells[1, j].GetValue<string>();
+                        var title = sheet.Cells[2, j].GetValue<string>();
                         if (String.IsNullOrEmpty(title)) continue;
 
                         if (title.EndsWith(" new"))
@@ -44,6 +45,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
 
         public static ExcelFile ExportXls(this ITranslationRepository repository, string pattern = null, IEnumerable<string> translatableLanguages = null)
         {
+            var availableLanguages = Lang.GetLanguages().ToDictionary(el => el.IsoCode, el => el);
             var lans = (translatableLanguages ?? repository.GetAvailableLanguages()).ToList();
             lans.Remove(repository.DefaultDictionnary.Language);
             lans.Insert(0,repository.DefaultDictionnary.Language);
@@ -71,7 +73,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 data.Add(el);
             }
             
-            var headers = new List<ExcelColumn>
+            var columns = new List<ExcelColumn>
             {
                 new ExcelColumn
                 {
@@ -80,21 +82,25 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 }
             };
 
+            sheet.AddHeader(new ExcelColumn());
+
             foreach (var lan in lans)
             {
-                headers.Add(new ExcelColumn
+                columns.Add(new ExcelColumn
                 {
                     DisplayName = lan + " orig",
                     PropertyName = lan + "_orig"
                 });
-                 headers.Add(new ExcelColumn
+                 columns.Add(new ExcelColumn
                  {
                     DisplayName = lan + " new",
                     PropertyName = lan + "_new"
                 });
+
+                sheet.AddHeader(new ExcelColumn { HeaderColSpan = 1, DisplayName = availableLanguages[lan.ToLowerInvariant()].Name});
             }
             
-            sheet.HeaderColumns.AddRange(headers);
+            sheet.AddColumns(columns);
             sheet.Data = data;
 
             var excelFile = new ExcelFile
