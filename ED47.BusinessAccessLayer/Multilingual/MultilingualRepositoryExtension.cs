@@ -30,7 +30,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 {
                     var newLanguageRows = GetLanguageColumns(currentWorksheet);
 
-                    for (var i = 2; i < currentWorksheet.Cells.End.Row; i++)
+                    for (var i = 3; i < currentWorksheet.Cells.End.Row; i++)
                     {
                         foreach (var newLanguageRow in newLanguageRows)
                         {
@@ -68,7 +68,7 @@ namespace ED47.BusinessAccessLayer.Multilingual
 
             for (var i = MasterColumn + 1; i < sheet.Cells.End.Column; i++)
             {
-                var header = sheet.Cells[1, i].GetValue<string>();
+                var header = sheet.Cells[2, i].GetValue<string>();
 
                 if (String.IsNullOrWhiteSpace(header) || !header.Contains("[NEW]"))
                     continue;

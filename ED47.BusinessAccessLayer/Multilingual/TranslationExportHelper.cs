@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.Excel;
 using ED47.Stack.Web;
 
@@ -65,13 +66,24 @@ namespace ED47.BusinessAccessLayer.Multilingual
                 new ExcelColumn {PropertyName = "Key", DisplayName = "Key", IsReadOnly = true },
                 new ExcelColumn {PropertyName = "Property", DisplayName = "Property", IsReadOnly = true  });
 
+            sheet.AddHeader(new ExcelColumn(), new ExcelColumn(), new ExcelColumn());
+
             var masterColumn = languageColumns.SingleOrDefault(el => el.Contains("MASTER"));
             if (masterColumn != null)
                 sheet.AddColumns(new ExcelColumn { PropertyName = masterColumn, DisplayName = masterColumn });
 
+            var languages = Lang.GetLanguages().ToDictionary(el => el.IsoCode, el => el);
+
             foreach (var languageColumn in languageColumns.Where(el => !el.Contains("MASTER")))
             {
                 sheet.AddColumns(new ExcelColumn { PropertyName = languageColumn, DisplayName = languageColumn });
+
+                if (languageColumn.Contains("[ORIG]"))
+                    sheet.AddHeader(new ExcelColumn
+                    {
+                        HeaderColSpan = 1,
+                        DisplayName = languages[languageColumn.Replace("[ORIG]", String.Empty).ToLowerInvariant()].Name
+                    });
             }
             
             return excelFile;
