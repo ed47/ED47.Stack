@@ -172,6 +172,7 @@
     <Compile Include="IFileRepository.cs" />
     <Compile Include="IntKey.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="IUnitOfWork.cs" />
     <Compile Include="JsonDataFieldAttribute.cs" />
     <Compile Include="JsonDataFieldInjector.cs" />
     <Compile Include="LocalFileRepository.cs" />
