@@ -95,6 +95,31 @@ namespace ED47.BusinessAccessLayer.EF
                     .OrderByDescending(el => el.CreationDate);
         }
 
+        public override void RemoveFile(int id, int? fileBoxid)
+        {
+            var file = Get(id) as File;
+
+            if (file == null)
+                return;
+
+            var context = BaseUserContext.Instance;
+
+            if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
+                context = BusinessComponent.Kernel.Get<BaseUserContext>();
+
+            context.Repository.Delete<Entities.File, File>(file);
+
+            if (fileBoxid.HasValue)
+            {
+                var item = FileBoxItem.Get(id, fileBoxid.Value);
+                
+                if (item == null)
+                    return;
+
+                item.Delete();
+            }
+        }
+
         public IFile Upload(string businessKey, int groupId = 0)
         {
             var cxt = HttpContext.Current;

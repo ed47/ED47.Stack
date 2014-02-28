@@ -17,5 +17,6 @@ namespace ED47.BusinessAccessLayer
         IFile GetFileByKey(string businessKey, int? version = null);
         IEnumerable<IFile> GetHistoryFilesByKey(string businessKey);
         string GetUrl(IFile file, bool specificVersion = true);
+        void RemoveFile(int id, int? fileBoxid);
     }
 }

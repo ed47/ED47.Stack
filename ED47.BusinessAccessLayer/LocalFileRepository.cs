@@ -101,5 +101,7 @@ namespace ED47.BusinessAccessLayer
                 return String.Format("/fileRepository.axd?id={0}&token={1}", file.Id, file.Guid);
             return String.Format("/fileRepository.axd?key={0}&token={1}", file.BusinessKey, file.Guid);
         }
+
+        public abstract void RemoveFile(int id, int? fileBoxid);
     }
 }

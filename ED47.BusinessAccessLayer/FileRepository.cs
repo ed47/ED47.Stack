@@ -9,5 +9,10 @@ namespace ED47.BusinessAccessLayer
         {
             return FileRepositoryFactory.Default.CreateNewFile(name, businessKey, groupId, requiresLogin, langId, encrypted, fileBoxId);
         }
+
+        public static void RemoveFile(int id, int? fileBoxid = null)
+        {
+            FileRepositoryFactory.Default.RemoveFile(id, fileBoxid);
+        }
     }
 }
