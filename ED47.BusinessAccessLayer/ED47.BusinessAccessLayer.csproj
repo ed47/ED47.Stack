@@ -172,6 +172,7 @@
     <Compile Include="FileRepositoryHandler.cs" />
     <Compile Include="IBusinessEntity.cs" />
     <Compile Include="IFileRepository.cs" />
+    <Compile Include="IGenericRepositoryManager.cs" />
     <Compile Include="IntKey.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="IUnitOfWork.cs" />
