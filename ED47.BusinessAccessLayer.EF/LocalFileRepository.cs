@@ -20,8 +20,8 @@ namespace ED47.BusinessAccessLayer.EF
 
             return context.Repository.Find<Entities.File, File>(el => el.Id == id);
         }
-        
-        // <summary>
+
+        /// <summary>
         /// Creates a new file into the repository.
         /// </summary>
         /// <typeparam name="TFile">The type of the file.</typeparam>
@@ -29,9 +29,11 @@ namespace ED47.BusinessAccessLayer.EF
         /// <param name="businessKey">The business key.</param>
         /// <param name="groupId">The group id.</param>
         /// <param name="requiresLogin">if set to <c>true</c> [requires login].</param>
+        /// <param name="langId">The file's language</param>
         /// <param name="encrypted">Pass <c>True</c> to encrypt the file on disk.</param>
+        /// <param name="fileBoxId">The optional filebox Id to put this file in.</param>
         /// <returns></returns>
-        public override IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false)
+        public override IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false, int? fileBoxId = null)
         {
             var previous = GetFileByKey(businessKey);
             var version = previous != null ? previous.Version + 1 : 1;
@@ -48,6 +50,16 @@ namespace ED47.BusinessAccessLayer.EF
                 Encrypted = encrypted
             };
             BaseUserContext.Instance.Repository.Add<Entities.File, File>(file);
+
+            if (fileBoxId.HasValue)
+            {
+                var filebox = FileBox.Get(fileBoxId.Value);
+
+                if(filebox == null)
+                    throw new ApplicationException(String.Format("You want to add a file to the file box Id '{0}' but the filebox doesn't exists!", fileBoxId));
+
+                filebox.AddFile(file);
+            }
 
             return file;
         }

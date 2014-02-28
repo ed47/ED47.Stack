@@ -85,7 +85,7 @@ namespace ED47.BusinessAccessLayer
 
         public abstract IFile Get(int fileId);
 
-        public abstract IFile CreateNewFile(string name, string businessKey, int? groupId, bool requiresLogin = true, string langId = null, bool encrypted = false);
+        public abstract IFile CreateNewFile(string name, string businessKey, int? groupId, bool requiresLogin = true, string langId = null, bool encrypted = false, int? fileBoxId = null);
         public abstract IFile GetFileByKey(string businessKey, int? version = null);
         public abstract IEnumerable<IFile> GetHistoryFilesByKey(string businessKey);
 

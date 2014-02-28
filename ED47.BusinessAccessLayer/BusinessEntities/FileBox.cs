@@ -33,7 +33,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public static FileBox CreateNew(string parentTypeName)
         {
-            var fileBox = new FileBox(){ ParentTypeName = parentTypeName };
+            var fileBox = new FileBox { ParentTypeName = parentTypeName };
             BaseUserContext.Instance.Repository.Add<BusinessAccessLayer.Entities.FileBox, FileBox>(fileBox);
             return fileBox;
         }
