@@ -137,6 +137,8 @@
     <Compile Include="ClientData.cs" />
     <Compile Include="ClientToBusinessInjection.cs" />
     <Compile Include="BusinessToEntityInjection.cs" />
+    <Compile Include="ContextItemCollection.cs" />
+    <Compile Include="ContextUsername.cs" />
     <Compile Include="Cryptography.cs" />
     <Compile Include="DictionaryInjection.cs" />
     <Compile Include="CustomFlatLoopValueInjection.cs" />

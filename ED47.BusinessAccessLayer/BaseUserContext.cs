@@ -38,8 +38,6 @@ namespace ED47.BusinessAccessLayer
             
             var val = HttpContext.Current.Items[key];
 
-           
-
             return val;
         }
 
@@ -67,11 +65,10 @@ namespace ED47.BusinessAccessLayer
         /// <param name="value">The value.</param>
         public static void Store(string key, object value)
         {
-            if (HttpContext.Current == null) return;
+            var items = ContextItemCollection.GetItems();
+            if (items  == null) return;
 
-            HttpContext.Current.Items[key] = value;
-
-
+            items[key] = value;
         }
 
         public event EventHandler Commited;
