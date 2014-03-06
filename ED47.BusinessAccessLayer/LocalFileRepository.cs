@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
 namespace ED47.BusinessAccessLayer
@@ -103,5 +104,14 @@ namespace ED47.BusinessAccessLayer
         }
 
         public abstract void RemoveFile(int id, int? fileBoxid);
+        public IEnumerable<IFile> GetByFileBox(int fileBoxId)
+        {
+            var fileBox = FileBox.Get(fileBoxId);
+
+            if (fileBox == null)
+                return new List<IFile>();
+
+            return fileBox.GetFiles().Select(el => el.File);
+        }
     }
 }
