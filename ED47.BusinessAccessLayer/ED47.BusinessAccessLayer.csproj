@@ -216,6 +216,7 @@
     <Compile Include="CancellableRepositoryEventArgs.cs" />
     <Compile Include="BaseUserContext.cs" />
     <Compile Include="Message\MessageFactoryHelper.cs" />
+    <Compile Include="RepositoryManager.cs" />
     <Compile Include="StringKey.cs" />
     <Compile Include="TypeExtension.cs" />
   </ItemGroup>
