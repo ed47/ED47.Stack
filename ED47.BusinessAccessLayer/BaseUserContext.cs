@@ -101,8 +101,9 @@ namespace ED47.BusinessAccessLayer
             }   
         }
 
+        public abstract string LanguageCode { get; }
+
         protected abstract IRepository GetRepository();
-      
       
 
         /// <summary>

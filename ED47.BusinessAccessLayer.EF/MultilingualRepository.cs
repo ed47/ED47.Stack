@@ -88,7 +88,7 @@ namespace ED47.BusinessAccessLayer.EF
             where TEntity : BusinessAccessLayer.DbEntity
         {
             if (isoLanguageCode == null)
-                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                isoLanguageCode = BaseUserContext.Instance.LanguageCode;
 
             var bodyExpression = (MemberExpression)propertySelector.Body;
             var propertyName = bodyExpression.Member.Name;
@@ -233,7 +233,7 @@ namespace ED47.BusinessAccessLayer.EF
                 return String.Empty;
 
             if (isoLanguageCode == null)
-                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                isoLanguageCode = BaseUserContext.Instance.LanguageCode;
 
             var bodyExpression = (MemberExpression)propertySelector.Body;
             var propertyName = bodyExpression.Member.Name;
@@ -253,7 +253,7 @@ namespace ED47.BusinessAccessLayer.EF
         public string T(string entityName, int entityId, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
         {
             if (isoLanguageCode == null)
-                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                isoLanguageCode = BaseUserContext.Instance.LanguageCode;
 
             var bodyExpression = (MemberExpression)propertySelector.Body;
             var propertyName = bodyExpression.Member.Name.Replace(entityName, String.Empty); //By convention, parent entity property name is "entityname + propertyname" (i.e.e RiskDescription)
@@ -316,7 +316,7 @@ namespace ED47.BusinessAccessLayer.EF
                 return;
 
             if (String.IsNullOrWhiteSpace(isoLanguageCode))
-                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                isoLanguageCode = BaseUserContext.Instance.LanguageCode;
 
             isoLanguageCode = isoLanguageCode.Trim().ToLowerInvariant();
             var entityName = typeof(TBusinesEntity).Name;
@@ -355,7 +355,7 @@ namespace ED47.BusinessAccessLayer.EF
                 return;
 
             if (String.IsNullOrWhiteSpace(isoLanguageCode))
-                isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                isoLanguageCode = BaseUserContext.Instance.LanguageCode;
 
             var entityName = typeof(TBusinesEntity).Name;
             var key = entityName + "[" + String.Join(",", businessEntity.GetKeys<TEntity>().Select(kv => kv.Value)) + "]";
