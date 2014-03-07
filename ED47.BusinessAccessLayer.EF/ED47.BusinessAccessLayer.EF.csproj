@@ -95,10 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EmailRepository.cs" />
-    <Compile Include="File.cs" />
     <Compile Include="IGenericRepositoryManager.cs" />
     <Compile Include="ISqlRepository.cs" />
-    <Compile Include="LocalFileRepository.cs" />
+    <Compile Include="FileRepository.cs" />
     <Compile Include="MultilingualRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository.cs" />

@@ -1,17 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
-namespace ED47.BusinessAccessLayer
+namespace ED47.BusinessAccessLayer.File
 {
     public interface IFileRepository
     {
-        bool Write(IFile file, byte[] content);
-        bool Append(IFile file, byte[] content);
-        bool Delete(IFile file);
-        bool Exist(IFile file);
-        Stream OpenWrite(IFile file);
-        Stream OpenRead(IFile file);
         IFile Get(int fileId);
         IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false, int? fileBoxId = null);
         IFile GetFileByKey(string businessKey, int? version = null);

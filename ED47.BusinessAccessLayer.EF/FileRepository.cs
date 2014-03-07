@@ -9,7 +9,7 @@ using Ninject;
 
 namespace ED47.BusinessAccessLayer.EF
 {
-    public class LocalFileRepository : BusinessAccessLayer.LocalFileRepository
+    public class FileRepository : File.FileRepository
     {
         public override IFile Get(int id)
         {
@@ -18,7 +18,7 @@ namespace ED47.BusinessAccessLayer.EF
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            return context.Repository.Find<Entities.File, File>(el => el.Id == id);
+            return context.Repository.Find<Entities.File, File.File>(el => el.Id == id);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace ED47.BusinessAccessLayer.EF
             var previous = GetFileByKey(businessKey);
             var version = previous != null ? previous.Version + 1 : 1;
 
-            var file = new File
+            var file = new File.File
             {
                 Name = name,
                 BusinessKey = businessKey,
@@ -49,7 +49,7 @@ namespace ED47.BusinessAccessLayer.EF
                 GroupId = groupId.GetValueOrDefault(0),
                 Encrypted = encrypted
             };
-            BaseUserContext.Instance.Repository.Add<Entities.File, File>(file);
+            BaseUserContext.Instance.Repository.Add<Entities.File, File.File>(file);
 
             if (fileBoxId.HasValue)
             {
@@ -71,7 +71,7 @@ namespace ED47.BusinessAccessLayer.EF
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            return context.Repository.Where<Entities.File, File>(el => !el.IsDeleted && el.BusinessKey == businessKey && (version == null || el.Version == version.Value)).FirstOrDefault();
+            return context.Repository.Where<Entities.File, File.File>(el => !el.IsDeleted && el.BusinessKey == businessKey && (version == null || el.Version == version.Value)).FirstOrDefault();
         }
 
         public IEnumerable<IFile> GetAll()
@@ -80,7 +80,7 @@ namespace ED47.BusinessAccessLayer.EF
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            return context.Repository.GetAll<Entities.File, File>();
+            return context.Repository.GetAll<Entities.File, File.File>();
         }
 
         public override IEnumerable<IFile> GetHistoryFilesByKey(string businessKey)
@@ -91,13 +91,13 @@ namespace ED47.BusinessAccessLayer.EF
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
             return context.Repository
-                    .Where<Entities.File, File>(el => !el.IsDeleted && el.BusinessKey == businessKey)
+                    .Where<Entities.File, File.File>(el => !el.IsDeleted && el.BusinessKey == businessKey)
                     .OrderByDescending(el => el.CreationDate);
         }
 
         public override void RemoveFile(int id, int? fileBoxid)
         {
-            var file = Get(id) as File;
+            var file = Get(id) as File.File;
 
             if (file == null)
                 return;
@@ -107,7 +107,7 @@ namespace ED47.BusinessAccessLayer.EF
             if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
                 context = BusinessComponent.Kernel.Get<BaseUserContext>();
 
-            context.Repository.Delete<Entities.File, File>(file);
+            context.Repository.Delete<Entities.File, File.File>(file);
 
             if (fileBoxid.HasValue)
             {
@@ -142,7 +142,7 @@ namespace ED47.BusinessAccessLayer.EF
         /// <param name="file">The file reference.</param>
         /// <param name="specificVersion">If true, a specific version is fetched [default]. If false, latest version will be downloaded.</param>
         /// <returns>The URL to download the file.</returns>
-        public string GetUrl(File file, bool specificVersion = true)
+        public string GetUrl(File.File file, bool specificVersion = true)
         {
             if (specificVersion)
                 return String.Format("/fileRepository.axd?id={0}&token={1}", file.Id, file.Guid);
@@ -151,12 +151,12 @@ namespace ED47.BusinessAccessLayer.EF
 
         public IEnumerable<IFile> GetFilesByKeyFamilly(string businessKeyFamilly)
         {
-            return ((Repository)BaseUserContext.Instance.Repository).ExecuteTableFunction<File>("File_GetFilesByKeyFamilly", businessKeyFamilly);
+            return ((Repository)BaseUserContext.Instance.Repository).ExecuteTableFunction<File.File>("File_GetFilesByKeyFamilly", businessKeyFamilly);
         }
 
         public IEnumerable<IFile> GetFilesByGroupId(int groupId, int page = 0, int pageSize = 50)
         {
-            return ((Repository)BaseUserContext.Instance.Repository).ExecuteTableFunction<File>("File_GetFilesByGroupId", groupId, page, pageSize);
+            return ((Repository)BaseUserContext.Instance.Repository).ExecuteTableFunction<File.File>("File_GetFilesByGroupId", groupId, page, pageSize);
         }
     }
 }
