@@ -26,7 +26,8 @@ namespace ED47.BusinessAccessLayer.Multilingual
                     for (var j = 2; j <= sheet.Dimension.End.Column; j++)
                     {
                         var title = sheet.Cells[2, j].GetValue<string>();
-                        if (String.IsNullOrEmpty(title)) continue;
+                        if (String.IsNullOrEmpty(title)) 
+                            continue;
 
                         if (title.EndsWith(" new"))
                         {
@@ -36,7 +37,10 @@ namespace ED47.BusinessAccessLayer.Multilingual
                             if (String.IsNullOrWhiteSpace(value))
                                 continue;
 
-                            Stack.Web.Multilingual.Multilingual.UpdateEntry(lan, key, value);
+                            if(value.Trim() == "$NULL")
+                                Stack.Web.Multilingual.Multilingual.DeleteEntry(lan, key);
+                            else
+                                Stack.Web.Multilingual.Multilingual.UpdateEntry(lan, key, value);
                         }
                     }
                 }
