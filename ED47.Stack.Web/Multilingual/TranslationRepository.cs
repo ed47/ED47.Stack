@@ -180,6 +180,15 @@ namespace ED47.Stack.Web.Multilingual
             dictionary.UpdateEntry(key, value, null, attributes);
         }
 
+        public void DeleteEntry(string language, string key)
+        {
+            var dictionary = GetDictionary(language);
+            if (dictionary == null)
+                return;
+
+            dictionary.RemoveEntry(key);
+        }
+
         public string GetCurrentTranslation(string key, params object[] args)
         {
             return GetTranslation(key, GetCurrentLanguage(), args);

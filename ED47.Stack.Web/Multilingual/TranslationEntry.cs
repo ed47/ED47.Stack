@@ -15,6 +15,38 @@ namespace ED47.Stack.Web.Multilingual
             Save(attributes);
         }
 
+        public void Delete()
+        {
+            var splitPath = Key.Split('.');
+
+            lock (Dictionary.WriteLock)
+            {
+                var document = XDocument.Load(File.FileInfo.FullName);
+                var currentElement = document.Root;
+                if (currentElement == null)
+                    return;
+
+
+                foreach (var node in splitPath)
+                {
+                    var nextElement = currentElement.Element(node);
+
+                    if (nextElement == null)
+                    {
+                        return;
+                    }
+
+                    currentElement = nextElement;
+                }
+
+                
+                currentElement.Remove();
+
+                document.Save(File.FileInfo.FullName);
+                Dictionary.Repository.ClearCache(Dictionary.Language);
+            }
+        }
+
         private void Save(object attributes = null)
         {
             var splitPath = Key.Split('.');
