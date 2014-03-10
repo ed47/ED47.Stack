@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -100,7 +101,7 @@ namespace ED47.Stack.Web.Multilingual
                     File = file,
                     Key = key
                 };
-                
+
                 Add(key, entry);
             }
 
@@ -120,7 +121,7 @@ namespace ED47.Stack.Web.Multilingual
         public ITranslationEntry AddEntry(string key, string value, object attributes = null)
         {
             var file = GetFile(key);
-            
+
             return UpdateEntry(key, value, file, attributes);
         }
 
@@ -134,7 +135,9 @@ namespace ED47.Stack.Web.Multilingual
                 var file = TranslationFiles.Values.Where(el => el.FileInfo.Name.StartsWith(pattern) && el.Language == Language)
                         .OrderBy(el => el.FileInfo.FullName.Length)
                         .FirstOrDefault();
-                if (file != null) return file;
+
+                if (file != null)
+                    return file;
             }
             return null;
         }
