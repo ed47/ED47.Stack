@@ -59,6 +59,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             MemoryCache.Default.Set(new CacheItem(GetCacheKey(LanguageIsoCode, Key), translations), CacheItemPolicy);
         }
 
+        public void Delete()
+        {
+            var context = BaseUserContext.Instance ?? BusinessComponent.Kernel.Get<BaseUserContext>();
+
+            context.Repository.Delete<Entities.Multilingual, Multilingual>(this);
+
+            MemoryCache.Default.Remove(GetCacheKey(LanguageIsoCode, Key));
+        }
+
         public static string GetCacheKey(string language, string key)
         {
             return String.Concat("Translation", language, key);

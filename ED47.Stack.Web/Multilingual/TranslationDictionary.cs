@@ -108,6 +108,14 @@ namespace ED47.Stack.Web.Multilingual
             return entry;
         }
 
+        public void RemoveEntry(string key)
+        {
+            var entry = GetEntry(key);
+            if (entry == null)
+                return;
+
+            entry.Delete();
+        }
 
         public ITranslationEntry AddEntry(string key, string value, object attributes = null)
         {

@@ -32,7 +32,10 @@ namespace ED47.BusinessAccessLayer.Multilingual
                         {
                             var lan = title.Substring(0, title.Length - 4);
                             var value = sheet.Cells[i, j].GetValue<string>();
-                            if (String.IsNullOrWhiteSpace(value)) continue;
+
+                            if (String.IsNullOrWhiteSpace(value))
+                                continue;
+
                             Stack.Web.Multilingual.Multilingual.UpdateEntry(lan, key, value);
                         }
                     }

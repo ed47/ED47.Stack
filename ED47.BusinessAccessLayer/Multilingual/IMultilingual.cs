@@ -24,5 +24,6 @@ namespace ED47.BusinessAccessLayer.Multilingual
         string Text { get; set; }
 
         void Save();
+        void Delete();
     }
 }
