@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
 namespace ED47.BusinessAccessLayer
@@ -13,6 +14,11 @@ namespace ED47.BusinessAccessLayer
         public static void RemoveFile(int id, int? fileBoxid = null)
         {
             FileRepositoryFactory.Default.RemoveFile(id, fileBoxid);
+        }
+
+        public static IEnumerable<IFile> GetByFileBox(int fileBoxId)
+        {
+            return FileRepositoryFactory.Default.GetByFileBox(fileBoxId);
         }
     }
 }
