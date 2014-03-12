@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Transactions;
 using Omu.ValueInjecter;
 
 namespace ED47.BusinessAccessLayer.EF
@@ -29,16 +29,9 @@ namespace ED47.BusinessAccessLayer.EF
         protected DbContext ImmediateDbContext { get; set; }
 
         /// <summary>
-        /// This repository's instance transaction.
-        /// </summary>
-        protected TransactionScope TransactionScope { get; set; }
-
-        /// <summary>
         /// The username of the user who's request is attached to this repository.
         /// </summary>
         protected string UserName { get; set; }
-
-        public string ConnectionString { get; set; }
 
         /// <summary>
         /// Creates a new Business Repository using a specific DbContext.
@@ -51,13 +44,6 @@ namespace ED47.BusinessAccessLayer.EF
         {
             DbContext = dbcontext;
             ImmediateDbContext = immediateDbcontext;
-
-#if !DEBUG
-            //this.TransactionScope = new TransactionScope();
-#else
-            //Infinite timeout to make debugging easier.
-            //this.TransactionScope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(5));
-#endif
 
             UserName = userName;
         }
@@ -157,7 +143,7 @@ namespace ED47.BusinessAccessLayer.EF
 
             query = AddIncludes(query, GetBusinessIncludes<TBusinessEntity>());
             query = AddIncludes(query, includes);
-            
+
             return Convert<TEntity, TBusinessEntity>(query.Where(predicate));
         }
 
@@ -411,7 +397,7 @@ namespace ED47.BusinessAccessLayer.EF
             var baseDbEntity = newEntity as BaseDbEntity;
             if (baseDbEntity != null)
             {
-                if(baseDbEntity.Guid == Guid.Empty)
+                if (baseDbEntity.Guid == Guid.Empty)
                     baseDbEntity.Guid = Guid.NewGuid();
 
                 baseDbEntity.CreationDate = DateTime.UtcNow.ToUniversalTime();
@@ -632,164 +618,160 @@ namespace ED47.BusinessAccessLayer.EF
         /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            if (TransactionScope != null)
-                TransactionScope.Dispose();
+            if (ImmediateDbContext != null)
+                ImmediateDbContext.Dispose();
 
             if (DbContext != null)
                 DbContext.Dispose();
-
-            if (ImmediateDbContext != null)
-                ImmediateDbContext.Dispose();
         }
 
 
         protected internal IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params SqlParameter[] parameters) where TBusinessEntity : class
         {
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+
+                sqlcmd.CommandType = CommandType.Text;
+                sqlcmd.CommandText = "SELECT * FROM " + tableFunction + "(" +
+                                     String.Join(",", parameters.Select(el => el.ParameterName)) + ")";
+
+                foreach (var parameter in parameters)
                 {
-                    InitSqlCommand(sqlcmd);
-
-                    sqlcmd.CommandType = CommandType.Text;
-                    sqlcmd.CommandText = "SELECT * FROM " + tableFunction + "(" +
-                                         String.Join(",", parameters.Select(el => el.ParameterName)) + ")";
-
-                    foreach (var parameter in parameters)
-                    {
-                        sqlcmd.Parameters.Add(parameter);
-                    }
-
-                    var reader = sqlcmd.ExecuteReader();
-
-                    return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
+                    sqlcmd.Parameters.Add(parameter);
                 }
-            }
 
+                var reader = sqlcmd.ExecuteReader();
+
+                return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
+            }
         }
-        
+
         public IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params object[] parameters) where TBusinessEntity : class
         {
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                var sqlparams = new SqlParameter[parameters.Length];
+
+                for (int i = 0; i < parameters.Length; i++)
                 {
-                    InitSqlCommand(sqlcmd);
-                    var sqlparams = new SqlParameter[parameters.Length];
-
-                    for (int i = 0; i < parameters.Length; i++)
-                    {
-                        sqlparams[i] = new SqlParameter("@p" + i, parameters[i]);
-                    }
-
-                    sqlcmd.CommandType = CommandType.Text;
-                    sqlcmd.CommandText = "SELECT * FROM " + tableFunction + "(" +
-                                         String.Join(",", sqlparams.Select(el => el.ParameterName)) + ")";
-                    sqlcmd.Parameters.AddRange(sqlparams);
-
-                    var reader = sqlcmd.ExecuteReader();
-
-                    return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
+                    sqlparams[i] = new SqlParameter("@p" + i, parameters[i]);
                 }
-            }
 
+                sqlcmd.CommandType = CommandType.Text;
+                sqlcmd.CommandText = "SELECT * FROM " + tableFunction + "(" +
+                                     String.Join(",", sqlparams.Select(el => el.ParameterName)) + ")";
+                sqlcmd.Parameters.AddRange(sqlparams);
+
+                var reader = sqlcmd.ExecuteReader();
+
+                return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
+            }
         }
 
         public IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params object[] parameters) where TBusinessEntity : class
         {
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.CommandText = storedProcedure;
+                var i = 0;
+                foreach (var parameter in parameters)
                 {
-                    InitSqlCommand(sqlcmd);
-                    sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.CommandText = storedProcedure;
-                    var i = 0;
-                    foreach (var parameter in parameters)
-                    {
-                        sqlcmd.Parameters.Add(new SqlParameter("@p" + i, parameter));
-                        i++;
-                    }
-
-                    var reader = sqlcmd.ExecuteReader();
-
-                    return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
+                    sqlcmd.Parameters.Add(new SqlParameter("@p" + i, parameter));
+                    i++;
                 }
+
+                var reader = sqlcmd.ExecuteReader();
+
+                return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
             }
         }
 
         public IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params SqlParameter[] parameters) where TBusinessEntity : class
         {
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.CommandText = storedProcedure;
+
+                foreach (var parameter in parameters)
                 {
-                    InitSqlCommand(sqlcmd);
-                    sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.CommandText = storedProcedure;
+                    sqlcmd.Parameters.Add(parameter);
+                }
 
-                    foreach (var parameter in parameters)
-                    {
-                        sqlcmd.Parameters.Add(parameter);
-                    }
+                using (var reader = sqlcmd.ExecuteReader())
+                {
 
-                    using (var reader = sqlcmd.ExecuteReader())
-                    {
-
-                        return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
-                    }
+                    return ReaderInjection.ReadAll<TBusinessEntity>(reader).ToArray();
                 }
             }
-
         }
 
-        private SqlDataReader ExecuteStoredProcedure(string storedProcedure, params SqlParameter[] parameters)
+        private DbDataReader ExecuteStoredProcedure(string storedProcedure, params SqlParameter[] parameters)
         {
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.CommandText = storedProcedure;
+
+                foreach (var parameter in parameters)
                 {
-                    InitSqlCommand(sqlcmd);
-                    sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.CommandText = storedProcedure;
-
-                    foreach (var parameter in parameters)
-                    {
-                        sqlcmd.Parameters.Add(parameter);
-                    }
-
-                    return sqlcmd.ExecuteReader();
+                    sqlcmd.Parameters.Add(parameter);
                 }
-            }
 
+                return sqlcmd.ExecuteReader();
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
         public int ExecuteNonQuery(string storedProcedure, params SqlParameter[] parameters)
         {
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.CommandText = storedProcedure;
+
+                foreach (var parameter in parameters)
                 {
-                    InitSqlCommand(sqlcmd);
-                    sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.CommandText = storedProcedure;
-
-                    foreach (var parameter in parameters)
-                    {
-                        sqlcmd.Parameters.Add(parameter);
-                    }
-
-                    return sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Add(parameter);
                 }
-            }
 
+                return sqlcmd.ExecuteNonQuery();
+            }
         }
 
 
@@ -806,7 +788,7 @@ namespace ED47.BusinessAccessLayer.EF
         /// <param name="entitySelector">The entity selector.</param>
         /// <param name="dataSelector">The data selector.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized.")]
-        public void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, IntKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null, IEnumerable<SqlParameter> parameters = null)
+        public void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, IntKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<DbDataReader, object> dataSelector = null, IEnumerable<SqlParameter> parameters = null)
         {
             var idProp = typeof(TEntity).GetProperty("Id");
             var ks = keySelector ?? (el => new IntKey { Value = (System.Convert.ToInt32(idProp.GetValue(el, null))) });
@@ -818,45 +800,45 @@ namespace ED47.BusinessAccessLayer.EF
                 allParameters.AddRange(parameters);
             }
 
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
-                {
-                    InitSqlCommand(sqlcmd);
-                    sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.CommandText = storedProcedure;
-                    sqlcmd.Parameters.AddRange(allParameters.ToArray());
-                    using (var reader = sqlcmd.ExecuteReader())
-                    {
-                        entities.Apply(reader, entitySelector, dataSelector);
 
-                    }
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.CommandText = storedProcedure;
+                sqlcmd.Parameters.AddRange(allParameters.ToArray());
+                using (var reader = sqlcmd.ExecuteReader())
+                {
+                    entities.Apply(reader, entitySelector, dataSelector);
+
                 }
             }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
-        protected internal void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, StringKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null)
+        protected internal void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, StringKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<DbDataReader, object> dataSelector = null)
         {
             var idProp = typeof(TEntity).GetProperty("Id");
             var ks = keySelector ?? (el => new StringKey() { Value = idProp.GetValue(el, null).ToString() });
             var ids = entities.Select(ks).Distinct().ToDataTable();
             var p = new SqlParameter(idParameter, ids);
 
-            using (var conn = new SqlConnection(ConnectionString))
-            {
+            var conn = DbContext.Database.Connection;
+            if (conn.State != ConnectionState.Open)
                 conn.Open();
-                using (var sqlcmd = conn.CreateCommand())
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.CommandText = storedProcedure;
+                sqlcmd.Parameters.Add(p);
+                using (var reader = sqlcmd.ExecuteReader())
                 {
-                    InitSqlCommand(sqlcmd);
-                    sqlcmd.CommandType = CommandType.StoredProcedure;
-                    sqlcmd.CommandText = storedProcedure;
-                    sqlcmd.Parameters.Add(p);
-                    using (var reader = sqlcmd.ExecuteReader())
-                    {
-                        entities.Apply(reader, entitySelector, dataSelector);
-                    }
+                    entities.Apply(reader, entitySelector, dataSelector);
                 }
             }
         }
@@ -882,12 +864,12 @@ namespace ED47.BusinessAccessLayer.EF
         /// </summary>
         /// <typeparam name="TEntity">The entity type.</typeparam>
         /// <param name="keys">The entity's keys.</param>
-        public TBusinessEntity Restore<TEntity, TBusinessEntity>(params object[] keys) 
-            where TEntity : BaseDbEntity 
+        public TBusinessEntity Restore<TEntity, TBusinessEntity>(params object[] keys)
+            where TEntity : BaseDbEntity
             where TBusinessEntity : class, new()
         {
             var element = DbContext.Set<TEntity>().Find(keys);
-            if (element == null) 
+            if (element == null)
                 return null;
 
             element.DeletionDate = null;
@@ -897,12 +879,11 @@ namespace ED47.BusinessAccessLayer.EF
             return Convert<TEntity, TBusinessEntity>(element);
         }
 
-
         /// <summary>
         /// Initializes a Sql command with the webconfig appsettings "SQLCommandXxxxxxxx" elements
         /// </summary>
         /// <param name="sqlcmd">command wich will be setted the timeout </param>
-        private void InitSqlCommand(SqlCommand sqlcmd)
+        private void InitSqlCommand(DbCommand sqlcmd)
         {
             // Set Timeout 
             int timeout = 0;

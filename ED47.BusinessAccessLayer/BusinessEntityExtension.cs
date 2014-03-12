@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
@@ -28,7 +29,7 @@ namespace ED47.BusinessAccessLayer
            }
         }
 
-       public static void Apply<TEntity>(this IEnumerable<TEntity> entities, SqlDataReader reader, Func<TEntity, object> entitySelector = null, Func<SqlDataReader, object> dataSelector = null) 
+       public static void Apply<TEntity>(this IEnumerable<TEntity> entities, DbDataReader reader, Func<TEntity, object> entitySelector = null, Func<DbDataReader, object> dataSelector = null) 
        {
            var idPropInfo1 = typeof(TEntity).GetProperty("Id");
            var ks1 = entitySelector ?? (el => idPropInfo1 != null ? idPropInfo1.GetValue(el, null) : el);
