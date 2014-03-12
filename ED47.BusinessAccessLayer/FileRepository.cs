@@ -20,5 +20,10 @@ namespace ED47.BusinessAccessLayer
         {
             return FileRepositoryFactory.Default.GetByFileBox(fileBoxId);
         }
+
+        public static IFile Get(int fileId)
+        {
+            return FileRepositoryFactory.Default.Get(fileId);
+        }
     }
 }
