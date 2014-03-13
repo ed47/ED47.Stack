@@ -200,7 +200,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 record = record[0];
 
             var view = this;
-
+            
             if (!record.isValid()) {
                 return;
             }
@@ -213,7 +213,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                     });
                 });
             });
-
+            
             if (_.isEqual(record.data, this.serverValue)) {
                 Ext.each(modifiedFieldNames, function (fiedName) {
                     Ext.each(view.forms, function (form) {
@@ -260,8 +260,9 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
 
         //Updates a record from a callResult.
         updateRecord: function (store, record, callResult) {
-            var index = record.index || store.indexOf(record);
-
+            var myRec =  callResult.data.ResultData.Item.Id ? store.findRecord("Id",callResult.data.ResultData.Item.Id) : null;
+            var index = myRec ? store.indexOf(myRec) : (record.index || store.indexOf(record));
+            
             store.removeAt(index);
             this.serverValue = Ext.applyIf(callResult.data.ResultData.Item, record.data);
             this._updating = true;
