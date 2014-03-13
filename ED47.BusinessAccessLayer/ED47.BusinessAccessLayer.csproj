@@ -222,6 +222,7 @@
     <Compile Include="RepositoryManager.cs" />
     <Compile Include="StringKey.cs" />
     <Compile Include="TypeExtension.cs" />
+    <Compile Include="UnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
