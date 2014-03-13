@@ -6,6 +6,5 @@ namespace ED47.BusinessAccessLayer
     {
         void Commit();
         void Rollback();
-        void StartTransaction();
     }
 }

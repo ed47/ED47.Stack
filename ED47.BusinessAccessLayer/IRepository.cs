@@ -10,7 +10,8 @@ namespace ED47.BusinessAccessLayer
     public interface IRepository : IDisposable
     {
         //TODO: Remove this property once all usages are moved to BusinessAccess.EF
-        DbContext DbContext { get; set; }
+        DbContext DbContext { get; }
+        DbContext ImmediateDbContext { get; }
 
         /// <summary>
         /// Commits the changes made on the context to the database.

@@ -1,18 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.Entity;
 using System.Data.SqlClient;
 
 namespace ED47.BusinessAccessLayer.EF
 {
     public interface ISqlRepository : IRepository
     {
-        /// <summary>
-        /// The current Entity Framework DbContext.
-        /// </summary>
-        new DbContext DbContext { get; set; }
-
         IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params object[] parameters) where TBusinessEntity : class;
         IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params object[] parameters) where TBusinessEntity : class;
         IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params SqlParameter[] parameters) where TBusinessEntity : class;

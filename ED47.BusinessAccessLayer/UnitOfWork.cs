@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -10,11 +11,19 @@ namespace ED47.BusinessAccessLayer
         public UnitOfWork(IRepository repository)
         {
             Repository = repository;
+            StartTransaction();
         }
 
-        public void StartTransaction()
+        public UnitOfWork()
+        {
+            Repository = BaseUserContext.Instance.Repository;
+            StartTransaction();
+        }
+
+        private void StartTransaction()
         {
             Transaction = Repository.DbContext.Database.BeginTransaction();
+            Repository.ImmediateDbContext.Database.UseTransaction(Transaction.UnderlyingTransaction);
         }
 
         /// <summary>
@@ -22,13 +31,11 @@ namespace ED47.BusinessAccessLayer
         /// </summary>
         public void Dispose()
         {
-            if (Repository != null)
-                Repository.Dispose();
-
             if (Transaction != null)
             {
                 Transaction.Rollback();
                 Transaction.Dispose();
+                throw new ApplicationException("UnitOfWork disposed with pending transaction! Either call Commit() or Rollback() before disposing!");
             }
         }
 
@@ -40,7 +47,10 @@ namespace ED47.BusinessAccessLayer
             Repository.Commit();
 
             if (Transaction != null)
+            {
                 Transaction.Commit();
+                Transaction = null;
+            }
         }
 
         public void Rollback()
@@ -53,6 +63,7 @@ namespace ED47.BusinessAccessLayer
 
             Transaction.Rollback();
             Transaction.Dispose();
+            Transaction = null;
         }
     }
 }

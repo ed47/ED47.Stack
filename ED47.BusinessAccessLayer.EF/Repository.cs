@@ -26,7 +26,7 @@ namespace ED47.BusinessAccessLayer.EF
         /// <value>
         /// The immediate context.
         /// </value>
-        protected DbContext ImmediateDbContext { get; set; }
+        public DbContext ImmediateDbContext { get; private set; }
 
         /// <summary>
         /// The username of the user who's request is attached to this repository.
