@@ -28,6 +28,8 @@ namespace ED47.BusinessAccessLayer.EF
         /// </value>
         public DbContext ImmediateDbContext { get; private set; }
 
+        public DbContextTransaction Transaction { get; set; }
+
         /// <summary>
         /// The username of the user who's request is attached to this repository.
         /// </summary>
@@ -628,10 +630,8 @@ namespace ED47.BusinessAccessLayer.EF
 
         protected internal IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params SqlParameter[] parameters) where TBusinessEntity : class
         {
-            var conn = DbContext.Database.Connection;
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
+            var conn = Connection;
+           
             using (var sqlcmd = conn.CreateCommand())
             {
                 InitSqlCommand(sqlcmd);
@@ -653,10 +653,7 @@ namespace ED47.BusinessAccessLayer.EF
 
         public IEnumerable<TBusinessEntity> ExecuteTableFunction<TBusinessEntity>(string tableFunction, params object[] parameters) where TBusinessEntity : class
         {
-            var conn = DbContext.Database.Connection;
-
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
+            var conn = Connection;
 
             using (var sqlcmd = conn.CreateCommand())
             {
@@ -681,11 +678,8 @@ namespace ED47.BusinessAccessLayer.EF
 
         public IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params object[] parameters) where TBusinessEntity : class
         {
-            var conn = DbContext.Database.Connection;
-
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
+            var conn = Connection;
+            
             using (var sqlcmd = conn.CreateCommand())
             {
                 InitSqlCommand(sqlcmd);
@@ -706,10 +700,7 @@ namespace ED47.BusinessAccessLayer.EF
 
         public IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params SqlParameter[] parameters) where TBusinessEntity : class
         {
-            var conn = DbContext.Database.Connection;
-
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
+            var conn = Connection;
 
             using (var sqlcmd = conn.CreateCommand())
             {
@@ -732,10 +723,8 @@ namespace ED47.BusinessAccessLayer.EF
 
         private DbDataReader ExecuteStoredProcedure(string storedProcedure, params SqlParameter[] parameters)
         {
-            var conn = DbContext.Database.Connection;
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
+            var conn = Connection;
+            
             using (var sqlcmd = conn.CreateCommand())
             {
                 InitSqlCommand(sqlcmd);
@@ -754,10 +743,7 @@ namespace ED47.BusinessAccessLayer.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
         public int ExecuteNonQuery(string storedProcedure, params SqlParameter[] parameters)
         {
-            var conn = DbContext.Database.Connection;
-
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
+            var conn = Connection;
 
             using (var sqlcmd = conn.CreateCommand())
             {
@@ -800,10 +786,8 @@ namespace ED47.BusinessAccessLayer.EF
                 allParameters.AddRange(parameters);
             }
 
-            var conn = DbContext.Database.Connection;
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
+            var conn = Connection;
+            
             using (var sqlcmd = conn.CreateCommand())
             {
                 InitSqlCommand(sqlcmd);
@@ -818,6 +802,18 @@ namespace ED47.BusinessAccessLayer.EF
             }
         }
 
+        public DbConnection Connection
+        {
+            get
+            {
+                var conn = DbContext.Database.Connection;
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+
+                return conn;
+            }
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
         protected internal void ApplyStoredProcedure<TEntity>(string storedProcedure, string idParameter, IEnumerable<TEntity> entities, Func<TEntity, StringKey> keySelector = null, Func<TEntity, object> entitySelector = null, Func<DbDataReader, object> dataSelector = null)
         {
@@ -826,10 +822,8 @@ namespace ED47.BusinessAccessLayer.EF
             var ids = entities.Select(ks).Distinct().ToDataTable();
             var p = new SqlParameter(idParameter, ids);
 
-            var conn = DbContext.Database.Connection;
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
+            var conn = Connection;
+            
             using (var sqlcmd = conn.CreateCommand())
             {
                 InitSqlCommand(sqlcmd);
@@ -893,6 +887,9 @@ namespace ED47.BusinessAccessLayer.EF
 
             if (timeout > 0)
                 sqlcmd.CommandTimeout = timeout;
+
+            if (Transaction != null)
+                sqlcmd.Transaction = Transaction.UnderlyingTransaction;
         }
     }
 }

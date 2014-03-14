@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EmailRepository.cs" />
+    <Compile Include="GenericRepositoryManager.cs" />
     <Compile Include="IGenericRepositoryManager.cs" />
     <Compile Include="ISqlRepository.cs" />
     <Compile Include="FileRepository.cs" />

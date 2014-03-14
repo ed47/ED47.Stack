@@ -18,6 +18,7 @@ namespace ED47.BusinessAccessLayer
         {
             Repository = BaseUserContext.Instance.Repository;
             StartTransaction();
+            Repository.Transaction = Transaction;
         }
 
         private void StartTransaction()

@@ -12,6 +12,7 @@ namespace ED47.BusinessAccessLayer
         //TODO: Remove this property once all usages are moved to BusinessAccess.EF
         DbContext DbContext { get; }
         DbContext ImmediateDbContext { get; }
+        DbContextTransaction Transaction { get; set; }
 
         /// <summary>
         /// Commits the changes made on the context to the database.
