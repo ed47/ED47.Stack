@@ -19,7 +19,7 @@ namespace ED47.Stack.Web.Multilingual
             LoadXmlTranslations();
         }
 
-        internal string GetCurrentLanguage()
+        public virtual string GetCurrentLanguage()
         {
             return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
 
