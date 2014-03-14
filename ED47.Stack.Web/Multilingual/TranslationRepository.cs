@@ -224,6 +224,17 @@ namespace ED47.Stack.Web.Multilingual
             return GetTranslation(key, language, args);
         }
 
+        public IEnumerable<string> FindKeys(string key, string language)
+        {
+            var allKeys = new HashSet<string>();
+
+            foreach (var dictionary in Values.Where(el => String.IsNullOrWhiteSpace(language) || el.Language == language))
+            {
+                allKeys.UnionWith(dictionary.Keys.Where(el => el.StartsWith(key)));
+            }
+            return allKeys;
+        }
+
         public TranslationFile CreateFile(string key, string language)
         {
             var defaultFile = DefaultDictionnary.GetFile(key);

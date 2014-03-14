@@ -34,5 +34,7 @@ namespace ED47.Stack.Web.Multilingual
         /// </summary>
         /// <returns></returns>
         string GetTranslationPluralized(string key, int pluralizeCount, params object[] args);
+
+        IEnumerable<string> FindKeys(string key, string language);
     }
 }

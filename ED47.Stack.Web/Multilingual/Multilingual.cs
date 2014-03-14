@@ -43,6 +43,11 @@ namespace ED47.Stack.Web.Multilingual
             return Repository.GetAllKeys(language);
         }
 
+        public static IEnumerable<string> FindKeys(string key, string language = null)
+        {
+            return Repository.FindKeys(key, language);
+        }
+
         /// <summary>
         /// Gets a multilignual string in the current UI culture.
         /// </summary>
