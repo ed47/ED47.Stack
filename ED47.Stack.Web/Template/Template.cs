@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using RazorEngine;
+using Encoder = Microsoft.Security.Application.Encoder;
 
 namespace ED47.Stack.Web.Template
 {
@@ -628,7 +629,7 @@ namespace ED47.Stack.Web.Template
             return "";
         }
 
-        private static object GetPropertyValue(Template t, object obj, string property)
+        public static object GetPropertyValue(Template t, object obj, string property)
         {
             if (obj is JsonObject && ((JsonObject)obj).HasProperty(property))
             {
@@ -640,7 +641,12 @@ namespace ED47.Stack.Web.Template
             var pinfo = obj != null ? obj.GetType().GetProperty(property) : null;
             if (pinfo != null)
             {
-                return pinfo.GetValue(obj, null);
+                var value = pinfo.GetValue(obj, null);
+
+                if (value is String)
+                    value = Encoder.HtmlEncode((string) value);
+
+                return value;
             }
             if (property == "this" || property == "values")
             {
@@ -1081,7 +1087,6 @@ namespace ED47.Stack.Web.Template
             if (TplType == TemplateType.Razor)
             {
                 return Razor.Parse(TemplateText, o, Name);
-
             }
 
             IEnumerable list;
