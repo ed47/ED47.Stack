@@ -6,6 +6,7 @@ using System.Linq;
 using ED47.Stack.Web;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using OfficeOpenXml.Drawing;
 
 namespace ED47.BusinessAccessLayer.Excel
 {
@@ -20,6 +21,8 @@ namespace ED47.BusinessAccessLayer.Excel
         public Action<object, ExcelRange> HeaderRenderer { get; set; }
         public List<ExcelColumn> Columns { get; private set; }
         public List<ExcelColumn> HeaderColumns { get; private set; }
+        public List<ImageContent> Images { get; set; }
+        public List<RowHeight> RowHeights { get; set; }
 
         /// <summary>
         /// Gets or sets the data to export.
@@ -37,6 +40,9 @@ namespace ED47.BusinessAccessLayer.Excel
         {
             Columns = new List<ExcelColumn>();
             HeaderColumns = new List<ExcelColumn>();
+            Images = new List<ImageContent>();
+            RowHeights = new List<RowHeight>();
+
             this.Name = name;
 
             HeaderRenderer = (value, range) =>
@@ -80,6 +86,18 @@ namespace ED47.BusinessAccessLayer.Excel
         public ExcelSheet AddColumns(IEnumerable<ExcelColumn> columns)
         {
             Columns.AddRange(columns);
+            return this;
+        }
+        
+        public ExcelSheet AddImage(params ImageContent[] images)
+        {
+            Images.AddRange(images);
+            return this;
+        }
+        
+        public ExcelSheet SetRowHeight(params RowHeight[] rowHeights)
+        {
+            RowHeights.AddRange(rowHeights);
             return this;
         }
 
@@ -154,9 +172,13 @@ namespace ED47.BusinessAccessLayer.Excel
                         cells.Merge = true;
                         cell.Column += colSpan.Value;
                         HeaderRenderer(headerColumn.DisplayName, cells);
+                        headerColumn.Render(headerColumn.DisplayName, cells);
                     }
                     else
+                    {
                         HeaderRenderer(headerColumn.DisplayName, worksheet.Cells[cell.Row, cell.Column]);
+                        headerColumn.Renderer(headerColumn.DisplayName, worksheet.Cells[cell.Row, cell.Column]);
+                    }
 
                     cell.Column++;
                 }
@@ -179,9 +201,13 @@ namespace ED47.BusinessAccessLayer.Excel
                         cells.Merge = true;
                         cell.Column += colSpan.Value;
                         HeaderRenderer(c.DisplayName, cells);
+                        c.Renderer(c.DisplayName, cells);
                     }
                     else
+                    {
                         HeaderRenderer(c.DisplayName, worksheet.Cells[cell.Row, cell.Column]);
+                        c.Renderer(c.DisplayName, worksheet.Cells[cell.Row, cell.Column]);
+                    }
 
                     cell.Column++;
                 }
@@ -189,6 +215,17 @@ namespace ED47.BusinessAccessLayer.Excel
                 cell.Row++;
             }
 
+            foreach (var rowHeight in RowHeights) {
+                worksheet.Row(rowHeight.Row).Height = ExcelHelper.Pixel2RowHeight(rowHeight.Height);
+            }
+
+            foreach (var imageContent in Images)
+            {
+                DrawImage(worksheet, imageContent);
+            }
+
+         
+      
             return cell;
         }
 
@@ -229,6 +266,25 @@ namespace ED47.BusinessAccessLayer.Excel
                 cellCoordinate.Row++;
             }
         }
+
+        /// <summary>
+        /// Add image to worksheet 
+        /// </summary>
+        /// <param name="ws"></param>
+        /// <param name="columnIndex"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="image"></param>
+        private static void DrawImage(ExcelWorksheet ws, ImageContent imageContent) {
+            ExcelPicture picture = null;
+            picture = ws.Drawings.AddPicture("pic" + imageContent.Row.ToString() + imageContent.Column.ToString(), imageContent.Image);
+            picture.From.Column = imageContent.Column;
+            picture.From.Row = imageContent.Row;
+            picture.From.ColumnOff = ExcelHelper.Pixel2MTU(2+ imageContent.LeftOffset);     //Two pixel space for better alignment
+            picture.From.RowOff = ExcelHelper.Pixel2MTU(2+ imageContent.TopOffset);        //Two pixel space for better alignment
+
+            picture.SetSize(100);
+        }
+
 
         /// <summary>
         /// Adds header columns which are independant from the data columns.
