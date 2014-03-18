@@ -155,6 +155,7 @@
     <Compile Include="Entities\EmailAttachment.cs" />
     <Compile Include="Entities\FileBox.cs" />
     <Compile Include="Entities\FileBoxItem.cs" />
+    <Compile Include="Entities\FileExtensionWhiteList.cs" />
     <Compile Include="Entities\Language.cs" />
     <Compile Include="Entities\BaseMessage.cs" />
     <Compile Include="Entities\Multilingual.cs" />
@@ -175,6 +176,8 @@
     <Compile Include="FileRepositoryFactory.cs" />
     <Compile Include="FileRepositoryHandler.cs" />
     <Compile Include="File\File.cs" />
+    <Compile Include="File\FileExtensionWhiteList.cs" />
+    <Compile Include="File\FileSecurity.cs" />
     <Compile Include="File\IFileRepository.cs" />
     <Compile Include="File\FileRepository.cs" />
     <Compile Include="File\IFileStorage.cs" />

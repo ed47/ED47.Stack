@@ -60,6 +60,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if(file == null || file.ContentLength == 0)
                 return null;
 
+            if (!FileRepositoryFactory.Default.CheckIsSafe(file.FileName))
+                return null;
+
             var newFile = FileRepositoryFactory.Default.CreateNewFile(System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId);
 
             using (var fileStream = newFile.OpenWrite())

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
@@ -36,5 +38,25 @@ namespace ED47.BusinessAccessLayer.File
 
             return fileBox.GetFiles().Select(el => el.File);
         }
+
+        public bool CheckIsSafe(string filename)
+        {
+            FileSecurity security;
+
+            if (!FileSecurity.TryParse(ConfigurationManager.AppSettings["LocalFileRepository.Security"], out security))
+                return true;
+
+            switch (security)
+            {
+                case FileSecurity.WhiteList:
+                    var whiteList = GetFileExtensionWhiteLists();
+                    return whiteList.Contains(Path.GetExtension(filename.ToLowerInvariant()));
+                    
+            }
+
+            return false;
+        }
+
+        public abstract IEnumerable<string> GetFileExtensionWhiteLists();
     }
 }

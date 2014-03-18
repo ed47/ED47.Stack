@@ -8,6 +8,9 @@ namespace ED47.BusinessAccessLayer
         public static IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true,
             string langId = null, bool encrypted = false, int? fileBoxId = null)
         {
+            if (!FileRepositoryFactory.Default.CheckIsSafe(name))
+                return null;
+
             return FileRepositoryFactory.Default.CreateNewFile(name, businessKey, groupId, requiresLogin, langId, encrypted, fileBoxId);
         }
 

@@ -12,5 +12,6 @@ namespace ED47.BusinessAccessLayer.File
         string GetUrl(IFile file, bool specificVersion = true);
         void RemoveFile(int id, int? fileBoxid);
         IEnumerable<IFile> GetByFileBox(int fileBoxId);
+        bool CheckIsSafe(string filename);
     }
 }

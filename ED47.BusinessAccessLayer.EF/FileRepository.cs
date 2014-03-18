@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Web;
 using ED47.BusinessAccessLayer.BusinessEntities;
+using ED47.BusinessAccessLayer.File;
 using ED47.Stack.Web;
 using Ninject;
 
@@ -118,6 +120,28 @@ namespace ED47.BusinessAccessLayer.EF
 
                 item.Delete();
             }
+        }
+
+        public override IEnumerable<string> GetFileExtensionWhiteLists()
+        {
+            var context = BaseUserContext.Instance;
+
+            if (context == null) //This method can be called directly from the HTTP handler so it will use the default Context as defined in App_Start in that case
+                context = BusinessComponent.Kernel.Get<BaseUserContext>();
+
+            const string cacheKey = "GetFileExtensionWhiteLists";
+            var value = MemoryCache.Default.Get("GetFileExtensionWhiteLists") as IEnumerable<string>;
+
+            if (value == null)
+            {
+                value = context.Repository
+                    .GetAll<Entities.FileExtensionWhiteList, FileExtensionWhiteList>()
+                    .Select(el => el.Extension.ToLowerInvariant());
+
+                MemoryCache.Default.Add(new CacheItem(cacheKey, value), new CacheItemPolicy {SlidingExpiration = TimeSpan.FromMinutes(20)});
+            }
+
+            return value;
         }
 
         public IFile Upload(string businessKey, int groupId = 0)
