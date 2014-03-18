@@ -187,6 +187,11 @@
     <Compile Include="File\LocalFileStorage.cs" />
     <Compile Include="IBusinessEntity.cs" />
     <Compile Include="IGenericRepositoryManager.cs" />
+    <Compile Include="File\FileRepository.cs" />
+    <Compile Include="File\IFileRepository.cs" />
+    <Compile Include="File\IFileStorage.cs" />
+    <Compile Include="File\LocalFileStorage.cs" />
+    <Compile Include="IBusinessEntity.cs" />
     <Compile Include="IntKey.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="IUnitOfWork.cs" />
