@@ -2,12 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security.Principal;
-using System.Web;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.Stack.Web;
 using Ninject;
 
-namespace ED47.BusinessAccessLayer.EF
+namespace ED47.BusinessAccessLayer.File
 {
 	public class File : BusinessEntity, IFile
 	{
@@ -30,38 +29,40 @@ namespace ED47.BusinessAccessLayer.EF
 
 		public virtual Guid Guid { get; set; }
 		public virtual string MimeType { get; set; }
-		internal static readonly IFileRepository FileRepository = BusinessComponent.Kernel.Get<IFileRepository>();
+		
+		internal static readonly IFileStorage Storage = BusinessComponent.Kernel.Get<IFileStorage>();
 
 		public virtual bool Encrypted { get; set; }
 
-        public virtual DateTime CreationDate { get; set; }
+		public virtual DateTime CreationDate { get; set; }
 		
 		private string _Url;
 		public string Url
 		{
-            get { return _Url ?? (_Url = FileRepository.GetUrl(this)); }
+			get { return _Url ?? (_Url = GetUrl(this)); }
+		}
+
+		/// <summary>
+		/// Gets the download URL for a file.
+		/// </summary>
+		/// <param name="file">The file reference.</param>
+		/// <param name="specificVersion">If true, a specific version is fetched [default]. If false, latest version will be downloaded.</param>
+		/// <returns>The URL to download the file.</returns>
+		private static string GetUrl(IFile file, bool specificVersion = true)
+		{
+			if (specificVersion)
+				return String.Format("/fileRepository.axd?id={0}&token={1}", file.Id, file.Guid);
+			return String.Format("/fileRepository.axd?key={0}&token={1}", file.BusinessKey, file.Guid);
 		}
 
 		public void Write(string content)
 		{
-			using (var s = OpenWrite())
-			{
-				if (s == null) return;
-				var sw = new StreamWriter(s);
-				sw.Write(content);
-				sw.Close();
-				s.Flush();
-			}
+			Storage.Write(this,content);
 		}
 
 		public string ReadText(bool addView = true)
 		{
-			using (var s = OpenRead(addView))
-			{
-				if (s == null) return "";
-				var sr = new StreamReader(s);
-				return sr.ReadToEnd();
-			}
+			return Storage.ReadText(this);
 		}
 
 		/// <summary>
@@ -71,35 +72,12 @@ namespace ED47.BusinessAccessLayer.EF
 		/// <returns>[True] if the content has been copied else [False]</returns>
 		public bool CopyTo(Stream destination)
 		{
-			using (var s = OpenRead())
-			{
-				if (s != null)
-				{
-					s.CopyTo(destination);
-					return true;
-				}
-				return false;
-			}
+			return Storage.CopyTo(this, destination);
 		}
 
 
-		/// <summary>
-		/// Copy the content of the file into the destination stream.
-		/// </summary>
-		/// <param name="destination">The destination stream.</param>
-		/// <returns>[True] if the content has been copied else [False]</returns>
-		public bool CopyTo(FileInfo destination)
-		{
-			using (var s = OpenRead())
-			{
-				if (s != null)
-				{
-					s.CopyTo(destination.OpenWrite());
-					return true;
-				}
-				return false;
-			}
-		}
+	
+	   
 
 		/// <summary>
 		/// Open a stream on the file
@@ -108,15 +86,7 @@ namespace ED47.BusinessAccessLayer.EF
 		/// <returns></returns>
 		public Stream OpenRead(bool addView = false)
 		{
-			HttpContext context = HttpContext.Current;
-
-			if (context != null && addView)
-				AddView(context.User, context.Request.UserHostAddress);
-
-			if (Encrypted)
-				return Cryptography.Decrypt(FileRepository.OpenRead(this), KeyHash);
-
-			return FileRepository.OpenRead(this);
+			return Storage.OpenRead(this);
 		}
 
 		public string KeyHash { get; set; }
@@ -131,7 +101,7 @@ namespace ED47.BusinessAccessLayer.EF
 			if (Encrypted)
 			{
 				string keyHash;
-				var stream = Cryptography.Encrypt(FileRepository.OpenWrite(this), out keyHash);
+				var stream = Cryptography.Encrypt(Storage.OpenWrite(this), out keyHash);
 				KeyHash = keyHash;
 				Save();
 				BaseUserContext.Instance.Commit();
@@ -139,8 +109,13 @@ namespace ED47.BusinessAccessLayer.EF
 				return stream;
 			}
 
-			return FileRepository.OpenWrite(this);
+			return Storage.OpenWrite(this);
 		}
+
+        public Stream Open()
+        {
+            return Storage.Open(this);
+        }
 
 		private void Save()
 		{
@@ -167,15 +142,15 @@ namespace ED47.BusinessAccessLayer.EF
 			}
 		}
 
-        public void Write(Stream stream)
-        {
-            using (var s = OpenWrite())
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.CopyTo(s);
-                s.Flush();
-            }
-        }
+		public void Write(Stream stream)
+		{
+			using (var s = OpenWrite())
+			{
+				stream.Seek(0, SeekOrigin.Begin);
+				stream.CopyTo(s);
+				s.Flush();
+			}
+		}
 
 		/// <summary>
 		/// Gets the mime type of the file.

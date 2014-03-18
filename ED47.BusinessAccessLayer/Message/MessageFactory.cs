@@ -175,7 +175,7 @@ namespace ED47.BusinessAccessLayer.Message
        
         public void AddAttachment(string filename, bool requireLogin = false)
         {
-            if(!File.Exists(filename)) return;
+            if (!System.IO.File.Exists(filename)) return;
 
             var f = FileRepositoryFactory.Default.CreateNewFile(Path.GetFileName(filename), "Attachment", 0, requireLogin);
 

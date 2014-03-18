@@ -68,6 +68,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.Id == id);
         }
 
+        public static FileBoxItem Get(int fileId, int fileBoxId)
+        {
+            return BaseUserContext.Instance.Repository.Where<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileId == fileId && el.FileBoxId == fileBoxId).FirstOrDefault();
+        }
+
         public void Delete()
         {
             BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);

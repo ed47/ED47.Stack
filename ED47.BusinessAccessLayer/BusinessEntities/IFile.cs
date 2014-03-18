@@ -28,10 +28,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         string Url { get; }
         string KeyHash { get; set; }
         int Id { get; set; }
+       
+        DateTime CreationDate { get; }
         void Write(string content);
         string ReadText(bool addView = true);
-        DateTime CreationDate { get; }
-        
         /// <summary>
         /// Copy the content of the file into the destination stream.
         /// </summary>
@@ -39,12 +39,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <returns>[True] if the content has been copied else [False]</returns>
         bool CopyTo(Stream destination);
 
-        /// <summary>
-        /// Copy the content of the file into the destination stream.
-        /// </summary>
-        /// <param name="destination">The destination stream.</param>
-        /// <returns>[True] if the content has been copied else [False]</returns>
-        bool CopyTo(FileInfo destination);
+       
 
         /// <summary>
         /// Open a stream on the file
@@ -59,6 +54,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// </summary>
         /// <returns>The stream</returns>
         Stream OpenWrite();
+
+        Stream Open();
 
         /// <summary>
         /// Writes the specified disk file into the repository file.
