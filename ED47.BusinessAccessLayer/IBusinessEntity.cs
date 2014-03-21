@@ -35,5 +35,7 @@ namespace ED47.BusinessAccessLayer
         ///   Inits this instance. This method is executed after the database load and instance creation.
         /// </summary>
         void Init();
+
+        IDictionary<string, object> GetAllChanges();
     }
 }
