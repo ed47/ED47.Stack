@@ -588,10 +588,19 @@ namespace ED47.Stack.Web.Template
             var tplName = args[0].ToString().ToLower();
             if (args.Length == 1)
             {
+                Template t = null;
                 if (Templates.ContainsKey(tplName) && File.Exists(Templates[tplName]))
                 {
-                    var t = new Template(File.ReadAllText(Templates[tplName]));
+                    t = new Template(File.ReadAllText(Templates[tplName]));
 
+                }
+                else
+                {
+                    t = Get(tplName);
+                }
+
+                if (t != null)
+                {
                     InitChildTemplate(t);
                     return t.Apply(Current);
                 }
@@ -600,9 +609,19 @@ namespace ED47.Stack.Web.Template
             {
                 var target = args[1];
 
+                Template t = null;
+
                 if (Templates.ContainsKey(tplName) && File.Exists(Templates[tplName]))
                 {
-                    var t = new Template(File.ReadAllText(Templates[tplName]));
+                    t = new Template(File.ReadAllText(Templates[tplName]));
+                }
+                else
+                {
+                    t = Get(tplName);
+                }
+
+                if (t != null)
+                {
                     InitChildTemplate(t);
                     return t.Apply(target);
                 }
