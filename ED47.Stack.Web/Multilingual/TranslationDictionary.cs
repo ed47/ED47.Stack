@@ -41,7 +41,11 @@ namespace ED47.Stack.Web.Multilingual
 
             if (Fallback != null && Fallback != this) return Fallback.GetValue(key, args);
 
-            return Multilingual.Repository.DefaultDictionnary.GetValue(key, args);
+            if (Multilingual.Repository.DefaultDictionnary != this)
+                return Multilingual.Repository.DefaultDictionnary.GetValue(key, args);
+
+            return String.Format("[{0}]", key);
+
         }
 
         public ITranslationEntry GetEntry(string key)
