@@ -9,11 +9,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 {
     public class FileBox : BusinessEntity
     {
-      public int Id { get; set; }
+        public int Id { get; set; }
 
         [MaxLength(250)]
         public virtual string ParentTypeName { get; set; }
-        
+
+        [MaxLength(500)]
+        public virtual string Path { get; set; }
+
         /// <summary>
         /// Property used to construct Where clause in business repository.
         /// </summary>
@@ -25,15 +28,20 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 return e => !e.IsDeleted;
             }
         }
-        
+
         public static FileBox Get(int id)
         {
             return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.FileBox, FileBox>(el => el.Id == id);
         }
 
-        public static FileBox CreateNew(string parentTypeName)
+        public static FileBox CreateNew(string parentTypeName, string path = null)
         {
-            var fileBox = new FileBox { ParentTypeName = parentTypeName };
+            var fileBox = new FileBox
+            {
+                ParentTypeName = parentTypeName,
+                Path = path
+            };
+
             BaseUserContext.Instance.Repository.Add<BusinessAccessLayer.Entities.FileBox, FileBox>(fileBox);
             return fileBox;
         }
@@ -57,7 +65,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true)
         {
-            if(file == null || file.ContentLength == 0)
+            if (file == null || file.ContentLength == 0)
                 return null;
 
             if (!FileRepositoryFactory.Default.CheckIsSafe(file.FileName))
@@ -77,6 +85,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public FileBoxItem AddFile(IFile file, string comment = null)
         {
             return FileBoxItem.CreateNew(Id, file, comment);
+        }
+
+        public void Save()
+        {
+            BaseUserContext.Instance.Repository.Update<BusinessAccessLayer.Entities.FileBox, FileBox>(this);
         }
     }
 }
