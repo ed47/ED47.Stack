@@ -55,6 +55,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <returns>The stream</returns>
         Stream OpenWrite();
 
+        Stream Open();
+
         /// <summary>
         /// Writes the specified disk file into the repository file.
         /// </summary>

@@ -80,6 +80,13 @@ namespace ED47.BusinessAccessLayer.File
             return fi.OpenWrite();
         }
 
+        public Stream Open(IFile file)
+        {
+            var fi = GetFileInfo(file);
+
+            return fi.Open(FileMode.Open, FileAccess.ReadWrite);
+        }
+
         public void Write(IFile file, Stream stream)
         {
             var fi = GetFileInfo(file);

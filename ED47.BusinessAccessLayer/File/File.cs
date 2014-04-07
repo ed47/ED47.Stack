@@ -112,6 +112,11 @@ namespace ED47.BusinessAccessLayer.File
 			return Storage.OpenWrite(this);
 		}
 
+        public Stream Open()
+        {
+            return Storage.Open(this);
+        }
+
 		private void Save()
 		{
 			BaseUserContext.Instance.Repository.Update<Entities.File, File>(this);

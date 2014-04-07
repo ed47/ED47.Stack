@@ -54,5 +54,10 @@ namespace ED47.BusinessAccessLayer.Azure
                 stream.CopyTo(s);
             }
         }
+
+        public Stream Open(IFile file)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

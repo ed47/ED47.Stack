@@ -30,5 +30,6 @@ namespace ED47.BusinessAccessLayer.File
 
 
         void Write(IFile file, Stream stream);
+        Stream Open(IFile file);
     }
 }
