@@ -36,7 +36,6 @@ namespace ED47.BusinessAccessLayer
             {
                 Transaction.Rollback();
                 Transaction.Dispose();
-                throw new ApplicationException("UnitOfWork disposed with pending transaction! Either call Commit() or Rollback() before disposing!");
             }
         }
 
