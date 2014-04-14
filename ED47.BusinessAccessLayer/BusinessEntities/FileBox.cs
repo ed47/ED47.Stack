@@ -91,5 +91,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             BaseUserContext.Instance.Repository.Update<BusinessAccessLayer.Entities.FileBox, FileBox>(this);
         }
+
+        public static IEnumerable<FileBox> Get(string root)
+        {
+            return BaseUserContext.Instance.Repository.Where<Entities.FileBox, FileBox>(el => !el.IsDeleted && el.Path.StartsWith(root));
+        }
     }
 }
