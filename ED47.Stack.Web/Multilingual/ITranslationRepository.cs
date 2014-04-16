@@ -20,6 +20,8 @@ namespace ED47.Stack.Web.Multilingual
         /// </summary>
         void UpdateEntry(string language, string key, string value, object attributes = null);
 
+        void DeleteEntry(string lan, string key);
+
         string GetCurrentTranslation(string key, params object[] args);
 
         /// <summary>

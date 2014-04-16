@@ -26,14 +26,21 @@ namespace ED47.BusinessAccessLayer.Multilingual
                     for (var j = 2; j <= sheet.Dimension.End.Column; j++)
                     {
                         var title = sheet.Cells[2, j].GetValue<string>();
-                        if (String.IsNullOrEmpty(title)) continue;
+                        if (String.IsNullOrEmpty(title)) 
+                            continue;
 
                         if (title.EndsWith(" new"))
                         {
                             var lan = title.Substring(0, title.Length - 4);
                             var value = sheet.Cells[i, j].GetValue<string>();
-                            if (String.IsNullOrWhiteSpace(value)) continue;
-                            Stack.Web.Multilingual.Multilingual.UpdateEntry(lan, key, value);
+
+                            if (String.IsNullOrWhiteSpace(value))
+                                continue;
+
+                            if(value.Trim() == "$NULL")
+                                Stack.Web.Multilingual.Multilingual.DeleteEntry(lan, key);
+                            else
+                                Stack.Web.Multilingual.Multilingual.UpdateEntry(lan, key, value);
                         }
                     }
                 }

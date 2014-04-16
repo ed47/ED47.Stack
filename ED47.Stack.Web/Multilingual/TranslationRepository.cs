@@ -169,7 +169,8 @@ namespace ED47.Stack.Web.Multilingual
         public void UpdateEntry(string language, string key, string value, object attributes = null)
         {
             var dictionary = GetDictionary(language);
-            if (dictionary == null)
+            var rootKey = key.Split('.').First();
+            if (dictionary == null || dictionary.Keys.All(el => el.Split('.').First() != rootKey))
             {
                 var file = CreateFile(key, language);
                 var languageDictionary = AddLanguage(language);
@@ -178,6 +179,15 @@ namespace ED47.Stack.Web.Multilingual
             }
 
             dictionary.UpdateEntry(key, value, null, attributes);
+        }
+
+        public void DeleteEntry(string language, string key)
+        {
+            var dictionary = GetDictionary(language);
+            if (dictionary == null)
+                return;
+
+            dictionary.RemoveEntry(key);
         }
 
         public string GetCurrentTranslation(string key, params object[] args)

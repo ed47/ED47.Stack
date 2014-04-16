@@ -23,6 +23,11 @@ namespace ED47.Stack.Web.Multilingual
             Repository.UpdateEntry(language, key, value, attributes);
         }
 
+        public static void DeleteEntry(string language, string key)
+        {
+            Repository.DeleteEntry(language, key);
+        }
+
         private static ITranslationRepository _translations;
         public static ITranslationRepository Repository
         {

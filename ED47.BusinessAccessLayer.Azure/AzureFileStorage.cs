@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ED47.BusinessAccessLayer.BusinessEntities;
+using ED47.BusinessAccessLayer.File;
 
 namespace ED47.BusinessAccessLayer.Azure
 {
@@ -57,6 +53,11 @@ namespace ED47.BusinessAccessLayer.Azure
             {
                 stream.CopyTo(s);
             }
+        }
+
+        public Stream Open(IFile file)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

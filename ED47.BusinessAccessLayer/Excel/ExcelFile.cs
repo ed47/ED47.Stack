@@ -106,7 +106,7 @@ namespace ED47.BusinessAccessLayer.Excel
             Write(file);
             var f = FileRepositoryFactory.Default.CreateNewFile(name, businessKey, 0);
             f.Write(file);
-            File.Delete(file.FullName);
+            System.IO.File.Delete(file.FullName);
             return f;
         }
 

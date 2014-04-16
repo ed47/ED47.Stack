@@ -22,6 +22,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public static void AddNotifier(CommentNotifier notifier)
         {
+            if (Notifiers.Any(el => el.Guid == notifier.Guid))
+                return;
+
             Notifiers.Add(notifier);
         }
 

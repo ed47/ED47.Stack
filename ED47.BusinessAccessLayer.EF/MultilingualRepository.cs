@@ -131,6 +131,14 @@ namespace ED47.BusinessAccessLayer.EF
             }
         }
 
+        public void Remove(IMultilingual multilingual)
+        {
+            if (multilingual == null)
+                return;
+
+            multilingual.Delete();
+        }
+
         public IMultilingual Find(string key, string propertyName, string languageIsoCode)
         {
             return BaseUserContext.Instance.Repository

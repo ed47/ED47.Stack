@@ -47,6 +47,13 @@ namespace ED47.BusinessAccessLayer.Multilingual
                                 Text = value
                             };
 
+                            if (value.Trim() == "$NULL")
+                            {
+                                entry.Delete();
+                                
+                                continue;
+                            }
+
                             multilinguals.Add(entry);
                         }
                     }

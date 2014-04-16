@@ -7,5 +7,6 @@ namespace ED47.Stack.Web.Multilingual
         TranslationFile File { get; set; }
         string Value { get; set; }
         void Update(string value, object attributes = null);
+        void Delete();
     }
 }
