@@ -7,7 +7,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
     {
         public String Regex { get; set; }
         public Action<Comment, Match, CommentActionType> Action { get; set; }
+        public string Guid { get; set; }
 
+        public CommentNotifier()
+        {
+            Guid = System.Guid.NewGuid().ToString();
+        }
 
         public bool TryNotify(Comment comment, CommentActionType actionType)
         {
