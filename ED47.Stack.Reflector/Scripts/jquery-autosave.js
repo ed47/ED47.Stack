@@ -51,7 +51,7 @@
             me.setupOnChange(form);
             me.setupSubmit(form);
             
-            form.find("select, textarea").on("change", function() {
+            form.find("select, textarea, input[type=text]").on("change", function() {
                 if ($(this).parents(".autosave-ignore").length > 0) {
                     return;
                 }
@@ -61,7 +61,7 @@
         },
         
         setupOnChange: function(form) {
-            form.find("select, textarea").on("change", function() {
+            form.find("select, textarea, input[type=text]").on("change", function () {
                 if ($(this).parents(".autosave-ignore").length > 0) {
                     return;
                 }

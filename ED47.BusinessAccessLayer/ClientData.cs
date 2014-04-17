@@ -28,7 +28,7 @@ namespace ED47.BusinessAccessLayer
             return WriteTo(result,whiteList);
         }
 
-        public TBusinessEntity WriteTo<TBusinessEntity>(TBusinessEntity target, string[] whiteList = null) where TBusinessEntity : new()
+        public TBusinessEntity WriteTo<TBusinessEntity>(TBusinessEntity target, string[] whiteList = null)
         {
             var filter = this as Dictionary<string,object>;
             if(whiteList != null)
