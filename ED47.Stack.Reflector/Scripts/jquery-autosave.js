@@ -83,6 +83,11 @@
                 update[data.attr("name")] = data.val();
                 update.Id = form.find("[name='Id']").val();
 
+                form.find("input[autosaveval=true]").each(function() {
+                    var extraItem = $(this);
+                    update[extraItem.attr("name")] = $(this).val();
+                });
+
                 $.ajax({
                     url: form.attr("action"),
                     dataType: "json",
