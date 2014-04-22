@@ -96,6 +96,7 @@ namespace ED47.BusinessAccessLayer.Excel
                 
                 excelPackage.SaveAs(stream);
                 excelPackage.Package.Close();
+                stream.Flush();
             }
         }
 
@@ -127,6 +128,7 @@ namespace ED47.BusinessAccessLayer.Excel
             {
                 Write(fileStream);
                 fileStream.Flush();
+                fileStream.Close();
             }
 
             return file;
