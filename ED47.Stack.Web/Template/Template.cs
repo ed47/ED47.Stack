@@ -678,13 +678,6 @@ namespace ED47.Stack.Web.Template
             return Types.ContainsKey(property) ? Types[property] : null;
         }
 
-        /*
-                private object GetPropertyValue(object obj, string property)
-                {
-                    return GetPropertyValue(this, obj, property);
-                }
-        */
-
         internal static object GetValue(Template t, object obj, string ident)
         {
             if (ident == "this" || ident == "." || ident == "values")
