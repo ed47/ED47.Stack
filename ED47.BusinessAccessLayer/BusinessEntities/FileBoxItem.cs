@@ -36,6 +36,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             get { return _File ?? (_File = FileRepositoryFactory.Default.Get(FileId)); }
         }
 
+        public string CreatorUsername { get; set; }
+
         public static IEnumerable<FileBoxItem> GetByFileBoxId(int id)
         {
             return BaseUserContext.Instance.Repository
