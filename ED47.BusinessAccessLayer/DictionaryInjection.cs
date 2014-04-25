@@ -67,10 +67,18 @@ namespace ED47.BusinessAccessLayer
                         continue;
 
                     var values = ((string) value).Split(',');
+                    var collectionType = targetProp.PropertyType.GetGenericArguments().First();
 
-                    foreach (var collectionValues in values)
+                    foreach (var collectionValue in values)
                     {
-                        targetProp.PropertyType.GetMethod("Add").Invoke(targetProp.GetValue(target), new object[] { collectionValues });   
+                        object convertedValue = collectionValue;
+
+                        if (collectionType != typeof (string))
+                        {
+                            convertedValue = Convert.ChangeType(convertedValue, collectionType);
+                        }
+
+                        targetProp.PropertyType.GetMethod("Add").Invoke(targetProp.GetValue(target), new object[] { convertedValue });   
                     }
                     
                     continue;
