@@ -27,7 +27,12 @@ public static class CouchbaseManager
        conf.Urls.Add(new Uri("http://127.0.0.1:8091/pools"));*/
        
 //       _instance = new CouchbaseClient((CouchbaseClientSection)ConfigurationManager.GetSection("couchbase"));
+#if DEBUG
        _instance = new CouchbaseClient("couchbase"); // TODO: change to config section
+#endif
+#if !DEBUG
+       _instance = new CouchbaseClient("couchbaseProd"); // TODO: change to config section
+#endif
    }
 
    public static CouchbaseClient Instance { get { return _instance; } }
