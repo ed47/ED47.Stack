@@ -30,6 +30,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         int Id { get; set; }
        
         DateTime CreationDate { get; }
+        string CreatorUsername { get; set; }
         void Write(string content);
         string ReadText(bool addView = true);
         /// <summary>

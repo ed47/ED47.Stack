@@ -35,8 +35,11 @@ namespace ED47.BusinessAccessLayer.File
 		public virtual bool Encrypted { get; set; }
 
 		public virtual DateTime CreationDate { get; set; }
-		
-		private string _Url;
+
+        [MaxLength(200)]
+        public virtual string CreatorUsername { get; set; }
+
+	    private string _Url;
 		public string Url
 		{
 			get { return _Url ?? (_Url = GetUrl(this)); }
