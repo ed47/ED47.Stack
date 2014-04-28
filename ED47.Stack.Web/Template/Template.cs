@@ -552,12 +552,18 @@ namespace ED47.Stack.Web.Template
             if (args.Length != 2)
                 return "false";
 
-            if (args[0] is string || args[1] is string)
+            var s1 = args[0] ; 
+            var s2 = args[1] ;
+
+            if ((s1 == null && s2 != null) || (s1 != null && s2 == null))
+                return "false";
+
+            if (s1 is string || s2 is string)
             {
-                return args[0].ToString() == args[1].ToString() ? "true" : "false";
+                return s1.ToString() == s2.ToString() ? "true" : "false";
             }
 
-            return args[0] == args[1] ? "true" : "false";
+            return s1 == s2 ? "true" : "false";
         }
 
         private static string IsNotEqual(object[] args)
