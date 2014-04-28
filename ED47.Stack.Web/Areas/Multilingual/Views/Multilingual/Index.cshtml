@@ -33,7 +33,9 @@
         window.fields = $("textarea");
         window.keys = $("input[type=hidden][name=key]");
 
-        window.fields.autoGrow();
+        if (window.fields.autoGrow)
+            window.fields.autoGrow();
+        
         $("input[type=submit]").hide();
 
         $(document).on("keydown", "textarea", function () {
