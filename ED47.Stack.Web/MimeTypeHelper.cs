@@ -204,7 +204,7 @@ namespace ED47.Stack.Web
             if (String.IsNullOrWhiteSpace(fileName)) return "unknown/unknown";
 
             var ext = Path.GetExtension(fileName);
-            if (ext == null) return "unknown/unknown";
+            if (String.IsNullOrEmpty(ext)) return "unknown/unknown";
             ext = ext.Remove(0, 1).ToLowerInvariant();
             if (MimeTypesDictionary.ContainsKey(ext))
             {

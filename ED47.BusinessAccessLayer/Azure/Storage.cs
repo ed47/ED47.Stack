@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace ED47.BusinessAccessLayer.Azure
     public class Storage
     {
         public static CloudStorageAccount StorageAccount = CloudStorageAccount.Parse(
-            CloudConfigurationManager.GetSetting("StorageConnectionString"));
+            CloudConfigurationManager.GetSetting("StorageConnectionString") ?? ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString);
 
 
         public static void DeleteBlob(string container, string blobname)
