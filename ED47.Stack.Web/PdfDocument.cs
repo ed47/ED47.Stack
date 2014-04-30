@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
-using EvoPdf.HtmlToPdf;
 using System.Web;
+using EvoPdf;
 
 namespace ED47.Stack.Web
 {
@@ -65,7 +65,7 @@ namespace ED47.Stack.Web
             this.Content = content;
             
             PdfConverter pdf = new PdfConverter();
-            pdf.LicenseKey = "0vng8uHh8uPi5fLg/OLy4eP84+D86+vr6w==";
+            pdf.LicenseKey = "CoSXhZaWhZaTnIWRi5WFlpSLlJeLnJycnA==";
             pdf.PdfDocumentOptions.PdfPageSize = PdfPageSize.A4;
         
             pdf.PdfDocumentOptions.PdfCompressionLevel = PdfCompressionLevel.Normal;
@@ -74,8 +74,7 @@ namespace ED47.Stack.Web
             pdf.PdfDocumentOptions.FitWidth = false;
             pdf.PdfDocumentOptions.ShowHeader = false;// header != "";
             pdf.PdfDocumentOptions.ShowFooter = false;// footer != "";
-            pdf.AvoidTextBreak = true;
-            pdf.AvoidImageBreak = true;
+            
             _Converter = pdf;
 
 

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>ED47.BusinessAccessLayer.Communicator</id>
+        <version>$version$</version>
+        <authors>ED47</authors>
+        <owners>ED47</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>ED47.BusinessAccessLayer.Communicator</description>
+        <copyright>ED47</copyright>
+        <language>en-GB</language>
+      <tags>stack, communicator, ed47</tags>
+    </metadata>    
+</package>

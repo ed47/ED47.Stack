@@ -33,9 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -43,7 +42,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ED47.Communicator\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -175,16 +174,15 @@
     <EmbeddedResource Include="Scripts\shared-store.js" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\linq.min.js" />
     <EmbeddedResource Include="Scripts\objectdiff.js" />
     <EmbeddedResource Include="Scripts\multilingual-field.js" />
     <EmbeddedResource Include="Scripts\multilingual-form.js" />
     <EmbeddedResource Include="Scripts\tree.js" />
     <EmbeddedResource Include="Scripts\result-grid.js" />
     <EmbeddedResource Include="Scripts\checkColumnn.js" />
-    <Content Include="Scripts\filebox.js" />
+    <EmbeddedResource Include="Scripts\filebox.js" />
     <EmbeddedResource Include="Scripts\jquery-autosave.js" />
-    <Content Include="Scripts\linq-vsdoc.js" />
-    <Content Include="Scripts\linq.min.js" />
     <EmbeddedResource Include="Scripts\tooltiper.js" />
     <EmbeddedResource Include="Scripts\minilinq.js" />
     <EmbeddedResource Include="Scripts\menu.js" />
@@ -199,16 +197,8 @@
     <EmbeddedResource Include="Scripts\button.js" />
     <EmbeddedResource Include="Scripts\form.js" />
     <EmbeddedResource Include="Scripts\toolbar.js" />
-    <EmbeddedResource Include="Scripts\linq.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
