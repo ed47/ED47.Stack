@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Web.Http;
 using System.Web.Mvc;
 using ED47.Stack.Reflector.Attributes;
 using ED47.Stack.Reflector.Metadata;
@@ -89,7 +90,7 @@ namespace ED47.Stack.Reflector
                 var assembly = Assembly.Load(assemblyName);
                 return assembly
                     .GetTypes()
-                    .Where(t => t.IsSubclassOf(typeof(System.Web.Http.ApiController))||t.IsSubclassOf(typeof(Controller)))
+                    .Where(t => t.IsSubclassOf(typeof(ApiController))||t.IsSubclassOf(typeof(Controller)))
                     .Select(t => new ControllerItem
                                      {
                                          Kind = t.IsSubclassOf(typeof(System.Web.Http.ApiController)) ? ControllerKind.Api : ControllerKind.Mvc, 

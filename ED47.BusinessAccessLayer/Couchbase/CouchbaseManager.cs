@@ -1,8 +1,4 @@
-﻿using System;
-using System.Configuration;
-using Couchbase;
-using Couchbase.Configuration;
-using Couchbase.Management;
+﻿using Couchbase;
 
 namespace ED47.BusinessAccessLayer.Couchbase
 {
