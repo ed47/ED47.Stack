@@ -49,12 +49,12 @@
       <SpecificVersion>True</SpecificVersion>
       <HintPath>..\..\packages\CouchbaseNetClient.1.3.0\lib\net40\Couchbase.dll</HintPath>
     </Reference>
-    <Reference Include="ED47.Stack.Reflector">
-      <HintPath>..\packages\ED47.Stack.Reflector.Communicator.1.0.5233.22898\lib\net40\ED47.Stack.Reflector.dll</HintPath>
-    </Reference>
-    <Reference Include="ED47.Stack.Web, Version=1.0.5233.24827, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ED47.Stack.Reflector, Version=1.0.5234.17763, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ED47.Stack.Web.Communicator.1.0.5233.24827\lib\net40\ED47.Stack.Web.dll</HintPath>
+      <HintPath>..\packages\ED47.Stack.Reflector.Communicator.1.0.5234.17763\lib\net40\ED47.Stack.Reflector.dll</HintPath>
+    </Reference>
+    <Reference Include="ED47.Stack.Web">
+      <HintPath>..\..\ED47.Services\packages\ED47.Stack.Web.Communicator.1.0.5233.24827\lib\net40\ED47.Stack.Web.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
@@ -340,10 +340,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
-    <Content Include="Scripts\filebox.js" />
-    <Content Include="Scripts\linq-vsdoc.js" />
-    <Content Include="Scripts\linq.js" />
-    <Content Include="Scripts\linq.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
