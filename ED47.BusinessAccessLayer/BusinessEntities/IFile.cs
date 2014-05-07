@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security.Principal;
+using System.Web;
 using ED47.Stack.Reflector.Attributes;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
@@ -78,5 +79,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         /// <param name="viewer">The viewer.</param>
         /// <param name="viewerAddress">The IP address of the viewer.</param>
         void AddView(IPrincipal viewer, string viewerAddress = null);
+
+        IFile Duplicate();
     }
 }

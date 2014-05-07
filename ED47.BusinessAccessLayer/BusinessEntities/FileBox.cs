@@ -7,7 +7,7 @@ using System.Web;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
-    public class FileBox : BusinessEntity
+    public class FileBox : BusinessEntity, IFileBox
     {
         public int Id { get; set; }
 

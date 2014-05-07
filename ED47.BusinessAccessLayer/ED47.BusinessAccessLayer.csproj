@@ -125,6 +125,7 @@
     <Compile Include="BusinessEntities\CommentDiscussion.cs" />
     <Compile Include="BusinessEntities\IEmail.cs" />
     <Compile Include="BusinessEntities\IFile.cs" />
+    <Compile Include="BusinessEntities\IFileBox.cs" />
     <Compile Include="BusinessEntityHelper.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="FileRepositoryFactory.cs" />
     <Compile Include="FileRepositoryHandler.cs" />
     <Compile Include="File\File.cs" />
+    <Compile Include="File\FileExtensions.cs" />
     <Compile Include="File\FileExtensionWhiteList.cs" />
     <Compile Include="File\FileSecurity.cs" />
     <Compile Include="File\IFileStorage.cs" />
