@@ -22,10 +22,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public static void AddNotifier(CommentNotifier notifier)
         {
-            if (Notifiers.Any(el => el.Guid == notifier.Guid))
-                return;
+            lock (Notifiers)
+            {
+                if (Notifiers.Any(el => el.Guid == notifier.Guid))
+                    return;
 
-            Notifiers.Add(notifier);
+                Notifiers.Add(notifier);
+            }
         }
 
         public virtual int Id { get; set; }
