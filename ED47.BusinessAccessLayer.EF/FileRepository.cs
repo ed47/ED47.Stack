@@ -7,6 +7,7 @@ using System.Web;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.File;
 using ED47.Stack.Web;
+using Newtonsoft.Json;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.EF
@@ -35,7 +36,7 @@ namespace ED47.BusinessAccessLayer.EF
         /// <param name="encrypted">Pass <c>True</c> to encrypt the file on disk.</param>
         /// <param name="fileBoxId">The optional filebox Id to put this file in.</param>
         /// <returns></returns>
-        public override IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false, int? fileBoxId = null)
+        public override IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true, string langId = null, bool encrypted = false, int? fileBoxId = null, string metadata = null)
         {
             var previous = GetFileByKey(businessKey);
             var version = previous != null ? previous.Version + 1 : 1;
@@ -49,7 +50,8 @@ namespace ED47.BusinessAccessLayer.EF
                 LoginRequired = requiresLogin,
                 Lang = langId,
                 GroupId = groupId.GetValueOrDefault(0),
-                Encrypted = encrypted
+                Encrypted = encrypted,
+                Metadata = metadata
             };
             BaseUserContext.Instance.Repository.Add<Entities.File, File.File>(file);
 

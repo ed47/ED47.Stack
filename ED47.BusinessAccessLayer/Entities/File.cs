@@ -29,8 +29,7 @@ namespace ED47.BusinessAccessLayer.Entities
         public virtual bool Encrypted { get; set; }
 
         public string KeyHash { get; set; }
-
-        [JsonDataField]
+        
         public string Metadata { get; set; }
     }
 }

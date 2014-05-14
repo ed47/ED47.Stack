@@ -6,12 +6,12 @@ namespace ED47.BusinessAccessLayer
     public static class FileRepository
     {
         public static IFile CreateNewFile(string name, string businessKey, int? groupId = 0, bool requiresLogin = true,
-            string langId = null, bool encrypted = false, int? fileBoxId = null)
+            string langId = null, bool encrypted = false, int? fileBoxId = null, dynamic metadata = null)
         {
             if (!FileRepositoryFactory.Default.CheckIsSafe(name))
                 return null;
 
-            return FileRepositoryFactory.Default.CreateNewFile(name, businessKey, groupId, requiresLogin, langId, encrypted, fileBoxId);
+            return FileRepositoryFactory.Default.CreateNewFile(name, businessKey, groupId, requiresLogin, langId, encrypted, fileBoxId, metadata: metadata);
         }
 
         public static void RemoveFile(int id, int? fileBoxid = null)

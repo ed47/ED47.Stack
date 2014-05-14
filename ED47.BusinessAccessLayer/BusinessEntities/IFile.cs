@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Principal;
 using System.Web;
 using ED47.Stack.Reflector.Attributes;
+using Newtonsoft.Json;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
@@ -32,6 +33,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
        
         DateTime CreationDate { get; }
         string CreatorUsername { get; set; }
+        string Metadata { get; }
         void Write(string content);
         string ReadText(bool addView = true);
         /// <summary>
@@ -81,5 +83,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         void AddView(IPrincipal viewer, string viewerAddress = null);
 
         IFile Duplicate();
+        string GetMetadataViewName();
+        dynamic GetMetadata();
     }
 }

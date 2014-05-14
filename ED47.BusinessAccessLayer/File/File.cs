@@ -2,8 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security.Principal;
+using System.Web.Helpers;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.Stack.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.File
@@ -93,6 +96,30 @@ namespace ED47.BusinessAccessLayer.File
         }
 
         public string KeyHash { get; set; }
+
+        public string Metadata
+        {
+            get; set;
+        }
+
+        public string GetMetadataViewName()
+        {
+            if (Metadata == null)
+            {
+                return null;
+            }
+            var viewname = JObject.Parse(Metadata)["ViewName"];
+            return viewname!= null ? viewname.Value<string>() : null;
+        }
+
+        public dynamic GetMetadata()
+        {
+            if (Metadata == null)
+            {
+                return null;
+            }
+            return JsonConvert.DeserializeObject(Metadata);
+        }
 
         /// <summary>
         /// Opens a write only stream on the repository file.

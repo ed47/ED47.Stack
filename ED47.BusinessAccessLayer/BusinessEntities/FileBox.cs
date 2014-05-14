@@ -63,7 +63,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return FileBoxItem.GetByFileBoxId(Id);
         }
 
-        public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true)
+        public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true, dynamic metadata = null)
         {
             if (file == null || file.ContentLength == 0)
                 return null;
@@ -74,7 +74,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (!FileRepositoryFactory.Default.CheckIsSafe(file.FileName))
                 return null;
 
-            var newFile = FileRepositoryFactory.Default.CreateNewFile(System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId);
+            var newFile = FileRepository.CreateNewFile(System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId, metadata: metadata);
 
             using (var fileStream = newFile.OpenWrite())
             {
