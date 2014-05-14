@@ -457,7 +457,7 @@ namespace ED47.BusinessAccessLayer.EF
             if (originalEntity == null)
             {
                 var exception = new RepositoryException(Resources.Repository_Update_UpdateFailed_NotFound);
-                exception.Data.Add("Entity Keys", keys);
+                exception.Data.Add("Entity Keys", String.Join(",", keys));
                 throw exception;
             }
 
