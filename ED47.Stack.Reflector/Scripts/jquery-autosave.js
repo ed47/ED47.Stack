@@ -42,31 +42,39 @@
 
             var forms = $(this.element).find("form").addBack("form");
 
-            $.each(forms, function() {
+            $.each(forms, function () {
                 me.setup($(this));
             });
         },
-        setup: function(form) {
+        setup: function (form) {
             var me = this;
             me.setupOnChange(form);
             me.setupSubmit(form);
         },
-        
-        setupOnChange: function(form) {
-            form.find("select, textarea, input[type=text]").on("change", function () {
+
+        setupOnChange: function (form) {
+            form.find("select, textarea, input[type=text], input[type=checkbox]").on("change", function () {
                 if ($(this).parents(".autosave-ignore").length > 0) {
                     return;
                 }
-                
+
                 form.trigger("submit", this);
             });
         },
-        
-        setupSubmit: function(form) {
-            form.submit(function(e, data) {
+
+        setupSubmit: function (form) {
+            form.submit(function (e, data) {
                 e.preventDefault();
                 data = $(data);
                 
+                if (data.attr("type") == "checkbox" && !data.prop("checked")) {
+                    var newValue = $("<input type='hidden'/>");
+                    newValue.val(false);
+                    newValue.prop("name", data.prop("name"));
+
+                    data = newValue;
+                }
+
                 if (data.prop("tagName") === "OPTION") {
                     data = data.closest("select");
                 }
@@ -75,7 +83,7 @@
                 update[data.attr("name")] = data.val();
                 update.Id = form.find("[name='Id']").val();
 
-                form.find("input[autosaveval=true]").each(function() {
+                form.find("input[autosaveval=true]").each(function () {
                     var extraItem = $(this);
                     update[extraItem.attr("name")] = $(this).val();
                 });
@@ -101,20 +109,20 @@
                         }
                     }
 
-                    $.each(data.Validations, function() {
+                    $.each(data.Validations, function () {
                         var validationElement = form.find(".field-validation-valid[data-valmsg-for='" + this.PropertyName + "']");
                         validationElement
                             .removeClass("field-validation-valid")
                             .addClass("field-validation-error")
                             .html(this.ErrorMessage);
                     });
-                    
+
                     form.trigger("autosaved", { form: form, data: data });
                 })
-                .fail(function() {
+                .fail(function () {
                     form.find(".control-group").addClass("error");
                 });
-        });
+            });
         }
     };
 
