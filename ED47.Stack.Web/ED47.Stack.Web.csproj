@@ -53,9 +53,9 @@
     <Reference Include="evohtmltopdf">
       <HintPath>..\Shared\evohtmltopdf.dll</HintPath>
     </Reference>
-    <Reference Include="FluentValidation, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FluentValidation, Version=5.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\FluentValidation.5.2.0.0\lib\Net40\FluentValidation.dll</HintPath>
+      <HintPath>..\..\packages\FluentValidation.5.3.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizationLibrary">
       <HintPath>..\..\packages\AntiXSS.4.2.1\lib\net40\HtmlSanitizationLibrary.dll</HintPath>
