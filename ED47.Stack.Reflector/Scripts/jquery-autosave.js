@@ -94,6 +94,7 @@
                     data: update,
                     type: "POST"
                 }).success(function (data) {
+                    form.find(".success").removeClass("success");
                     form.find(".field-validation-error")
                         .removeClass("field-validation-error")
                         .addClass("field-validation-valid")
@@ -104,13 +105,16 @@
 
                         if (target.length !== 0) {
                             target.val(data.Values[property]);
-                            target.closest(".control-group").addClass("success");
+                            target.closest(".control-group").addClass("success").removeClass("error");
                             form.trigger("autosavepropertyset", { form: form, name: property });
                         }
                     }
 
                     $.each(data.Validations, function () {
+                        var target = form.find("[name=" + this.PropertyName + "]")
                         var validationElement = form.find(".field-validation-valid[data-valmsg-for='" + this.PropertyName + "']");
+                        
+                        target.closest(".control-group").removeClass("success").addClass("error");
                         validationElement
                             .removeClass("field-validation-valid")
                             .addClass("field-validation-error")
