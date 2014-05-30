@@ -99,5 +99,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         {
             return BaseUserContext.Instance.Repository.Where<Entities.FileBox, FileBox>(el => !el.IsDeleted && el.Path.StartsWith(root));
         }
+
+        public void Delete()
+        {
+            BaseUserContext.Instance.Repository.SoftDelete<Entities.FileBox>(Id);
+        }
     }
 }
