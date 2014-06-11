@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Caching;
 using System.Web.Http;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.Multilingual;
@@ -27,8 +26,6 @@ namespace ED47.Stack.TranslatorApi.Controllers
         {
             _multilingualRepository.Upsert(translations);
             _multilingualRepository.Commit();
-
-            MemoryCache.Default.Trim(100);
         }
 
         [HttpPost]
@@ -37,8 +34,6 @@ namespace ED47.Stack.TranslatorApi.Controllers
             var listTemp = new List<Multilingual> { translation };
             _multilingualRepository.Upsert(listTemp);
             _multilingualRepository.Commit();
-
-            MemoryCache.Default.Trim(100);
         }
     }
 }
