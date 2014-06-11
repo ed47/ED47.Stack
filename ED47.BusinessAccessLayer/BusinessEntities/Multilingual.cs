@@ -79,9 +79,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 return new CacheItemPolicy
                 {
-#if !DEBUG
-                    Priority = CacheItemPriority.NotRemovable
-#endif
 #if DEBUG
                     AbsoluteExpiration = DateTime.Now.AddSeconds(10)
 #endif
