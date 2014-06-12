@@ -7,7 +7,6 @@ using System.Web;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.BusinessAccessLayer.File;
 using ED47.Stack.Web;
-using Newtonsoft.Json;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer.EF
