@@ -638,7 +638,7 @@ namespace ED47.Stack.Web.Template
                     return res;
             }
 
-            var pinfo = obj != null ? obj.GetType().GetProperty(property) : null;
+            var pinfo = obj != null ? obj.GetType().GetProperties().FirstOrDefault(el => el.Name == property) : null;
             if (pinfo != null)
             {
                 var value = pinfo.GetValue(obj, null);
