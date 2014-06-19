@@ -23,5 +23,7 @@ namespace ED47.BusinessAccessLayer.Entities
 
         [ForeignKey("FileId")]
         public virtual Entities.File File { get; set; }
+
+        public virtual bool IsPublic { get; set; }
     }
 }

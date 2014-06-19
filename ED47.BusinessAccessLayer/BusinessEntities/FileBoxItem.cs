@@ -28,12 +28,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         private static readonly string[] Includes = new[] { "File" };
 
-        private IFile _File;
+        private IFile _file;
+
+        public bool IsPublic { get; set; }
 
         [JsonIgnore]
         public IFile File
         {
-            get { return _File ?? (_File = FileRepositoryFactory.Default.Get(FileId)); }
+            get { return _file ?? (_file = FileRepositoryFactory.Default.Get(FileId)); }
         }
 
         public string CreatorUsername { get; set; }
@@ -78,6 +80,20 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public void Delete()
         {
             BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
+        }
+
+        public void MakePublic()
+        {
+            IsPublic = true;
+            BaseUserContext.Instance.Repository.Update<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
+
+        }
+
+        public void MakePrivate()
+        {
+            IsPublic = false;
+            BaseUserContext.Instance.Repository.Update<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
+
         }
     }
 }
