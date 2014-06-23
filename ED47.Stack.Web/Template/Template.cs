@@ -231,14 +231,16 @@ namespace ED47.Stack.Web.Template
             {
                 if (templateStream != null)
                 {
-                    var reader = new StreamReader(templateStream);
-                    tpl = new Template(reader.ReadToEnd()) { Name = name, TplType = TemplateType.XTemplate };
-                    var ext = Path.GetExtension(name);
-                    if (ext == ".cshtml")
+                    using (var reader = new StreamReader(templateStream))
                     {
-                        tpl.TplType = TemplateType.Razor;
+                        tpl = new Template(reader.ReadToEnd()) {Name = name, TplType = TemplateType.XTemplate};
+                        var ext = Path.GetExtension(name);
+                        if (ext == ".cshtml")
+                        {
+                            tpl.TplType = TemplateType.Razor;
+                        }
+                        return tpl;
                     }
-                    return tpl;
                 }
             }
 
