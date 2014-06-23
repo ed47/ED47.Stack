@@ -49,7 +49,7 @@ namespace ED47.Stack.Web.Template
 
         public delegate void ChangedEventHandler(object sender, TemplateChangedEventArgs e);
         public static event ChangedEventHandler Changed;
-        
+
         static Template()
         {
             AddStdFunction("isNullOrEmpty", IsNullOrEmpty);
@@ -154,7 +154,7 @@ namespace ED47.Stack.Web.Template
             get { return _templateText; }
             set { _templateText = value; }
         }
-        
+
         public List<TemplateOccurence> Occurences
         {
             get { return _occurrences ?? (_occurrences = Compile(null, TemplateText).ToList()); }
@@ -175,7 +175,14 @@ namespace ED47.Stack.Web.Template
             if (Path.GetExtension(name) == ".cshtml")
                 templateType = TemplateType.Razor;
 
-            return new Template(new StreamReader(stream).ReadToEnd()) { Name = name, TplType = templateType };
+            using (var streamReader = new StreamReader(stream))
+            {
+                return new Template(streamReader.ReadToEnd())
+                {
+                    Name = name,
+                    TplType = templateType
+                };
+            }
         }
 
         /// <summary>
@@ -207,8 +214,7 @@ namespace ED47.Stack.Web.Template
 
             if (Templates.ContainsKey(name) && File.Exists(Templates[name]))
             {
-                tpl = new Template(File.ReadAllText(Templates[name]))
-                          {Name = Templates[name], TplType = TemplateType.XTemplate};
+                tpl = new Template(File.ReadAllText(Templates[name])) { Name = Templates[name], TplType = TemplateType.XTemplate };
 
                 var ext = Path.GetExtension(Templates[name]);
                 if (ext == ".cshtml")
@@ -232,8 +238,11 @@ namespace ED47.Stack.Web.Template
             {
                 if (templateStream != null)
                 {
-                    var reader = new StreamReader(templateStream);
-                    tpl = new Template(reader.ReadToEnd()) { Name = name, TplType = TemplateType.XTemplate };
+                    using (var reader = new StreamReader(templateStream))
+                    {
+                        tpl = new Template(reader.ReadToEnd()) {Name = name, TplType = TemplateType.XTemplate};
+                    }
+
                     var ext = Path.GetExtension(name);
                     if (ext == ".cshtml")
                     {
@@ -257,7 +266,7 @@ namespace ED47.Stack.Web.Template
         public static void Register(string tplName, string filename)
         {
             tplName = tplName.ToLowerInvariant();
-                
+
             if (Templates.ContainsKey(tplName))
             {
                 Templates[tplName] = filename;
@@ -318,7 +327,7 @@ namespace ED47.Stack.Web.Template
 
         private static string Translate(object[] param)
         {
-            
+
             return Multilingual.Multilingual.N2(param[0].ToString(), param[1].ToString(), param.Skip(2).ToArray());
         }
 
@@ -442,7 +451,7 @@ namespace ED47.Stack.Web.Template
             }
 
             var txt = args[0] != null ? args[0].ToString() : String.Empty;
-            var length = Convert.ToInt32(args[1],CultureInfo.InvariantCulture);
+            var length = Convert.ToInt32(args[1], CultureInfo.InvariantCulture);
             if (txt.Length <= length)
                 return txt;
             return txt.Substring(0, length) + "...";
@@ -521,7 +530,7 @@ namespace ED47.Stack.Web.Template
 
             if (args[0] == null)
                 return "false";
-            return Convert.ToString(args[0],CultureInfo.InvariantCulture) == "" ? "false" : "true";
+            return Convert.ToString(args[0], CultureInfo.InvariantCulture) == "" ? "false" : "true";
         }
 
         private static string IsNotNullOrEmpty(object[] args)
@@ -553,7 +562,7 @@ namespace ED47.Stack.Web.Template
 
             if (args[0] == null)
                 return "true";
-            return Convert.ToString(args[0],CultureInfo.InvariantCulture) == "" ? "true" : "false";
+            return Convert.ToString(args[0], CultureInfo.InvariantCulture) == "" ? "true" : "false";
         }
 
         private static string IsEqual(object[] args)
@@ -644,7 +653,7 @@ namespace ED47.Stack.Web.Template
                 var value = pinfo.GetValue(obj, null);
 
                 if (value is String)
-                    value = Encoder.HtmlEncode((string) value);
+                    value = Encoder.HtmlEncode((string)value);
 
                 return value;
             }
@@ -751,7 +760,7 @@ namespace ED47.Stack.Web.Template
                         var mc = new MethodCall
                                      {
                                          Fct =
-                                             Delegate.CreateDelegate(typeof (TemplateFuncDelegate), mf) as
+                                             Delegate.CreateDelegate(typeof(TemplateFuncDelegate), mf) as
                                              TemplateFuncDelegate,
                                          Scope = null
                                      };
@@ -767,7 +776,7 @@ namespace ED47.Stack.Web.Template
                         var mc = new MethodCall
                                      {
                                          Fct =
-                                             Delegate.CreateDelegate(typeof (TemplateFuncDelegate), scope, lastIdent) as
+                                             Delegate.CreateDelegate(typeof(TemplateFuncDelegate), scope, lastIdent) as
                                              TemplateFuncDelegate
                                      };
                         return mc;
@@ -1074,7 +1083,7 @@ namespace ED47.Stack.Web.Template
             }
             return start + res + end;
         }
-        
+
         public string Apply(object o)
         {
             if (TplType == TemplateType.Razor)
@@ -1085,7 +1094,7 @@ namespace ED47.Stack.Web.Template
             IEnumerable list;
             if (!(o is IEnumerable))
             {
-                var list2 = new List<object> {o};
+                var list2 = new List<object> { o };
                 list = list2;
             }
             else
