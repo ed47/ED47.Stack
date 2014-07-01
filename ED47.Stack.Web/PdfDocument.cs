@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using EvoPdf.HtmlToPdf;
+using EvoPdf;
 using System.Web;
 
 namespace ED47.Stack.Web
@@ -25,7 +25,7 @@ namespace ED47.Stack.Web
             {
                 return _Content;
             }
-            set 
+            set
             {
                 _Content = value;
             }
@@ -60,19 +60,17 @@ namespace ED47.Stack.Web
         public PdfDocument(string content)
         {
             this.Content = content;
-            
-            PdfConverter pdf = new PdfConverter();
-            pdf.LicenseKey = "CoSXhZaWhZaTnIWRi5WFlpSLlJeLnJycnA==";
+
+            var pdf = new PdfConverter { LicenseKey = "CoSXhZaWhZaTnIWRi5WFlpSLlJeLnJycnA==" };
             pdf.PdfDocumentOptions.PdfPageSize = PdfPageSize.A4;
-        
+
             pdf.PdfDocumentOptions.PdfCompressionLevel = PdfCompressionLevel.Normal;
 
             pdf.PdfDocumentOptions.PdfPageOrientation = PdfPageOrientation.Portrait;
             pdf.PdfDocumentOptions.FitWidth = false;
             pdf.PdfDocumentOptions.ShowHeader = false;// header != "";
             pdf.PdfDocumentOptions.ShowFooter = false;// footer != "";
-            pdf.AvoidTextBreak = true;
-            pdf.AvoidImageBreak = true;
+
             _Converter = pdf;
 
 
@@ -103,7 +101,7 @@ namespace ED47.Stack.Web
             path = CreateInFile(path);
             this._Filename = path;
             return path;
-            
+
         }
 
 
@@ -112,8 +110,8 @@ namespace ED47.Stack.Web
         /// </summary>
         /// <param name="content">The html content</param>
         /// <returns></returns>
-        public string CreateInFile( string filename)
-        { 
+        public string CreateInFile(string filename)
+        {
             this._Filename = Path.GetDirectoryName(filename) + "\\" + Path.GetFileName(filename);
 
             using (var s = File.Open(_Filename, FileMode.OpenOrCreate))
@@ -129,7 +127,7 @@ namespace ED47.Stack.Web
         /// </summary>
         /// <param name="content">The html content</param>
         /// <param name="s">The stream</param>
-        public  void CreateInStream(Stream s)
+        public void CreateInStream(Stream s)
         {
             byte[] pdfbyte = _Converter.GetPdfBytesFromHtmlString(Content, HttpContext.Current.Request.ApplicationPath);
             s.Write(pdfbyte, 0, pdfbyte.Length);
@@ -145,10 +143,11 @@ namespace ED47.Stack.Web
         //    return res;
         //}
 
-        public void CreateInHttpResponse(string attachName, bool endResponse=false)
+        public void CreateInHttpResponse(string attachName, bool endResponse = false)
         {
             var c = System.Web.HttpContext.Current;
-            if (c != null) {
+            if (c != null)
+            {
                 //CurrentResponse.SetMode(ResponseMode.InStream);
                 byte[] pdfbyte = _Converter.GetPdfBytesFromHtmlString(Content, HttpContext.Current.Request.ApplicationPath);
                 System.Web.HttpResponse response = System.Web.HttpContext.Current.Response;
@@ -158,11 +157,11 @@ namespace ED47.Stack.Web
                 response.Flush();
                 response.BinaryWrite(pdfbyte);
                 response.Flush();
-                
+
                 if (endResponse)
                     response.End();
             }
         }
-        
+
     }
 }
