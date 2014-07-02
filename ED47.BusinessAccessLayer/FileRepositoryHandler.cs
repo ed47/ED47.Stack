@@ -81,7 +81,7 @@ namespace ED47.BusinessAccessLayer
                 if (rs == null)
                     return; 
 
-                context.Response.AddHeader("Content-Disposition", String.Format("filename=\"{0}\";size={1};", file.Name, rs.Length));
+                context.Response.AddHeader("Content-Disposition", String.Format("attachment;filename=\"{0}\";size={1};", file.Name, rs.Length));
 
                 if(rs.CanRead)
                     rs.CopyTo(context.Response.OutputStream);
