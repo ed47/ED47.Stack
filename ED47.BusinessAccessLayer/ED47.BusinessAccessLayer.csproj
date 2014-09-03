@@ -42,6 +42,9 @@
     <Reference Include="Afterthought">
       <HintPath>..\..\packages\Afterthought.1.0.8\lib\Afterthought.dll</HintPath>
     </Reference>
+    <Reference Include="ED47.Settings">
+      <HintPath>..\..\ED47.GrcTool.Web\Bin\ED47.Settings.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>

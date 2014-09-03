@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ED47.Settings;
 using Ninject;
 
 namespace ED47.BusinessAccessLayer
@@ -31,6 +32,12 @@ namespace ED47.BusinessAccessLayer
             _Domains = new List<BusinessDomain>();
         }
 
+        private static ISettingRepository _settingRepository;
+
+        public static ISettingRepository SettingsRepository
+        {
+            get { return _settingRepository ?? (_settingRepository = Kernel.Get<ISettingRepository>()); }
+        }
 
         /// <summary>
         ///   Gets the components registered.
