@@ -76,9 +76,14 @@ namespace ED47.Stack.Web.Template
             AddFunction("inject", Inject);
         }
 
-        public Template(string tplText)
+        public Template(string tplText, bool? allowUnsafe = null)
             : this()
         {
+            if (allowUnsafe.HasValue)
+            {
+                AllowUnsafe = allowUnsafe.Value;
+            }
+
             TemplateText = tplText;
         }
 
