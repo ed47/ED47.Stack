@@ -32,6 +32,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public bool IsPublic { get; set; }
 
+        public  Guid Guid { get; set; }
+
         [JsonIgnore]
         public IFile File
         {
