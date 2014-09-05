@@ -161,6 +161,8 @@ namespace ED47.Stack.Web.Template
             set { _occurrences = value; }
         }
 
+        public bool AllowUnsafe { get; set; }
+
         /// <summary>
         /// Gets a template from a stream.
         /// </summary>
@@ -653,7 +655,12 @@ namespace ED47.Stack.Web.Template
                 var value = pinfo.GetValue(obj, null);
 
                 if (value is String)
-                    value = Encoder.HtmlEncode((string)value);
+                {
+                    if (!t.AllowUnsafe)
+                    {
+                        value = Encoder.HtmlEncode((string) value);
+                    }
+                }
 
                 return value;
             }

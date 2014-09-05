@@ -43,22 +43,30 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public virtual Template GetSubjectTpl()
         {
-            return Subject != null ? new Template(Subject) : Template.Get("Email_" + GetType().Name + "Subject", languageCode: this.LanguageCode);
+            var template = Subject != null ? new Template(Subject) : Template.Get("Email_" + GetType().Name + "Subject", languageCode: this.LanguageCode);
+            template.AllowUnsafe = true;
+            return template;
         }
 
         public virtual Template GetBodyTpl(string languageCode = null)
         {
-            return Body != null ? new Template(Body) : Template.Get("Email_" + GetType().Name + "Body", languageCode: languageCode ?? this.LanguageCode);
+            var template = Body != null ? new Template(Body) : Template.Get("Email_" + GetType().Name + "Body", languageCode: languageCode ?? this.LanguageCode);
+            template.AllowUnsafe = true;
+            return template;
         }
 
         public virtual Template GetHeaderTpl()
         {
-            return Header != null ? new Template(Header) : Template.Get("Email_Header", languageCode: this.LanguageCode);
+            var template = Header != null ? new Template(Header) : Template.Get("Email_Header", languageCode: this.LanguageCode);
+            template.AllowUnsafe = true;
+            return template;
         }
 
         public virtual Template GetFooterTpl()
         {
-            return Header != null ? new Template(Footer) : Template.Get("Email_Footer", languageCode: this.LanguageCode);
+            var template = Header != null ? new Template(Footer) : Template.Get("Email_Footer", languageCode: this.LanguageCode);
+            template.AllowUnsafe = true;
+            return template;
         }
 
         private Email _email;
