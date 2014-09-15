@@ -17,6 +17,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         [MaxLength(500)]
         public virtual string Path { get; set; }
 
+        public Guid Guid { get; set; }
+
         /// <summary>
         /// Property used to construct Where clause in business repository.
         /// </summary>
