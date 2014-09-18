@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ED47.Settings;
+
 using Ninject;
 
 namespace ED47.BusinessAccessLayer
