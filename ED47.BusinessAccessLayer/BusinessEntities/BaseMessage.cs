@@ -81,7 +81,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         private string _cc;
         private string _bcc;
 
-        public string BaseUrl {
+        public string BaseUrl
+        {
             get { return BaseUserContext.ApplicationUrl; }
         }
 
@@ -133,14 +134,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (headerTemplate != null)
                 bodyStringbuilder.Append(headerTemplate.Apply(this) + Email.Body);
 
+
+            tpl = GetBodyTpl(LanguageCode ?? "en");
             bodyStringbuilder.Append(tpl != null ? tpl.Apply(data ?? Data ?? this) : (data != null ? data.ToString() : "No body"));
 
-            if (!String.IsNullOrWhiteSpace(LanguageCode) && LanguageCode != "en")
-            {
-                tpl = GetBodyTpl("en");
-                bodyStringbuilder.Append(tpl != null ? tpl.Apply(data ?? Data ?? this) : (data != null ? data.ToString() : "No body"));
-            }
-            
+
             var footerTemplate = GetFooterTpl();
             if (footerTemplate != null)
                 bodyStringbuilder.Append(footerTemplate.Apply(this));
