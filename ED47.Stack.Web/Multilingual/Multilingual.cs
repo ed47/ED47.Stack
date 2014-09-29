@@ -11,7 +11,7 @@ namespace ED47.Stack.Web.Multilingual
 {
     public static class Multilingual
     {
-        public static readonly string ResourceFilesRelativePath = ConfigurationManager.AppSettings["ed47:ResourceFilesRelativePath"] + "Translations//";
+        public static readonly string ResourceFilesPath = ConfigurationManager.AppSettings["ed47:ResourceFilesPath"] + "Translations//";
 
         private static KernelBase _kernel;
         public static KernelBase Kernel
@@ -35,7 +35,7 @@ namespace ED47.Stack.Web.Multilingual
             get
             {
                 return _translations ??
-                       (_translations = Kernel.Get<ITranslationRepository>(new ConstructorArgument("path", HttpContext.Current.Server.MapPath(ResourceFilesRelativePath))));
+                       (_translations = Kernel.Get<ITranslationRepository>(new ConstructorArgument("path", ResourceFilesPath)));
             }
         }
 
@@ -95,7 +95,7 @@ namespace ED47.Stack.Web.Multilingual
         {
             using (var zip = new ZipFile())
             {
-                zip.AddDirectory(HttpContext.Current.Server.MapPath(ResourceFilesRelativePath), "Translations");
+                zip.AddDirectory(HttpContext.Current.Server.MapPath(ResourceFilesPath), "Translations");
                 zip.Save(outputStream);
             }
         }

@@ -225,6 +225,7 @@
     <Compile Include="Message\MessageFactoryHelper.cs" />
     <Compile Include="RepositoryHelper.cs" />
     <Compile Include="RepositoryManager.cs" />
+    <Compile Include="RequestCache.cs" />
     <Compile Include="StringKey.cs" />
     <Compile Include="TypeExtension.cs" />
     <Compile Include="UnitOfWork.cs" />

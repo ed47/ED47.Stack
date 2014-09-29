@@ -13,6 +13,12 @@ public static class StringExtensions
 
     public const string EmailRegexReplace = @"([A-Z0-9._%-]+)@([A-Z0-9.-]+\.[A-Z]{2,6})\(([^)]*)\)";
 
+    public static string ToHtml(this string s)
+    {
+        return s.Replace("\r", "</br>");
+    }
+
+
     public static string Ellipsis(this string s, int length, string showMoreText = "...")
     {
         if (s == null)
