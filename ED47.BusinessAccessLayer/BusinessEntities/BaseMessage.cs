@@ -41,9 +41,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             set { _email = value; }
         }
 
-        public virtual Template GetSubjectTpl()
+        public virtual Template GetSubjectTpl(string languageCode = null)
         {
-            var template = Subject != null ? new Template(Subject) : Template.Get("Email_" + GetType().Name + "Subject", languageCode: this.LanguageCode);
+            var template = Subject != null ? new Template(Subject) : Template.Get("Email_" + GetType().Name + "Subject", languageCode: languageCode ?? this.LanguageCode);
             template.AllowUnsafe = true;
             return template;
         }
@@ -117,7 +117,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (!String.IsNullOrWhiteSpace(Email.Subject))
                 return;
 
-            var tpl = GetSubjectTpl();
+            var tpl = GetSubjectTpl(LanguageCode ?? "en");
             Email.Subject = tpl != null ? tpl.Apply(data ?? Data ?? this) : (data != null ? data.ToString() : "No subject");
 
         }
