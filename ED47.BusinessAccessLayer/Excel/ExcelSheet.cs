@@ -50,6 +50,16 @@ namespace ED47.BusinessAccessLayer.Excel
                                  };
         }
 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExcelSheet"/> class.
+        /// </summary>
+        /// <param name="name">The sheet's name.</param>
+        public ExcelSheet(string name, JsonObjectList data) : this(name)
+        {
+           
+        }
+
         /// <summary>
         /// Adds the columns.
         /// </summary>

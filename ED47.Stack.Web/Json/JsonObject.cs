@@ -79,7 +79,7 @@ namespace ED47.Stack.Web
             _source = source;
             dynamic t = new { };
             
-            var pps = source.GetType().GetProperties();
+            var pps = source.GetType().GetProperties().Where(el=>el.CanRead);
             foreach (var p in pps)
             {
                 AddProperty(p.Name, p.GetValue(source, null));

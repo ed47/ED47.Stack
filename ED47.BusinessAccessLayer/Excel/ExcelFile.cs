@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Web.Mvc;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.Stack.Web;
@@ -38,7 +39,7 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <param name="data">The data to show in the sheet.</param>
         /// <param name="name">The sheet's name.</param>
         /// <returns>The new sheet</returns>
-        public ExcelSheet AddSheet(JsonObjectList data, string name = null)
+        public ExcelSheet AddSheet(JsonObjectList data, string name = null, bool autoColumns = false)
         {
             if (String.IsNullOrWhiteSpace(name))
             {
@@ -52,6 +53,17 @@ namespace ED47.BusinessAccessLayer.Excel
                                };
             
             this.Sheets.Add(newSheet);
+
+            if (autoColumns && newSheet.Data.Count>0)
+            {
+                var first = newSheet.Data[0];
+                newSheet.AddColumns(
+                    first.Properties.Select(el=> new ExcelColumn()
+                    {
+                        DisplayName = el,
+                        PropertyName = el,
+                    }));
+            }
             return newSheet;
         }
 
