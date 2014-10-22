@@ -9,6 +9,9 @@ using OfficeOpenXml.Style;
 
 namespace ED47.BusinessAccessLayer.Excel
 {
+
+
+
     public class ExcelSheet
     {
        
@@ -97,13 +100,22 @@ namespace ED47.BusinessAccessLayer.Excel
         /// Writes the sheet into the specified excel package.
         /// </summary>
         /// <param name="excelPackage">The excel package.</param>
-        public void Write(ExcelPackage excelPackage)
+        /// <param name="replace">If a sheet with the same name should be replace</param>
+        public void Write(ExcelPackage excelPackage, bool replace = false)
         {
+            if (replace)
+            {
+                var s = excelPackage.Workbook.Worksheets[Name];
+                if(s!= null)
+                    excelPackage.Workbook.Worksheets.Delete(s);
+            }
+
             var ws = CreateSheet(excelPackage);
             var cell = CreateColumns(ws);
             WriteCellData(ws, cell);
         }
 
+      
         /// <summary>
         /// Creates a sheet on an ExcelPackage.
         /// </summary>

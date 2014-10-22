@@ -10,6 +10,17 @@ using OfficeOpenXml;
 
 namespace ED47.BusinessAccessLayer.Excel
 {
+    public static class IFileExtension
+    {
+        public static ExcelPackage ToExcelPackage(this IFile file)
+        {
+            using (var f = file.OpenRead())
+            {
+                return new ExcelPackage(f);
+            }
+        }
+    }
+
     public class ExcelFile
     {
         private int _sheetNameCounter = 1;
@@ -17,8 +28,9 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <summary>
         /// Initializes a new instance of the <see cref="ExcelFile"/> class.
         /// </summary>
-        public ExcelFile()
+        public ExcelFile(IFile file = null)
         {
+          
             Sheets = new List<ExcelSheet>();
         }
 
@@ -28,8 +40,8 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <value>
         /// The sheets.
         /// </value>
-        public ICollection<ExcelSheet> Sheets { get; private set; }
-
+        public List<ExcelSheet> Sheets { get; private set; }
+    
         public string FileName { get; set; }
         public string BusinessKey { get; set; }
 
@@ -97,13 +109,14 @@ namespace ED47.BusinessAccessLayer.Excel
         /// Saves the Excel file to a stream.
         /// </summary>
         /// <param name="stream">The output stream to write the Excel file to.</param>
-        public void Write(Stream stream)
+        /// <param name="existingFile"></param>
+        public void Write(Stream stream, IFile existingFile = null)
         {
-            using (var excelPackage = new ExcelPackage())
+            using (var excelPackage = (existingFile != null ? existingFile.ToExcelPackage() : new ExcelPackage()))
             {
                 foreach (var excelSheet in Sheets)
                 {
-                    excelSheet.Write(excelPackage);
+                    excelSheet.Write(excelPackage, existingFile != null);
                 }
                 
                 excelPackage.SaveAs(stream);
@@ -111,6 +124,8 @@ namespace ED47.BusinessAccessLayer.Excel
                 stream.Flush();
             }
         }
+
+      
 
         public IFile Write(string name, string businessKey)
         {
@@ -132,13 +147,13 @@ namespace ED47.BusinessAccessLayer.Excel
             }
         }
 
-        public IFile ToFile()
+        public IFile ToFile(IFile existingFile = null)
         {
             var file = FileRepositoryFactory.Default.CreateNewFile(FileName, BusinessKey);
             
             using (var fileStream = file.OpenWrite())
             {
-                Write(fileStream);
+                Write(fileStream, existingFile);
                 fileStream.Flush();
                 fileStream.Close();
             }

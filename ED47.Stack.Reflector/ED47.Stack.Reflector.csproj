@@ -159,6 +159,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="Scripts\linq.min.js.map">
+      <DependentUpon>linq.min.js</DependentUpon>
+    </None>
     <None Include="Templates\JsApiController.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>JsApiController.cs</LastGenOutput>

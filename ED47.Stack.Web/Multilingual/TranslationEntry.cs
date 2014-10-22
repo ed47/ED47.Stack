@@ -1,3 +1,4 @@
+using System;
 using System.Xml.Linq;
 
 namespace ED47.Stack.Web.Multilingual
@@ -49,7 +50,7 @@ namespace ED47.Stack.Web.Multilingual
 
         private void Save(object attributes = null)
         {
-            var splitPath = Key.Split('.');
+            var splitPath = Key.Split(new []{'.'}, StringSplitOptions.RemoveEmptyEntries);
             lock (Dictionary.WriteLock)
             {
                 var document = XDocument.Load(File.FileInfo.FullName);

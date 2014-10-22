@@ -74,17 +74,33 @@ namespace ED47.BusinessAccessLayer
 
             context.Response.Clear();
             context.Response.ContentType = ED47.Stack.Web.MimeTypeHelper.GetMimeType(file.Name);
-
-            using(var rs = file.OpenRead())
+            if (!file.Encrypted)
             {
-                if (rs == null)
-                    return; 
+                using (var rs = file.OpenRead())
+                {
+                    if (rs == null)
+                        return;
 
-                context.Response.AddHeader("Content-Disposition", String.Format("filename=\"{0}\";size={1};", file.Name, rs.Length));
+                    context.Response.AddHeader("Content-Disposition", String.Format("filename=\"{0}\";size={1};", file.Name, rs.Length));
 
-                if(rs.CanRead)
-                    rs.CopyTo(context.Response.OutputStream);
+                    if (rs.CanRead)
+                        rs.CopyTo(context.Response.OutputStream);
+                }
             }
+            else
+            {
+                using (var rs = Cryptography.Decrypt(file.OpenRead(),file.KeyHash))
+                {
+                    if (rs == null)
+                        return;
+
+                    context.Response.AddHeader("Content-Disposition", String.Format("filename=\"{0}\";size={1};", file.Name, rs.Length));
+
+                    if (rs.CanRead)
+                        rs.CopyTo(context.Response.OutputStream);
+                }
+            }
+           
             context.Response.OutputStream.Flush();
             context.Response.End();
         }
