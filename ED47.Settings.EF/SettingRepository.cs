@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Caching;
 using ED47.BusinessAccessLayer;
-using Newtonsoft.Json;
 using Ninject;
 
 namespace ED47.Settings.EF
@@ -9,6 +10,14 @@ namespace ED47.Settings.EF
     {
         public virtual ED47.Settings.ISetting Get(string path, string name, string defaultValue = null)
         {
+
+            var cache = MemoryCache.Default;
+
+            var key = String.Format("path={0}&name={1}", path, name);
+            var cachesetting = cache.Get(key) as Settings.ISetting;
+            if (cachesetting != null) return cachesetting;
+
+
             var setting = BusinessComponent.Kernel.Get<BaseUserContext>().Repository.Find<Entity.Setting, Setting>(el => el.Path == path && el.Name == name);
 
             if (setting == null)
@@ -22,6 +31,11 @@ namespace ED47.Settings.EF
 
                 Add(setting);
             }
+
+            cache.Add(key, setting, new CacheItemPolicy()
+            {
+                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(15)
+            });
 
             return setting;
         }
