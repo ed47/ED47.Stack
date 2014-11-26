@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Caching;
 using ED47.BusinessAccessLayer;
 using Ninject;
@@ -13,7 +14,7 @@ namespace ED47.Settings.EF
 
             var cache = MemoryCache.Default;
 
-            var key = String.Format("path={0}&name={1}", path, name);
+            var key = String.Format("Settings?path={0}&name={1}", path, name);
             var cachesetting = cache.Get(key) as Settings.ISetting;
             if (cachesetting != null) return cachesetting;
 
@@ -60,6 +61,22 @@ namespace ED47.Settings.EF
         public virtual void Remove(ED47.Settings.ISetting setting)
         {
             BusinessComponent.Kernel.Get<BaseUserContext>().Repository.Delete<Entity.Setting, ED47.Settings.ISetting>(setting);
+        }
+
+
+        public virtual IEnumerable<Settings.ISetting> GetAll()
+        {
+            var cache = MemoryCache.Default;
+
+            var key = String.Format("Settings?all");
+            var settings = cache.Get(key) as IEnumerable<Settings.ISetting>;
+            if (settings != null) return settings;
+            settings  = BusinessComponent.Kernel.Get<BaseUserContext>().Repository.Where<Entity.Setting, Setting>(el=>true).ToArray();
+            cache.Add(key, settings, new CacheItemPolicy()
+            {
+                AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(30)
+            });
+            return settings;
         }
 
         public void Commit()

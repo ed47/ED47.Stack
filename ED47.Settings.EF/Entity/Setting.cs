@@ -19,5 +19,7 @@ namespace ED47.Settings.EF.Entity
 
         [MaxLength(1000)]
         public string Value { get; set; }
+        
+       // public bool IsPublic { get; set; }
     }
 }
