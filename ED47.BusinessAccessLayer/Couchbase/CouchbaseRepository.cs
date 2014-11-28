@@ -154,12 +154,9 @@ namespace ED47.BusinessAccessLayer.Couchbase
         public static IEnumerable<TDocument> All<TDocument>(string type) where TDocument : class, IDocument
         {
             var client = CouchbaseManager.Instance;
-            var view = client.GetView("all", "byType")
-                                .StartKey(new[] { type, "z" })
-                                .EndKey(new[] { type, "" })
-                                .Descending(true);
+            var view = client.GetView("all", "byType").Key(type);
 
-            return view.Select(viewRow => Get<TDocument>(viewRow.ItemId)).ToList();
+          return view.Select(viewRow => Get<TDocument>(viewRow.ItemId)).ToList();
         }  
 
     }
