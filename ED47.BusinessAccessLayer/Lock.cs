@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Caching;
+using FluentValidation.Resources;
 
 namespace ED47.BusinessAccessLayer
 {
@@ -44,6 +45,11 @@ namespace ED47.BusinessAccessLayer
             }
         }
 
+        public static object Get(Type entityType, string id) 
+        {
+
+            return Get(String.Format("{0}?{1}", entityType.FullName, id));
+        }
 
         public static object Get<TEntity>(IBusinessEntity entity) where  TEntity : DbEntity
         {
