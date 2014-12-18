@@ -171,7 +171,6 @@
     <Compile Include="Excel\Reader\BaseSyncClass.cs" />
     <Compile Include="Excel\Reader\ExcelColumnAttribute.cs" />
     <Compile Include="Excel\Reader\ExcelData.cs" />
-    <Compile Include="Excel\Reader\ExcelDataReader.cs" />
     <Compile Include="Excel\Reader\ImportStatus.cs" />
     <Compile Include="FileRepository.cs" />
     <Compile Include="FileRepositoryFactory.cs" />
