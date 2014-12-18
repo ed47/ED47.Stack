@@ -63,7 +63,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         private string _cc;
         private string _bcc;
-        private IEnumerable _fileBoxItemMessages;
+        //private IEnumerable _fileBoxItemMessages;
 
         public string CC
         {

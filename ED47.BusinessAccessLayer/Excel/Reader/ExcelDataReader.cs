@@ -58,7 +58,7 @@ namespace DED47.BusinessAccessLayer.Excel.Reader
                     return false;
                 }
             }
-            catch (Exception err)
+            catch (Exception )
             {
                 //"Reading Excel file", "error reading excel file: " + err.Message;
                 return false;
