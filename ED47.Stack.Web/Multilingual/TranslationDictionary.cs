@@ -135,7 +135,7 @@ namespace ED47.Stack.Web.Multilingual
             for (int i = 0; i < subkeys.Count; i++)
             {
                 var pattern = String.Join(".", subkeys.Take(i + 1));
-                var file = TranslationFiles.Values.Where(el => el.FileInfo.Name.StartsWith(pattern) && el.Language == Language)
+                var file = TranslationFiles.Values.Where(el => el.FileInfo.Name.ToLowerInvariant().StartsWith(pattern.ToLowerInvariant()) && el.Language.ToLowerInvariant() == Language.ToLowerInvariant())
                         .OrderBy(el => el.FileInfo.FullName.Length)
                         .FirstOrDefault();
 

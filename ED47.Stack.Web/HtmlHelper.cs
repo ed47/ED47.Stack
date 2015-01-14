@@ -13,7 +13,21 @@ namespace ED47.Stack.Web
 {
     public static class HtmlHelper
     {
-        /// <summary>
+        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model,
+            string id = null, string name = null,
+            string addUpdateFunctionName = null,
+            string initNewFunctionName = null,
+            string deleteFunctionName = null, bool deleteConfirmation = true,
+            int? preselectedRecordId = null,
+            string deleteConfirmationMessage = null)
+        {
+            return RenderSharedStore(helper, model, model.GetType(), id, name, addUpdateFunctionName,
+                initNewFunctionName, deleteFunctionName, deleteConfirmation, preselectedRecordId,
+                deleteConfirmationMessage);
+        }
+    
+
+    /// <summary>
         /// Renders a model in a shared store in a view.
         /// </summary>
         /// <param name="helper">The HtmlHelper.</param>
@@ -28,7 +42,7 @@ namespace ED47.Stack.Web
         /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model,
+        public static MvcHtmlString RenderSharedStore(this System.Web.Mvc.HtmlHelper helper, object model, Type modelType,
                                                       string id = null, string name = null,
                                                       string addUpdateFunctionName = null,
                                                       string initNewFunctionName = null,
@@ -47,7 +61,7 @@ namespace ED47.Stack.Web
             if (String.IsNullOrWhiteSpace(name))
             {
                 name = "ED47.Stack.Models.";
-                var modelType = model.GetType();
+               
 
                 if (modelType.IsGenericType)
                     name += modelType.GetGenericArguments()[0].Name;

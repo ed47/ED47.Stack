@@ -87,9 +87,7 @@ if (window.Ext) {
         } else {
             iFrameFile.onload = callback;
         }
-
         document.body.appendChild(iFrameFile);
-
         iFrameFile.src = url;
     };
 }

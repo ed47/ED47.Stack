@@ -203,6 +203,7 @@
     <EmbeddedResource Include="Scripts\tree.js" />
     <EmbeddedResource Include="Scripts\result-grid.js" />
     <EmbeddedResource Include="Scripts\checkColumnn.js" />
+    <EmbeddedResource Include="Scripts\autolink.js" />
     <Content Include="Scripts\filebox.js" />
     <EmbeddedResource Include="Scripts\jquery-autosave.js" />
     <Content Include="Scripts\linq-vsdoc.js" />
