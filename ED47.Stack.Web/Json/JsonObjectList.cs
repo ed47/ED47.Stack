@@ -21,7 +21,7 @@ namespace ED47.Stack.Web
         {
         }
 
-        public JsonObjectList(IEnumerable objs, string typename = null)
+        public JsonObjectList(IEnumerable objs, string typename = null, string[] fields = null)
         {
             if (objs == null) return;
             foreach (var o in objs)

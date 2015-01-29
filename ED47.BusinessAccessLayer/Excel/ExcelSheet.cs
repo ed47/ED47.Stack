@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using Afterthought;
 using ED47.Stack.Web;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -22,8 +23,8 @@ namespace ED47.BusinessAccessLayer.Excel
         public string Name { get; set; }
         public Action<object, ExcelRange> HeaderRenderer { get; set; }
         public List<ExcelColumn> Columns { get; private set; }
-        public List<ExcelColumn> HeaderColumns { get; private set; }
-
+        public List<ExcelColumn> HeaderColumns { get;  set; }
+        public string[] Fields { get; set; }
         /// <summary>
         /// Gets or sets the data to export.
         /// </summary>
@@ -147,9 +148,15 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <returns>The cell coordinates.</returns>
         private CellCoordinate CreateColumns(ExcelWorksheet worksheet)
         {
+            var columns = new HashSet<string>( Data[0].Properties);
+
+            if(Fields != null)
+                columns.IntersectWith(Fields);
+
+
             if (Columns.Count == 0 && Data.Count > 0)
             {
-                foreach (var p in Data[0].Properties)
+                foreach (var p in columns)
                 {
                     Columns.Add(new ExcelColumn
                     {
