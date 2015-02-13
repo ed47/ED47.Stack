@@ -58,6 +58,14 @@
                     return;
                 }
 
+               /* var old = $(this).data("old");
+                var value = $(this).val();
+
+                if (old == value) return;
+                
+               
+                $(this).data("old", value);
+                */
                 form.trigger("submit", this);
             });
         },
@@ -105,16 +113,16 @@
 
                         if (target.length !== 0) {
                             target.val(data.Values[property]);
-                            target.closest(".control-group").addClass("success").removeClass("error");
+                            target.closest(".control-group, .form-group").addClass("success").removeClass("error");
                             form.trigger("autosavepropertyset", { form: form, name: property });
                         }
                     }
 
                     $.each(data.Validations, function () {
-                        var target = form.find("[name=" + this.PropertyName + "]")
+                        var target = form.find("[name=" + this.PropertyName + "]");
                         var validationElement = form.find(".field-validation-valid[data-valmsg-for='" + this.PropertyName + "']");
                         
-                        target.closest(".control-group").removeClass("success").addClass("error");
+                        target.closest(".control-group, .form-group").removeClass("success").addClass("error");
                         validationElement
                             .removeClass("field-validation-valid")
                             .addClass("field-validation-error")
@@ -124,7 +132,7 @@
                     form.trigger("autosaved", { form: form, data: data });
                 })
                 .fail(function () {
-                    form.find(".control-group").addClass("error");
+                    form.find(".control-group, .form-group").addClass("error");
                 });
             });
         }
