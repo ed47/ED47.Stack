@@ -118,5 +118,5 @@ $(function() {
 
 $(function () {
 
-    $("a.one-shot, input[type=submit].one-shot").livequery(function () { $(this).jOneShot(); });
+    $("a.one-shot, input[type=submit].one-shot, button.one-shot").livequery(function () { $(this).jOneShot(); });
 })
