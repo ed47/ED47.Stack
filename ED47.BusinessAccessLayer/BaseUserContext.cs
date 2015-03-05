@@ -142,7 +142,7 @@ namespace ED47.BusinessAccessLayer
         }
 
         public static TBusinessEntity GetStaticInstance<TDbEntity, TBusinessEntity>(int id, bool ignoreBusinessPredicate = false)
-            where TDbEntity : BaseDbEntity
+            where TDbEntity : DbEntity, IBaseDbEntity
             where TBusinessEntity : class, IBusinessEntity, new()
         {
             var key = typeof(TBusinessEntity).FullName + String.Format(".StaticInstance?id={0}", id);
@@ -164,7 +164,7 @@ namespace ED47.BusinessAccessLayer
         }
 
         public static void StoreDynamicInstance<TDbEntity, TBusinessEntity>(TBusinessEntity value)
-            where TDbEntity : BaseDbEntity
+            where TDbEntity : DbEntity, IBaseDbEntity
             where TBusinessEntity : IBusinessEntity, new()
         {
             var key = typeof(TBusinessEntity).FullName + String.Format(".DynamicInstance?id={0}", value.GetKeys<TDbEntity>().Single(el => el.Key == "Id").Value);
@@ -208,7 +208,7 @@ namespace ED47.BusinessAccessLayer
 
 
         public static void StoreDynamicInstances<TDbEntity, TBusinessEntity>(IEnumerable<TBusinessEntity> values)
-            where TDbEntity : BaseDbEntity
+            where TDbEntity : DbEntity, IBaseDbEntity
             where TBusinessEntity : IBusinessEntity, new()
         {
             foreach (var entity in values)
@@ -219,7 +219,7 @@ namespace ED47.BusinessAccessLayer
         }
 
         public static TBusinessEntity GetDynamicInstance<TDbEntity, TBusinessEntity>(int id, bool ignoreBusinessPredicate = false)
-            where TDbEntity : BaseDbEntity
+            where TDbEntity : DbEntity, IBaseDbEntity
             where TBusinessEntity : class, IBusinessEntity, new()
         {
             var key = typeof(TBusinessEntity).FullName + String.Format(".DynamicInstance?id={0}", id);
