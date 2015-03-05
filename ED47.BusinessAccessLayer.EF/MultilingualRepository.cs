@@ -87,6 +87,17 @@ namespace ED47.BusinessAccessLayer.EF
             where TBusinessEntity : IBusinessEntity
             where TEntity : BusinessAccessLayer.DbEntity
         {
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHS")
+            {
+                isoLanguageCode = "zs";
+            }
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHT")
+            {
+                isoLanguageCode = "zt";
+            }
+
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
@@ -240,6 +251,18 @@ namespace ED47.BusinessAccessLayer.EF
             if (entity == null)
                 return String.Empty;
 
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHS")
+            {
+                isoLanguageCode = "zs";
+            }
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHT")
+            {
+                isoLanguageCode = "zt";
+            }
+
+
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
@@ -260,6 +283,18 @@ namespace ED47.BusinessAccessLayer.EF
 
         public string T(string entityName, int entityId, Expression<Func<string>> propertySelector, string isoLanguageCode = null)
         {
+
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHS")
+            {
+                isoLanguageCode = "zs";
+            }
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHT")
+            {
+                isoLanguageCode = "zt";
+            }
+
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
@@ -323,6 +358,17 @@ namespace ED47.BusinessAccessLayer.EF
             if (!businessEntities.Any())
                 return;
 
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHS")
+            {
+                isoLanguageCode = "zs";
+            }
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHT")
+            {
+                isoLanguageCode = "zt";
+            }
+
             if (String.IsNullOrWhiteSpace(isoLanguageCode))
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
@@ -361,6 +407,16 @@ namespace ED47.BusinessAccessLayer.EF
         {
             if (businessEntity == null)
                 return;
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHS")
+            {
+                isoLanguageCode = "zs";
+            }
+
+            if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHT")
+            {
+                isoLanguageCode = "zt";
+            }
 
             if (String.IsNullOrWhiteSpace(isoLanguageCode))
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;

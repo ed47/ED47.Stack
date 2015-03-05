@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace ED47.Stack.Web.Multilingual
@@ -21,6 +22,17 @@ namespace ED47.Stack.Web.Multilingual
 
         internal string GetCurrentLanguage()
         {
+
+            if (CultureInfo.CurrentUICulture.Name == "zh-CHS")
+            {
+                return "zs";
+            }
+
+            if (CultureInfo.CurrentUICulture.Name == "zh-CHT")
+            {
+               return "zt";
+            }
+
             return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant();
 
         }
