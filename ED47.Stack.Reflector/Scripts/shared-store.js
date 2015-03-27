@@ -270,6 +270,8 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             this._updating = false;
             this.select(this, store.getAt(index));
             this.selectMulti(this, [store.getAt(index)]);
+
+            this.fireEvent("afterUpdate", store, record, callResult);
         },
 
         deleteRecord: function (record, callback) {
