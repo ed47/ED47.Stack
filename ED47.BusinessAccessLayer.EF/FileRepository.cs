@@ -137,7 +137,7 @@ namespace ED47.BusinessAccessLayer.EF
             {
                 value = context.Repository
                     .GetAll<Entities.FileExtensionWhiteList, FileExtensionWhiteList>()
-                    .Select(el => el.Extension.ToLowerInvariant());
+                    .Select(el => el.Extension.ToLowerInvariant()).ToArray();
 
                 MemoryCache.Default.Add(new CacheItem(cacheKey, value), new CacheItemPolicy {SlidingExpiration = TimeSpan.FromMinutes(20)});
             }

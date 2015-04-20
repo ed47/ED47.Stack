@@ -25,6 +25,7 @@ namespace ED47.BusinessAccessLayer.Excel
         public List<ExcelColumn> Columns { get; private set; }
         public List<ExcelColumn> HeaderColumns { get;  set; }
         public string[] Fields { get; set; }
+        public string[] Labels { get; set; }
         /// <summary>
         /// Gets or sets the data to export.
         /// </summary>

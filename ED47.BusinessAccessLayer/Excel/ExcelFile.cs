@@ -51,7 +51,7 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <param name="data">The data to show in the sheet.</param>
         /// <param name="name">The sheet's name.</param>
         /// <returns>The new sheet</returns>
-        public ExcelSheet AddSheet(JsonObjectList data, string name = null, bool autoColumns = false, string[] fields = null)
+        public ExcelSheet AddSheet(JsonObjectList data, string name = null, bool autoColumns = false, string[] fields = null, string[] labels = null)
         {
             if (String.IsNullOrWhiteSpace(name))
             {
@@ -63,6 +63,7 @@ namespace ED47.BusinessAccessLayer.Excel
                                {
                                    Data = data,
                                    Fields = fields
+                                   
                                };
             
             this.Sheets.Add(newSheet);

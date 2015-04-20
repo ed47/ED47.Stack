@@ -4,7 +4,32 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Web.Mvc;
 
+public static class DatetimeExtensions
+{
 
+    public static string ToPeriod(this DateTime? value)
+    {
+        if (!value.HasValue) return "";
+        return value.Value.ToPeriod();
+    }
+
+      public static string ToPeriod(this DateTime value)
+    {
+        
+        var dl = value;
+        if (dl.Month >= 1 && dl.Month <= 3)
+            return dl.Year + " Q1";
+        if (dl.Month >= 4 && dl.Month <= 6)
+            return dl.Year + " Q2";
+        if (dl.Month >= 7 && dl.Month <= 9)
+            return dl.Year + " Q3";
+        if (dl.Month >= 10 && dl.Month <= 12)
+            return dl.Year + " Q4";
+        return String.Empty;
+    }
+
+
+}
 public static class StringExtensions
 {
     public const string EmailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}"
@@ -15,9 +40,9 @@ public static class StringExtensions
 
     public static string ToHtml(this string s)
     {
-        if(String.IsNullOrEmpty(s)) return String.Empty;
+        if (String.IsNullOrEmpty(s)) return String.Empty;
         var regex = new Regex(@"(\r|\r\n|\n)");
-        return regex.Replace(s,"</br>");
+        return regex.Replace(s, "</br>");
     }
 
 
@@ -31,7 +56,7 @@ public static class StringExtensions
 
         return s.Length < length
                    ? s
-                   : s.Substring(0, Math.Max(s.IndexOfLastSpace(length),length) ) + showMoreText;
+                   : s.Substring(0, Math.Max(s.IndexOfLastSpace(length), length)) + showMoreText;
     }
 
     public static int IndexOfLastSpace(this string s, int pos)
@@ -48,12 +73,13 @@ public static class StringExtensions
         return IndexOfLastSpace(s, pos - 1);
     }
 
-    public static bool IsEmail(this string s) {
-    
+    public static bool IsEmail(this string s)
+    {
+
         var re = new Regex(EmailRegex);
         if (re.IsMatch(s))
             return (true);
-        
+
         return (false);
     }
 
@@ -64,7 +90,8 @@ public static class StringExtensions
     }
 
 
-    public static Stream ToStream(this string str) {
+    public static Stream ToStream(this string str)
+    {
         var stream = new MemoryStream();
         var writer = new StreamWriter(stream);
         writer.Write(str);
@@ -74,7 +101,8 @@ public static class StringExtensions
     }
 
 
-    public static bool IsLike(this string s, object text) {
+    public static bool IsLike(this string s, object text)
+    {
         if (s == null && text == null)
             return true;
 
@@ -111,11 +139,13 @@ public static class StringExtensions
         //Regex.Replace(text, EmailRegexReplace, "<a class=\"email\" onclick=\"javascript:eml(\\'$2\\',this,\\'$3\\',\\'$1\\');\" target=\"_self\">$3</a>", RegexOptions.IgnoreCase);
     }
 
-    public static string GetProtectedEmailFromSpam(this string text, string cssclass) {
+    public static string GetProtectedEmailFromSpam(this string text, string cssclass)
+    {
         return Regex.Replace(text, EmailRegexReplace, "<a class=\"" + cssclass + "\" onclick=\"javascript:eml(\\'$2\\',this,\\'$3\\',\\'$1\\');\" target=\"_self\">$3</a>", RegexOptions.IgnoreCase);
     }
 
-    public static string GetProtectedEmailFromSpam(this string text, string cssClass, string replacement) {
+    public static string GetProtectedEmailFromSpam(this string text, string cssClass, string replacement)
+    {
         return Regex.Replace(text, EmailRegexReplace, replacement);
     }
 
@@ -124,25 +154,25 @@ public static class StringExtensions
 
 public static class WebViewPageExtensions
 {
-    
+
     public static bool IsPublish(this HtmlHelper htmlHelper)
     {
-        #if PUBLISH
+#if PUBLISH
             return true;
-        #else
-            return false;
-        #endif
+#else
+        return false;
+#endif
     }
 
     public static bool IsDebug(this HtmlHelper htmlHelper)
     {
-        #if DEBUG
-            return true;
-        #else
+#if DEBUG
+        return true;
+#else
             return false;
-        #endif
+#endif
     }
 }
 
-    
+
 
