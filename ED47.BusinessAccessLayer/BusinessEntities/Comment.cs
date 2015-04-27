@@ -58,7 +58,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     .ToList();
         }
 
-        public static Comment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null, bool? encrypted = false)
+        public static Comment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null, bool? encrypted = false, bool notify = true)
         {
             Comment newComment;
 
@@ -77,7 +77,10 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 BaseUserContext.Instance.Repository.Add<Entities.Comment, EncryptedComment>((EncryptedComment)newComment);
 
             newComment.AddFiles(fileIds);
-            Notifiers.ToList().ForEach(el => el.TryNotify(newComment, CommentActionType.New));
+            if(notify)
+            {
+                Notifiers.ToList().ForEach(el => el.TryNotify(newComment, CommentActionType.New));
+            }
             MakePreviousReadOnly(newComment.Id, newComment.BusinessKey);
          
 
