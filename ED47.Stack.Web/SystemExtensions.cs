@@ -111,6 +111,17 @@ public static class StringExtensions
         return Regex.Replace(text, EmailRegexReplace, replacement);
     }
 
+
+    /// <summary>
+    /// Capitalize every First letter of a word in a phrase
+    /// </summary>
+    public static string Capitalize(this string s)
+    {
+        if (s == null)
+            return null;
+
+        return Regex.Replace(s, @"(^\w)|(\s\w)", m => m.Value.ToUpper()); ;
+    } 
 }
 
 
