@@ -63,6 +63,7 @@ namespace ED47.Stack.Web.Template
             AddStdFunction("injectXTemplate", _InjectXTemplate);
             AddStdFunction("toLower", ToLower);
             AddStdFunction("ellipsis", Ellipsis);
+             AddStdFunction("deadline", DateAddDays);
         }
 
         public Template()
@@ -448,6 +449,17 @@ namespace ED47.Stack.Web.Template
                 res = Sum(this, Current, args[0].ToString(), args[1].ToString());
             }
             return args.Length >= 3 ? String.Format("{" + args[2] + "}", res) : res.ToString(CultureInfo.InvariantCulture);
+        }
+
+
+        private static string DateAddDays(object[] args)
+        {
+            if (args.Length != 1)
+            {
+                return "Fct DateAddDays need 1 arguments";
+            }
+            var days = Convert.ToInt32(args[0], CultureInfo.InvariantCulture);
+            return DateTime.Now.AddDays(days).ToShortDateString();
         }
 
         private static string Ellipsis(object[] args)

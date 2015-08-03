@@ -29,8 +29,20 @@
             $(this).parents("form").find("input[type=submit]").show();
         });
 
+
+        var timeout;
+
         $(document).on("keydown", "#search", function (eventData) {
-            $(this).closest("form").submit();
+            if (timeout) clearTimeout(timeout);
+            var val = $(this).val();
+            if (val.length < 4)
+                return;
+
+            var form = $(this).closest("form");
+            timeout = setTimeout(function () {
+               // form.submit();
+            }, 700);
+         
         });
     });
 
