@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Ninject;
@@ -29,6 +30,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             var context = BaseUserContext.Instance ?? BusinessComponent.Kernel.Get<BaseUserContext>();
 
             return context.Repository.GetAll<Entities.Language, Lang>().ToList();
+        }
+
+        private static readonly IEnumerable<Lang> Languages  = Lang.GetLanguages();
+        public static bool IsAvailableLang(string name)
+        {
+            if (String.IsNullOrWhiteSpace(name))
+                return false;
+            name = name.ToLowerInvariant().Split(new[] {"-"}, StringSplitOptions.RemoveEmptyEntries)[0];
+            return Languages.Any(l => l.IsoCode.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
     }
