@@ -18,7 +18,7 @@ namespace ED47.Stack.Reflector.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+    #line 1 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "12.0.0.0")]
     public partial class JsApiController : JsApiControllerBase
     {
@@ -30,28 +30,28 @@ namespace ED47.Stack.Reflector.Templates
         {
             this.Write("//Controller: ");
             
-            #line 5 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+            #line 5 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ControllerInfo.ControllerType.Name));
             
             #line default
             #line hidden
             this.Write("\r\nExt.ns(\"ED47.Stack.Controllers");
             
-            #line 6 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+            #line 6 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ControllerInfo.GetNamespace()));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 6 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+            #line 6 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.ControllerInfo.ControllerType.Name));
             
             #line default
             #line hidden
             this.Write("\");\r\n");
             
-            #line 7 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+            #line 7 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 foreach(var action in this.ControllerInfo.Actions)
 {
 	GenerateParameterDocumentation(action);
@@ -60,7 +60,7 @@ foreach(var action in this.ControllerInfo.Actions)
             #line hidden
             this.Write("\r\n\t");
             
-            #line 11 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+            #line 11 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 
 	GenerateAction(action);
 }
@@ -71,7 +71,7 @@ foreach(var action in this.ControllerInfo.Actions)
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 15 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 15 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 
 protected void GenerateParameters(ActionInfo action)
 {
@@ -82,27 +82,27 @@ protected void GenerateParameters(ActionInfo action)
         #line default
         #line hidden
         
-        #line 20 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 20 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(parameters[i].Name));
 
         
         #line default
         #line hidden
         
-        #line 20 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 20 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 if(i < parameters.Length-1){
         
         #line default
         #line hidden
         
-        #line 20 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 20 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(",");
 
         
         #line default
         #line hidden
         
-        #line 20 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 20 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 }}
 
 	if(parameters.Length > 0)
@@ -111,14 +111,14 @@ this.Write(",");
         #line default
         #line hidden
         
-        #line 23 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 23 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(", ");
 
         
         #line default
         #line hidden
         
-        #line 23 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 23 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 }	
 }
 
@@ -131,48 +131,48 @@ this.Write(", ");
         #line default
         #line hidden
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 30 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(parameters[i].Name));
 
         
         #line default
         #line hidden
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 30 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(": ");
 
         
         #line default
         #line hidden
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 30 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(parameters[i].Name));
 
         
         #line default
         #line hidden
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 30 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(" ");
 
         
         #line default
         #line hidden
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 30 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 if(i < parameters.Length-1){
         
         #line default
         #line hidden
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 30 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(",");
 
         
         #line default
         #line hidden
         
-        #line 30 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 30 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 }}	
 }*/
 
@@ -185,42 +185,42 @@ protected void GenerateParameterDocumentation(ActionInfo action)
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 37 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write("///<param name=\"");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 37 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(parameters[i].Name));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 37 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write("\" type=\"");
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 37 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(parameters[i].ParameterType));
 
         
         #line default
         #line hidden
         
-        #line 37 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 37 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write("\"></param>\r\n\t");
 
         
         #line default
         #line hidden
         
-        #line 38 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 38 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 }	
 }
 
@@ -230,84 +230,84 @@ protected void GenerateAction(ActionInfo action)
         #line default
         #line hidden
         
-        #line 42 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 42 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write("ED47.Stack.Controllers.");
 
         
         #line default
         #line hidden
         
-        #line 43 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 43 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(this.ControllerInfo.ControllerType.Name));
 
         
         #line default
         #line hidden
         
-        #line 43 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 43 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(".");
 
         
         #line default
         #line hidden
         
-        #line 43 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 43 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(action.Name));
 
         
         #line default
         #line hidden
         
-        #line 43 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 43 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(" = function(parameters, callBack, context){\r\n\twindow.ajaxRequest.request(\"");
 
         
         #line default
         #line hidden
         
-        #line 44 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 44 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(action.GetUrl()));
 
         
         #line default
         #line hidden
         
-        #line 44 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 44 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write("\", \"");
 
         
         #line default
         #line hidden
         
-        #line 44 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 44 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(action.Verb));
 
         
         #line default
         #line hidden
         
-        #line 44 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 44 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write("\" , parameters, callBack, null, context, ");
 
         
         #line default
         #line hidden
         
-        #line 44 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 44 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(action.EnableClientCaching.ToString().ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 44 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 44 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 this.Write(");\t\r\n}\r\n");
 
         
         #line default
         #line hidden
         
-        #line 46 "D:\projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
+        #line 46 "D:\Projets\Grc.Tool\ED47.Stack\ED47.Stack.Reflector\Templates\JsApiController.tt"
 }
         
         #line default
