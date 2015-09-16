@@ -459,7 +459,7 @@ namespace ED47.Stack.Web.Template
                 return "Fct DateAddDays need 1 arguments";
             }
             var days = Convert.ToInt32(args[0], CultureInfo.InvariantCulture);
-            return DateTime.Now.AddDays(days).ToShortDateString();
+            return DateTime.Now.AddDays(days).ToString("dd.MM.yyyy");
         }
 
         private static string Ellipsis(object[] args)
