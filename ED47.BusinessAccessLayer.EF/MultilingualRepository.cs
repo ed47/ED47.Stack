@@ -71,12 +71,12 @@ namespace ED47.BusinessAccessLayer.EF
 
                 MemoryCache.Default.Add(new CacheItem(cacheKey, translations), new CacheItemPolicy
                 {
-#if !DEBUG
+//#if !DEBUG
                     Priority = CacheItemPriority.NotRemovable
-#endif
-#if DEBUG
-                    AbsoluteExpiration = DateTime.Now.AddSeconds(10)
-#endif
+//#endif
+//#if DEBUG
+//                    AbsoluteExpiration = DateTime.Now.AddSeconds(10)
+//#endif
                 });
             }
 
