@@ -47,7 +47,7 @@ namespace ED47.Stack.Web.Multilingual
             if (string.IsNullOrEmpty(cache))
             {
 
-                context.Response.ContentType = "text/javascript";
+
                 var httpResponse = new StringBuilder();
 
                 httpResponse.AppendLine(
@@ -84,7 +84,9 @@ namespace ED47.Stack.Web.Multilingual
                 Multilingual.Repository.CacheData("MultilingualHandler?lan=" + lan, cache, lan);
 
             }
-
+            context.Response.ContentType = "text/javascript";
+            context.Response.Cache.SetCacheability(HttpCacheability.Public);
+            context.Response.Cache.SetExpires(DateTime.Now.AddDays(1));
             context.Response.Write(cache);
 
 

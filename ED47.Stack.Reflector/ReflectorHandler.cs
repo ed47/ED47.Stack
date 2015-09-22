@@ -85,6 +85,9 @@ namespace ED47.Stack.Reflector
                 }
                 js.Append(cachedResult);
             }
+            context.Response.Cache.SetCacheability(HttpCacheability.Public);
+            context.Response.Cache.SetExpires(DateTime.Now.AddDays(1));
+            
 #if DEBUG
             context.Response.Write(js.ToString());
 #else
