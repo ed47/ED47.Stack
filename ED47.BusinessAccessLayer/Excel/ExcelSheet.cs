@@ -114,6 +114,7 @@ namespace ED47.BusinessAccessLayer.Excel
 
             var ws = CreateSheet(excelPackage);
             var cell = CreateColumns(ws);
+            if(cell == null) return;
             WriteCellData(ws, cell);
         }
 
@@ -149,6 +150,9 @@ namespace ED47.BusinessAccessLayer.Excel
         /// <returns>The cell coordinates.</returns>
         private CellCoordinate CreateColumns(ExcelWorksheet worksheet)
         {
+            if(Data.Count == 0)
+                return null;
+
             var columns = new HashSet<string>( Data[0].Properties);
 
             if(Fields != null)

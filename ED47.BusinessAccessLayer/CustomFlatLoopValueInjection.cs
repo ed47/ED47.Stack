@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Omu.ValueInjecter;
 
@@ -18,6 +19,8 @@ namespace ED47.BusinessAccessLayer
             foreach (PropertyDescriptor targetProperty in target.GetProps())
             {
                 var t1 = targetProperty;
+
+               
                 var es = UberFlatter.Flat(targetProperty.Name, source, type => TypesMatch(type,t1.PropertyType));
 
                 var sourceType = source.GetType();
@@ -25,7 +28,7 @@ namespace ED47.BusinessAccessLayer
                 if (!es.Any() && !sourceType.IsPrimitive && targetProperty.PropertyType != typeof(String) && !targetProperty.PropertyType.IsInterface)
                 {
                     var sourceProperty = source.GetType().GetProperty(targetProperty.Name);
-                    if (sourceProperty != null)
+                    if (sourceProperty != null && !sourceProperty.PropertyType.IsSubclassOf(typeof(DbEntity)))
                     {
                         var sourceValue = sourceProperty.GetValue(source, null);
                         if (sourceValue != null)
