@@ -41,7 +41,7 @@ public static class StringExtensions
     public static string ToHtml(this string s)
     {
         if (String.IsNullOrEmpty(s)) return String.Empty;
-        var regex = new Regex(@"(\r|\r\n|\n)");
+        var regex = new Regex(@"(\r\n|\r|\n)");
         return regex.Replace(s, "</br>");
     }
 
