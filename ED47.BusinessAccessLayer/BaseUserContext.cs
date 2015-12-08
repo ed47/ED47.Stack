@@ -86,6 +86,10 @@ namespace ED47.BusinessAccessLayer
         protected virtual string GetCurrentUserName()
         {
             if (HttpContext.Current == null || !HttpContext.Current.User.Identity.IsAuthenticated) return null;
+            
+            if(HttpContext.Current.Session != null && HttpContext.Current.Session["Username"] != null)
+                return HttpContext.Current.Session["Username"].ToString();
+            
             return HttpContext.Current.User.Identity.Name;
 
         }
