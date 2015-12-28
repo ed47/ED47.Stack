@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using ED47.Stack.Reflector.Attributes;
 using ED47.Stack.Reflector.Metadata;
 using ED47.Stack.Reflector.Templates;
+using Microsoft.Ajax.Utilities;
 
 namespace ED47.Stack.Reflector
 {
@@ -100,6 +101,10 @@ namespace ED47.Stack.Reflector
             catch (System.IO.FileNotFoundException)
             {
                 return new List<ControllerItem>(0);
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
