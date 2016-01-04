@@ -232,7 +232,7 @@ namespace ED47.Stack.Web.Multilingual
         public string GetTranslationPluralized(string key, int pluralizeCount, params object[] args)
         {
             var language = GetCurrentLanguage();
-            key = key + (pluralizeCount <= 1 ? ".single" : ".many");
+            key = key + (pluralizeCount <= 1 ? ( pluralizeCount == 0 ? ".none" : ".single") : ".many");
             return GetTranslation(key, language, args);
         }
 
