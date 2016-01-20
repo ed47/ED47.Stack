@@ -66,15 +66,21 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             {
                 return;
             }
-            FromAddress = from;
+            
+            if(from != null)
+                FromAddress = from;
 
             var mailMessage = new MailMessage
             {
                 Subject = Subject.Replace("\n", String.Empty).Replace("\r", String.Empty),
                 Body = Body,
                 IsBodyHtml = IsHtml,
+                
+                
             };
-            
+            if(!String.IsNullOrEmpty(FromAddress))
+                mailMessage.From = new MailAddress(FromAddress);
+
             AddRecipients(mailMessage);
 
             IEnumerable<Stream> streams = null;

@@ -50,13 +50,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     .ToList();
         }
 
-        public static FileBoxItem CreateNew(int fileBoxId, IFile file, string comment = null)
+        public static FileBoxItem CreateNew(int fileBoxId, IFile file, string comment = null, string name =  null)
         {
             var fileBoxItem = new FileBoxItem()
             {
                 FileBoxId = fileBoxId,
                 FileId = file.Id,
-                Name = file.Name,
+                Name = name ?? file.Name,
                 FileExtension = Path.GetExtension(file.Name),
                 Comment = comment
             };

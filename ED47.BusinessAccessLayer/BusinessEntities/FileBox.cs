@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -74,7 +75,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 return null;
 
         
-            var newFile = FileRepository.CreateNewFile( name ?? System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId, metadata: metadata);
+            var newFile = FileRepository.CreateNewFile( System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId, metadata: metadata);
 
             using (var fileStream = newFile.OpenWrite())
             {
@@ -82,7 +83,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 fileStream.Flush();
             }
 
-            return FileBoxItem.CreateNew(Id, newFile, comment);
+            return FileBoxItem.CreateNew(Id, newFile, comment, name);
         }
 
         public FileBoxItem AddFile(IFile file, string comment = null)
