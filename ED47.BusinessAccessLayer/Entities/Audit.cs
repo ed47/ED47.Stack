@@ -11,7 +11,7 @@ namespace ED47.BusinessAccessLayer.Entities
 
         public virtual DateTime CreationDate { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(150)]
         public virtual string UserName { get; set; }
         
         public virtual string JsonData { get; set; }
