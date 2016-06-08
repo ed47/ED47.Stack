@@ -122,7 +122,7 @@ namespace ED47.BusinessAccessLayer.Excel
                 }
                 
                 excelPackage.SaveAs(stream);
-                excelPackage.Package.Close();
+               // excelPackage.Package.Close();
                 stream.Flush();
             }
         }
