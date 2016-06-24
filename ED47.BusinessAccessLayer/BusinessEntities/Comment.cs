@@ -60,6 +60,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public static Comment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null, bool? encrypted = false, bool notify = true)
         {
+            if(comment == null)
+                return null;
+
             Comment newComment;
 
             if(encrypted == null || !encrypted.Value)
