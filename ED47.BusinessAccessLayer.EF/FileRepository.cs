@@ -50,7 +50,8 @@ namespace ED47.BusinessAccessLayer.EF
                 Lang = langId,
                 GroupId = groupId.GetValueOrDefault(0),
                 Encrypted = encrypted,
-                Metadata = metadata
+                Metadata = metadata,
+                
             };
             BaseUserContext.Instance.Repository.Add<Entities.File, File.File>(file);
 
