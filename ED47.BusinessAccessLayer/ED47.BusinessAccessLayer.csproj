@@ -57,7 +57,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\FluentValidation.5.3.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
-
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -187,6 +186,7 @@
     <Compile Include="JsonDataFieldAttribute.cs" />
     <Compile Include="JsonDataFieldInjector.cs" />
     <Compile Include="Lock.cs" />
+    <Compile Include="MessageRecipientInfo.cs" />
     <Compile Include="Message\EmailFactory.cs" />
     <Compile Include="Message\EmailHandler.cs" />
     <Compile Include="Message\EmailRepository.cs" />
