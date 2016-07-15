@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
+using System.Web.UI.WebControls.WebParts;
+using Ninject.Planning.Targets;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
@@ -61,12 +64,106 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return BaseUserContext.Instance.Repository.Count<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileBoxId == fileBoxId);
         }
 
-        public IEnumerable<FileBoxItem> GetFiles()
+        private List<FileBoxItem> _items;
+        private ILookup<int, FileBoxItem> _itemsByFolder;
+
+        private IEnumerable<FileBoxItem> _getItems()
         {
-            return FileBoxItem.GetByFileBoxId(Id);
+            if (_items == null)
+            {
+                _items = new List<FileBoxItem>(FileBoxItem.GetByFileBoxId(Id));
+                _filter();
+
+            }
+            return _items;
         }
 
-        public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true, dynamic metadata = null, string name = null)
+        public static Func<FileBoxItem, bool> HasAccess { get; set; }
+
+        private HashSet<FileBoxItem> _blockedFiles = new HashSet<FileBoxItem>();
+
+        private void _filter()
+        {
+            if (HasAccess == null || _items.All(el => String.IsNullOrEmpty(el.ReportingScope)))
+                return;
+
+            var res = new List<FileBoxItem>();
+            var noAccess = _blockedFiles;
+            foreach (var item in _items.Where(el => el.IsFolder && !String.IsNullOrEmpty(el.ReportingScope)))
+            {
+                if (noAccess.Contains(item) || HasAccess(item))
+                    continue;
+
+                noAccess.Add(item);
+                var files = GetChildren(item, true);
+                foreach (var file in files)
+                {
+                    noAccess.Add(file);
+                }
+            }
+            foreach (var item in _items.Where(el => !noAccess.Contains(el) && !el.IsFolder && !String.IsNullOrEmpty(el.ReportingScope)))
+            {
+
+                if (!HasAccess(item))
+                {
+                    noAccess.Add(item);
+                }
+
+
+            }
+            _items = _items.Where(el => !noAccess.Contains(el)).ToList();
+            _itemsByFolder = null;
+        }
+
+        private IEnumerable<FileBoxItem> _getFolderItems(FileBoxItem folder, bool recursive = false)
+        {
+
+            if (_itemsByFolder == null)
+            {
+                _itemsByFolder = _getItems().ToLookup(el => el.FolderId.HasValue ? el.FolderId.Value : 0, el => el);
+            }
+
+            var folders = folder != null ? new List<FileBoxItem>() { folder } : _getItems().Where(el => !el.FolderId.HasValue && el.IsFolder).ToList();
+            var res = new List<FileBoxItem>();
+            if (folder == null)
+                res.AddRange(folders);
+
+            while (folders.Any())
+            {
+                var current = folders.First();
+                folders.RemoveAt(0);
+                var items = _itemsByFolder[current.Id];
+                if (recursive)
+                    folders.AddRange(items.Where(el => el.IsFolder));
+                res.AddRange(items);
+
+            }
+
+            return res;
+        }
+
+        public IEnumerable<FileBoxItem> GetChildren(FileBoxItem folder, bool recursive)
+        {
+            return _getFolderItems(folder, recursive);
+        }
+
+
+        public IEnumerable<FileBoxItem> GetFolders()
+        {
+            return _getItems().Where(el => el.IsFolder);
+        }
+
+          public FileBoxItem GetItem(int id)
+        {
+            return _getItems().FirstOrDefault(el => el.Id == id);
+        }
+
+        public IEnumerable<FileBoxItem> GetFiles()
+        {
+            return _getItems().Where(el => !el.IsFolder);
+        }
+
+        public FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, int? folderId = null, string comment = null, string langId = null, bool requireLogin = true, dynamic metadata = null, string name = null)
         {
             if (file == null || file.ContentLength == 0)
                 return null;
@@ -74,8 +171,13 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (!FileRepositoryFactory.Default.CheckIsSafe(file.FileName))
                 return null;
 
-        
-            var newFile = FileRepository.CreateNewFile( System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId, metadata: metadata);
+            if (folderId.HasValue)
+            {
+                var folder = _items.FirstOrDefault(el => el.Id == folderId.Value);
+                if (_blockedFiles.Contains(folder)) return null;
+            }
+
+            var newFile = FileRepository.CreateNewFile(System.IO.Path.GetFileName(file.FileName), businessKey, groupdId, requireLogin, langId, metadata: metadata);
 
             using (var fileStream = newFile.OpenWrite())
             {
@@ -83,13 +185,63 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 fileStream.Flush();
             }
 
-            return FileBoxItem.CreateNew(Id, newFile, comment, name);
+            var res = FileBoxItem.CreateNew(Id, newFile, folderId, comment, name);
+
+            _items = null;
+            return res;
         }
 
-        public FileBoxItem AddFile(IFile file, string comment = null)
+        public FileBoxItem AddFile(IFile file, int? folderId = null, string comment = null)
         {
-            return FileBoxItem.CreateNew(Id, file, comment);
+            var res = FileBoxItem.CreateNew(Id, file, folderId, comment);
+            _items = null;
+            return res;
         }
+
+        public FileBoxItem AddFolder(string name, int? parentFolder, string comment = null)
+        {
+
+            if (parentFolder.HasValue)
+            {
+                var folder = FileBoxItem.Get(parentFolder.Value);
+                if (folder.FileBoxId != Id)
+                    throw new ApplicationException("Invalid folder");
+            }
+
+            var fileBoxItem = new FileBoxItem()
+            {
+                FileBoxId = Id,
+                Name = name,
+                Comment = comment,
+                IsFolder = true,
+                FolderId = parentFolder
+            };
+
+            BaseUserContext.Instance.Repository.Add<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(fileBoxItem);
+
+            _items = null;
+
+            return fileBoxItem;
+        }
+
+
+
+        public void MoveItem(int fileBoxItemId, int? targetFolderId)
+        {
+            var items = _getItems();
+            var item = items.FirstOrDefault(el => el.Id == fileBoxItemId);
+
+            if (item == null) return;
+
+            if (item.IsFolder)
+            {
+
+
+
+            }
+        }
+
+
 
         public void Save()
         {
