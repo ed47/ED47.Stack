@@ -33,14 +33,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public bool IsPublic { get; set; }
 
-        public  Guid Guid { get; set; }
+        public Guid Guid { get; set; }
 
         [JsonIgnore]
         public IFile File
         {
             get
             {
-                if(!FileId.HasValue) return null;
+                if (!FileId.HasValue) return null;
                 return _file ?? (_file = FileRepositoryFactory.Default.Get(FileId.Value));
             }
         }
@@ -59,14 +59,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                     .ToList();
         }
 
-        public static FileBoxItem CreateNew(int fileBoxId, IFile file, int? folderId = null, string comment = null, string name =  null)
+        public static FileBoxItem CreateNew(int fileBoxId, IFile file, int? folderId = null, string comment = null, string name = null)
         {
 
-            if(folderId.HasValue)
+            if (folderId.HasValue)
             {
                 var folder = Get(folderId.Value);
-                if(folder.FileBoxId != fileBoxId)
-                    throw  new ApplicationException("Invalid folder");
+                if (folder.FileBoxId != fileBoxId)
+                    throw new ApplicationException("Invalid folder");
             }
 
             var fileBoxItem = new FileBoxItem()
@@ -82,12 +82,14 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return fileBoxItem;
         }
 
-      
-    
-
         public static FileBoxItem Get(int id)
         {
             return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.Id == id);
+        }
+
+        public static FileBoxItem Get(FileBoxReference reference)
+        {
+            return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.Id == reference.Id && el.Guid.ToString().Equals(reference.Token, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static FileBoxItem Get(int fileId, int fileBoxId)
@@ -97,28 +99,28 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public void Delete(bool soft = false)
         {
-            if(soft)
+            if (soft)
             {
-                 BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.FileBoxItem>(this);
+                BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.FileBoxItem>(this);
             }
             else
             {
-                 BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
+                BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
             }
 
-           
+
         }
-        
-      
+
+
         public void Save()
         {
-         
-                 BaseUserContext.Instance.Repository.Update<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
-        
 
-           
+            BaseUserContext.Instance.Repository.Update<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
+
+
+
         }
-        
+
         public void MakePublic()
         {
             IsPublic = true;
@@ -133,6 +135,6 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         }
 
-   
+
     }
 }

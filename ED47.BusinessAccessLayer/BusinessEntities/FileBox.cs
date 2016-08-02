@@ -11,6 +11,13 @@ using Ninject.Planning.Targets;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
 {
+
+    public class FileBoxReference
+    {
+        public int Id { get; set; }
+        public String Token { get; set; }
+    }
+
     public class FileBox : BusinessEntity, IFileBox
     {
         public int Id { get; set; }
@@ -37,7 +44,12 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public static FileBox Get(int id)
         {
-            return BaseUserContext.Instance.Repository.Find<BusinessAccessLayer.Entities.FileBox, FileBox>(el => el.Id == id);
+            return BaseUserContext.Instance.Repository.Find<Entities.FileBox, FileBox>(el => el.Id == id);
+        }
+
+         public static FileBox Get(FileBoxReference reference)
+        {
+            return BaseUserContext.Instance.Repository.Find<Entities.FileBox, FileBox>(el => el.Id == reference.Id && el.Guid.ToString().Equals(reference.Token, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static FileBox CreateNew(string parentTypeName, string path = null)

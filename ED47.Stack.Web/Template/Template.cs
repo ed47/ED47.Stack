@@ -44,6 +44,7 @@ namespace ED47.Stack.Web.Template
         private List<TemplateOccurence> _occurrences;
         private readonly List<StackItem> _stack = new List<StackItem>();
         private string _templateText = "";
+        private const string DateFormat = "D";
 
         public TemplateType TplType { get; set; }
 
@@ -459,7 +460,7 @@ namespace ED47.Stack.Web.Template
                 return "Fct DateAddDays need 1 arguments";
             }
             var days = Convert.ToInt32(args[0], CultureInfo.InvariantCulture);
-            return DateTime.Now.AddDays(days).ToString("dd.MM.yyyy");
+            return DateTime.Now.AddDays(days).ToString(DateFormat);
         }
 
         private static string Ellipsis(object[] args)
@@ -888,7 +889,7 @@ namespace ED47.Stack.Web.Template
             var value = GetValue(Current, ident);
             if (value is DateTime)
             {
-                value = ((DateTime)value).ToString("dd.MM.yyyy");
+                value = ((DateTime)value).ToString(DateFormat);
             }
 
             return value != null ? value.ToString() : "";
