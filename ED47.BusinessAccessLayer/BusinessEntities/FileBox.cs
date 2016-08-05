@@ -185,7 +185,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
             if (folderId.HasValue)
             {
-                var folder = _items.FirstOrDefault(el => el.Id == folderId.Value);
+                var folder = _getItems().FirstOrDefault(el => el.Id == folderId.Value);
                 if (_blockedFiles.Contains(folder)) return null;
             }
 

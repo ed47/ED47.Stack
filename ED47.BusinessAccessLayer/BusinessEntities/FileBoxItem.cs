@@ -97,18 +97,26 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return BaseUserContext.Instance.Repository.Where<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(el => el.FileId == fileId && el.FileBoxId == fileBoxId).FirstOrDefault();
         }
 
-        public void Delete(bool soft = false)
+        public void Delete(bool soft = false, bool recursive = true)
         {
             if (soft)
             {
-                BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.FileBoxItem>(this);
+                BaseUserContext.Instance.Repository.SoftDelete<BusinessAccessLayer.Entities.FileBoxItem>(Id);
             }
             else
             {
                 BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
             }
 
-
+            if(IsFolder && recursive)
+            {
+                var fb = BaseUserContext.GetDynamicInstance<Entities.FileBox, FileBox>(FileBoxId);
+                var children = fb.GetChildren(this, true);
+                foreach (var item in children)
+                {
+                    item.Delete(soft);
+                }
+            }
         }
 
 
