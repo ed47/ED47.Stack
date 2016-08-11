@@ -183,7 +183,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             if (!FileRepositoryFactory.Default.CheckIsSafe(file.FileName))
                 return null;
 
-            if (folderId.HasValue)
+            if (folderId.HasValue && folderId.Value != 0)
             {
                 var folder = _getItems().FirstOrDefault(el => el.Id == folderId.Value);
                 if (_blockedFiles.Contains(folder)) return null;
@@ -197,7 +197,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 fileStream.Flush();
             }
 
-            var res = FileBoxItem.CreateNew(Id, newFile, folderId, comment, name);
+            var res = FileBoxItem.CreateNew(Id, newFile, folderId.HasValue ? (folderId.Value == 0 ? (int?)null : folderId.Value) : null , comment, name);
 
             _items = null;
             return res;
@@ -213,12 +213,15 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         public FileBoxItem AddFolder(string name, int? parentFolder, string comment = null)
         {
 
-            if (parentFolder.HasValue)
+            if (parentFolder.HasValue && parentFolder.Value != 0)
             {
                 var folder = FileBoxItem.Get(parentFolder.Value);
                 if (folder.FileBoxId != Id)
                     throw new ApplicationException("Invalid folder");
             }
+
+
+
 
             var fileBoxItem = new FileBoxItem()
             {
@@ -226,7 +229,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 Name = name,
                 Comment = comment,
                 IsFolder = true,
-                FolderId = parentFolder
+                FolderId = parentFolder.HasValue ? (parentFolder.Value == 0 ? (int?)null : parentFolder.Value) : null
             };
 
             BaseUserContext.Instance.Repository.Add<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(fileBoxItem);

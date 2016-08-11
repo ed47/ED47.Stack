@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Newtonsoft.Json;
 
 namespace ED47.BusinessAccessLayer.BusinessEntities
@@ -108,7 +109,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 BaseUserContext.Instance.Repository.Delete<BusinessAccessLayer.Entities.FileBoxItem, FileBoxItem>(this);
             }
 
-            if(IsFolder && recursive)
+            if (IsFolder && recursive)
             {
                 var fb = BaseUserContext.GetDynamicInstance<Entities.FileBox, FileBox>(FileBoxId);
                 var children = fb.GetChildren(this, true);
@@ -143,6 +144,44 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         }
 
+        private static HashSet<int> _getParents(FileBoxItem item)
+        {
+            var res = new HashSet<int>();
+            while (true)
+            {
+                if (res.Contains(item.Id))
+                    return res;
 
+                res.Add(item.Id);
+                if (!item.FolderId.HasValue)
+                    return res;
+
+                var parent = Get(item.FolderId.Value);
+                item = parent;
+            }
+        }
+
+
+        public bool SetFolder(FileBoxItem dest)
+        {
+            if(dest ==null)
+            {
+                FolderId = null;
+                return true;
+            }
+
+            if (dest.Id == Id || dest.Id == FolderId)
+                return false;
+
+            var chain = _getParents(dest);
+
+            if(chain.Contains(Id))
+                return false;
+
+            FolderId  = dest.Id;
+
+            return true;
+
+        }
     }
 }

@@ -460,7 +460,7 @@ namespace ED47.Stack.Web.Template
                 return "Fct DateAddDays need 1 arguments";
             }
             var days = Convert.ToInt32(args[0], CultureInfo.InvariantCulture);
-            return DateTime.Now.AddDays(days).ToString(DateFormat);
+            return DateTime.Now.AddDays(days).ToString(DateFormat, new CultureInfo("en-US"));
         }
 
         private static string Ellipsis(object[] args)
@@ -889,7 +889,7 @@ namespace ED47.Stack.Web.Template
             var value = GetValue(Current, ident);
             if (value is DateTime)
             {
-                value = ((DateTime)value).ToString(DateFormat);
+                value = ((DateTime)value).ToString(DateFormat, new CultureInfo("en-US"));
             }
 
             return value != null ? value.ToString() : "";
