@@ -6,7 +6,7 @@ using System.Text;
 namespace ED47.Stack.Reflector
 {
     public enum ExtJsXTypes
-    {
+    { 
         textfield,
         combo
     }

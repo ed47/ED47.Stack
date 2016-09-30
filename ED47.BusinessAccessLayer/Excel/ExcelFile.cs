@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 using ED47.BusinessAccessLayer.BusinessEntities;
 using ED47.Stack.Web;
@@ -10,6 +11,50 @@ using OfficeOpenXml;
 
 namespace ED47.BusinessAccessLayer.Excel
 {
+
+    public static class WorkBookExtension
+    {
+        
+        public static void AddData<TData>(this ExcelPackage package, string sheetName, IEnumerable<TData> data, IEnumerable<string> fields = null)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            if (package == null) throw new ArgumentNullException(nameof(package));
+
+            var sheet = package.Workbook.Worksheets.Add(sheetName);
+
+
+            var dataType = typeof(TData);
+            fields = fields ?? dataType.GetProperties().Select(el=>el.Name);
+
+            var rows = data as TData[] ?? data.ToArray();
+            var x = 1;
+            foreach (var field in fields)
+            {
+                var y = 1;
+                var pinfo = dataType.GetProperty(field);
+
+                if(pinfo == null) continue;
+
+                sheet.Cells[y, x].Value = field;
+
+                y++;
+
+                foreach (var row in rows)
+                {
+                    var val = pinfo.GetValue(row);
+
+                    if(val is DateTime?)
+                        sheet.Cells[y, x].Style.Numberformat.Format = "dd.mm.yyyy";
+
+                    sheet.Cells[y, x].Value = val;
+                    y++;
+                }
+
+                x++;
+            }
+        }
+    }
+
     public static class IFileExtension
     {
         public static ExcelPackage ToExcelPackage(this IFile file)
