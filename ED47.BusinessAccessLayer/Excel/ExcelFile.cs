@@ -14,7 +14,7 @@ namespace ED47.BusinessAccessLayer.Excel
 
     public static class WorkBookExtension
     {
-        
+
         public static void AddData<TData>(this ExcelPackage package, string sheetName, IEnumerable<TData> data, IEnumerable<string> fields = null)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
@@ -24,33 +24,42 @@ namespace ED47.BusinessAccessLayer.Excel
 
 
             var dataType = typeof(TData);
-            fields = fields ?? dataType.GetProperties().Select(el=>el.Name);
+            fields = fields ?? dataType.GetProperties().Select(el => el.Name);
 
-            var rows = data as TData[] ?? data.ToArray();
+
+            var y = 1;
             var x = 1;
             foreach (var field in fields)
             {
-                var y = 1;
                 var pinfo = dataType.GetProperty(field);
 
-                if(pinfo == null) continue;
+                if (pinfo == null) continue;
 
                 sheet.Cells[y, x].Value = field;
-
-                y++;
-
-                foreach (var row in rows)
+                x++;
+            }
+            y++;
+            foreach (var row in data)
+            {
+                x = 1;
+                foreach (var field in fields)
                 {
+                  
+                    var pinfo = dataType.GetProperty(field);
+
+                    if (pinfo == null) continue;
+
+              
+
                     var val = pinfo.GetValue(row);
 
-                    if(val is DateTime?)
+                    if (val is DateTime?)
                         sheet.Cells[y, x].Style.Numberformat.Format = "dd.mm.yyyy";
 
                     sheet.Cells[y, x].Value = val;
-                    y++;
+                    x++;
                 }
-
-                x++;
+                y++;
             }
         }
     }
@@ -75,7 +84,7 @@ namespace ED47.BusinessAccessLayer.Excel
         /// </summary>
         public ExcelFile(IFile file = null)
         {
-          
+
             Sheets = new List<ExcelSheet>();
         }
 
@@ -86,7 +95,7 @@ namespace ED47.BusinessAccessLayer.Excel
         /// The sheets.
         /// </value>
         public List<ExcelSheet> Sheets { get; private set; }
-    
+
         public string FileName { get; set; }
         public string BusinessKey { get; set; }
 
@@ -105,19 +114,19 @@ namespace ED47.BusinessAccessLayer.Excel
             }
 
             var newSheet = new ExcelSheet(name)
-                               {
-                                   Data = data,
-                                   Fields = fields
-                                   
-                               };
-            
+            {
+                Data = data,
+                Fields = fields
+
+            };
+
             this.Sheets.Add(newSheet);
 
-            if (autoColumns && newSheet.Data.Count>0)
+            if (autoColumns && newSheet.Data.Count > 0)
             {
                 var first = newSheet.Data[0];
                 newSheet.AddColumns(
-                    first.Properties.Select(el=> new ExcelColumn()
+                    first.Properties.Select(el => new ExcelColumn()
                     {
                         DisplayName = el,
                         PropertyName = el,
@@ -165,14 +174,14 @@ namespace ED47.BusinessAccessLayer.Excel
                 {
                     excelSheet.Write(excelPackage, existingFile != null);
                 }
-                
+
                 excelPackage.SaveAs(stream);
-               // excelPackage.Package.Close();
+                // excelPackage.Package.Close();
                 stream.Flush();
             }
         }
 
-      
+
 
         public IFile Write(string name, string businessKey)
         {
@@ -190,14 +199,14 @@ namespace ED47.BusinessAccessLayer.Excel
             var f = Write(name, businessKey);
             using (var s = f.OpenRead())
             {
-                return new FileStreamResult(s,f.GetContentType());
+                return new FileStreamResult(s, f.GetContentType());
             }
         }
 
         public IFile ToFile(IFile existingFile = null)
         {
             var file = FileRepositoryFactory.Default.CreateNewFile(FileName, BusinessKey);
-            
+
             using (var fileStream = file.OpenWrite())
             {
                 Write(fileStream, existingFile);
