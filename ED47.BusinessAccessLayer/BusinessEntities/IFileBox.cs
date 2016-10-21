@@ -16,8 +16,8 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
         string Path { get; set; }
         Guid Guid { get; set; }
         IEnumerable<FileBoxItem> GetFiles();
-        FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null, string comment = null, string langId = null, bool requireLogin = true, dynamic metadata = null, string name = null);
-        FileBoxItem AddFile(IFile file, string comment = null);
+        FileBoxItem AddFile(HttpPostedFileBase file, string businessKey, int? groupdId = null,int? folderId = null, string comment = null, string langId = null, bool requireLogin = true, dynamic metadata = null, string name = null);
+        FileBoxItem AddFile(IFile file,int? folderId = null, string comment = null);
         void Save();
     }
 }

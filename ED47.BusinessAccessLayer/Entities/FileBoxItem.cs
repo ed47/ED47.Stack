@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace ED47.BusinessAccessLayer.Entities
 {
@@ -18,12 +20,20 @@ namespace ED47.BusinessAccessLayer.Entities
 
         [ForeignKey("FileBoxId")]
         public virtual FileBox FileBox { get; set; }
-        
-        public virtual int FileId { get; set; }
+
+        public virtual int? FileId { get; set; }
 
         [ForeignKey("FileId")]
         public virtual Entities.File File { get; set; }
 
         public virtual bool IsPublic { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsFolder { get; set; }
+
+        public int? FolderId { get; set; }
+
+        [MaxLength(250)]
+        public string ReportingScope { get; set; }
     }
 }
