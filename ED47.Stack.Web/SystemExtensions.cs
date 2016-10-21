@@ -76,6 +76,7 @@ public static class StringExtensions
     public static bool IsEmail(this string s)
     {
 
+        if(s == null) return false;
         var re = new Regex(EmailRegex);
         if (re.IsMatch(s))
             return (true);
