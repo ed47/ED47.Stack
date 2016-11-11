@@ -49,6 +49,10 @@ namespace ED47.BusinessAccessLayer
             if (Transaction != null)
             {
                 Transaction.Commit();
+                // Transaction.Commit() has set Repository.DbContext.Database.Transaction to null
+                // but not Repository.ImmediateDbContext.Database.Transaction. this will fix it :
+                Repository.ImmediateDbContext.Database.UseTransaction(null);
+                Repository.Transaction = null;
                 Transaction = null;
             }
         }
@@ -64,6 +68,8 @@ namespace ED47.BusinessAccessLayer
             Transaction.Rollback();
             Transaction.Dispose();
             Transaction = null;
+            Repository.ImmediateDbContext.Database.UseTransaction(null);
+            Repository.Transaction = null;
         }
     }
 }
