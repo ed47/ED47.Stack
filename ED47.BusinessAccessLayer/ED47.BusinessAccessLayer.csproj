@@ -147,6 +147,7 @@
     <Compile Include="BusinessEntities\IEmail.cs" />
     <Compile Include="BusinessEntities\IFile.cs" />
     <Compile Include="BusinessEntities\IFileBox.cs" />
+    <Compile Include="BusinessEntities\Notifier.cs" />
     <Compile Include="BusinessEntityHelper.cs" />
     <Compile Include="BusinessEntities\Comment.cs" />
     <Compile Include="BusinessEntities\CommentNotifier.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="FileRepository.cs" />
     <Compile Include="FileRepositoryFactory.cs" />
     <Compile Include="FileRepositoryHandler.cs" />
+    <Compile Include="File\FileNotifier.cs" />
     <Compile Include="File\File.cs" />
     <Compile Include="File\FileExtensions.cs" />
     <Compile Include="File\FileExtensionWhiteList.cs" />

@@ -16,7 +16,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
     /// <summary>
     /// Represents a user comment.
     /// </summary>
-    public class Comment : BusinessEntity
+    public class Comment : BusinessEntity, IWithBusinessKey
     {
         protected static readonly ICollection<CommentNotifier> Notifiers = new List<CommentNotifier>();
 
@@ -200,6 +200,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 query = query.OrderBy(el => el.CreationDate);
 
             return RepositoryHelper.Convert<Entities.Comment, TComment>(query).ToList();
+        }
+
+        public string GetBusinessKey()
+        {
+            return BusinessKey;
         }
     }
 

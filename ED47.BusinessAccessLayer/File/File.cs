@@ -8,10 +8,12 @@ using ED47.Stack.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ED47.BusinessAccessLayer.File
 {
-    public class File : BusinessEntity, IFile
+    public class File : BusinessEntity, IFile, IWithBusinessKey
     {
         public virtual int Id { get; set; }
 
@@ -232,6 +234,37 @@ namespace ED47.BusinessAccessLayer.File
             }
 
             return newFile;
+        }
+
+        public string GetBusinessKey()
+        {
+            return BusinessKey;
+        }
+
+        protected static readonly ICollection<FileNotifier> Notifiers = new List<FileNotifier>();
+
+        public static void AddNotifier(FileNotifier notifier)
+        {
+            lock (Notifiers)
+            {
+                if (Notifiers.Any(el => el.Guid == notifier.Guid))
+                    return;
+
+                Notifiers.Add(notifier);
+            }
+        }
+
+        public void TryNotify(FileNotifierArgs args)
+        {
+            TryNotify(this, args);
+        }
+
+        public static void TryNotify(File file, FileNotifierArgs args)
+        {
+            lock (Notifiers)
+            {
+                Notifiers.ToList().ForEach(el => el.TryNotify(file, args));
+            }
         }
     }
 }
