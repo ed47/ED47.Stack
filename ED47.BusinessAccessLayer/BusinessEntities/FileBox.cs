@@ -210,6 +210,30 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
             return res;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="folderPath">subfolders separated with '/'</param>
+        /// <param name="comment"></param>
+        /// <returns></returns>
+        public FileBoxItem AddFileToPath(IFile file, string folderPath = null, string comment = null)
+        {
+            if (string.IsNullOrEmpty(folderPath))
+                return AddFile(file, (int?)null, comment);
+
+            var subDirectories = folderPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+
+            int? parentFolder = null;
+            foreach (var subdir in subDirectories)
+            {
+                var folder = GetFolders().FirstOrDefault(f => f.FolderId == parentFolder && f.Name == subdir)
+                    ?? AddFolder(subdir, parentFolder);
+                parentFolder = folder.Id;
+            }
+            return AddFile(file, parentFolder, comment);
+        }
+
         public FileBoxItem AddFolder(string name, int? parentFolder, string comment = null)
         {
 
