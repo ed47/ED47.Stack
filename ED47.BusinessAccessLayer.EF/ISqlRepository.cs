@@ -11,6 +11,16 @@ namespace ED47.BusinessAccessLayer.EF
         IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params object[] parameters) where TBusinessEntity : class;
         IEnumerable<TBusinessEntity> ExecuteStoredProcedure<TBusinessEntity>(string storedProcedure, params SqlParameter[] parameters) where TBusinessEntity : class;
 
+        /// <summary>
+        /// Execute a stored procedure which returns N tables.
+        /// First table will be mapped to objects of type types[0], second table with type types[1] and so on.
+        /// </summary>
+        /// <param name="storedProcedure"></param>
+        /// <param name="types">must be length N</param>
+        /// <param name="parameters"></param>
+        /// <returns>length is N. Result[0] will be the objects (of type types[0]) from the first table, ...</returns>
+        object[][] ExecuteStoredProcedure(string storedProcedure, Type[] types, params SqlParameter[] parameters);
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "SQL query is parametrized")]
         int ExecuteNonQuery(string storedProcedure, params SqlParameter[] parameters);
 

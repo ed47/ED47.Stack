@@ -721,6 +721,38 @@ namespace ED47.BusinessAccessLayer.EF
             }
         }
 
+        public object[][] ExecuteStoredProcedure(string storedProcedure, Type[] types, params SqlParameter[] parameters)
+        {
+            var conn = Connection;
+
+            using (var sqlcmd = conn.CreateCommand())
+            {
+                InitSqlCommand(sqlcmd);
+                sqlcmd.CommandType = CommandType.StoredProcedure;
+                sqlcmd.CommandText = storedProcedure;
+
+                foreach (var parameter in parameters)
+                {
+                    sqlcmd.Parameters.Add(parameter);
+                }
+                
+                List<object[]> result = new List<object[]>();
+                using (var reader = sqlcmd.ExecuteReader())
+                {
+                    foreach (var t in types)
+                    {
+                        var mi = typeof(ReaderInjection).GetMethod(nameof(ReaderInjection.ReadAll));
+                        var genMi = mi.MakeGenericMethod(t);
+                        var datas = (IEnumerable<object>) genMi.Invoke(null, new object[] { reader });
+                        result.Add(datas.ToArray());
+
+                        reader.NextResult();
+                    }
+                }
+                return result.ToArray();
+            }
+        }
+
         private DbDataReader ExecuteStoredProcedure(string storedProcedure, params SqlParameter[] parameters)
         {
             var conn = Connection;
