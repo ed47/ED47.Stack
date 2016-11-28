@@ -33,6 +33,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public virtual string Body { get; set; }
 
+        [MaxLength(500)]
+        public virtual string Signature { get; set; }
+
         public virtual DateTime?  TransmissionDate { get; set; }
         private List<EmailAttachment> _Attachments;
         public IEnumerable<EmailAttachment> Attachments

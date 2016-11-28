@@ -19,6 +19,9 @@ namespace ED47.BusinessAccessLayer.Entities
 
         public virtual string Body { get; set; }
 
+        [MaxLength(500)]
+        public virtual string Signature { get; set; }
+
         public virtual DateTime?  TransmissionDate { get; set; }
     }
 }
