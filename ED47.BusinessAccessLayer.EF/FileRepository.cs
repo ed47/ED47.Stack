@@ -50,24 +50,32 @@ namespace ED47.BusinessAccessLayer.EF
                 Lang = langId,
                 GroupId = groupId.GetValueOrDefault(0),
                 Encrypted = encrypted,
-                Metadata = metadata
+                Metadata = metadata,
+
             };
             BaseUserContext.Instance.Repository.Add<Entities.File, File.File>(file);
 
+            FileBox filebox = null;
             if (fileBoxId.HasValue)
             {
-                var filebox = FileBox.Get(fileBoxId.Value);
+                filebox = FileBox.Get(fileBoxId.Value);
 
-                if(filebox == null)
+                if (filebox == null)
                     throw new ApplicationException(String.Format("You want to add a file to the file box Id '{0}' but the filebox doesn't exists!", fileBoxId));
 
                 filebox.AddFile(file);
             }
 
+            file.TryNotify(new FileNotifierArgs()
+            {
+                ActionType = FileActionType.New,
+                FileBox = filebox
+            });
+
             return file;
         }
 
-        public override IFile GetFileByKey(string businessKey, int? version = null) 
+        public override IFile GetFileByKey(string businessKey, int? version = null)
         {
             var context = BaseUserContext.Instance;
 
@@ -115,12 +123,18 @@ namespace ED47.BusinessAccessLayer.EF
             if (fileBoxid.HasValue)
             {
                 var item = FileBoxItem.Get(id, fileBoxid.Value);
-                
+
                 if (item == null)
                     return;
 
                 item.Delete();
             }
+
+            file.TryNotify(new FileNotifierArgs()
+            {
+                ActionType = FileActionType.Delete,
+                FileBoxId = fileBoxid
+            });
         }
 
         public override IEnumerable<string> GetFileExtensionWhiteLists()
@@ -139,7 +153,7 @@ namespace ED47.BusinessAccessLayer.EF
                     .GetAll<Entities.FileExtensionWhiteList, FileExtensionWhiteList>()
                     .Select(el => el.Extension.ToLowerInvariant()).ToArray();
 
-                MemoryCache.Default.Add(new CacheItem(cacheKey, value), new CacheItemPolicy {SlidingExpiration = TimeSpan.FromMinutes(20)});
+                MemoryCache.Default.Add(new CacheItem(cacheKey, value), new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(20) });
             }
 
             return value;

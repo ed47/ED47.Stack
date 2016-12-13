@@ -16,7 +16,7 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
     /// <summary>
     /// Represents a user comment.
     /// </summary>
-    public class Comment : BusinessEntity
+    public class Comment : BusinessEntity, IWithBusinessKey
     {
         protected static readonly ICollection<CommentNotifier> Notifiers = new List<CommentNotifier>();
 
@@ -60,6 +60,9 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
 
         public static Comment Create(string businessKey, string comment, int? commenterId = null, IEnumerable<int> fileIds = null, bool? encrypted = false, bool notify = true)
         {
+            if(comment == null)
+                return null;
+
             Comment newComment;
 
             if(encrypted == null || !encrypted.Value)
@@ -197,6 +200,11 @@ namespace ED47.BusinessAccessLayer.BusinessEntities
                 query = query.OrderBy(el => el.CreationDate);
 
             return RepositoryHelper.Convert<Entities.Comment, TComment>(query).ToList();
+        }
+
+        public string GetBusinessKey()
+        {
+            return BusinessKey;
         }
     }
 

@@ -76,6 +76,7 @@ namespace ED47.BusinessAccessLayer
             context.Response.ContentType = ED47.Stack.Web.MimeTypeHelper.GetMimeType(file.Name);
             if (!file.Encrypted)
             {
+               
                 using (var rs = file.OpenRead())
                 {
                     if (rs == null)

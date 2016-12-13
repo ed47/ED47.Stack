@@ -6,14 +6,14 @@ if (window.Ext) {
     Ext.define("ED47.views.data.SharedStore", {
         extend: "Ext.util.Observable",
 
-        constructor: function(config) {
+        constructor: function (config) {
             this.id = config.id;
             this.model = config.model;
             this.deleteConfirmation = config.deleteConfirmation;
 
             try { //Attempt to create the model to make sure it exists. If not show a friendly message to the developer.
                 Ext.create(this.model);
-            } catch(e) {
+            } catch (e) {
                 console.error("Model seems to be missing for " + this.model + ". Please add [Model] attribute to the BusinessEntity.");
                 throw e;
             }
@@ -47,7 +47,7 @@ if (window.Ext) {
     ED47.Stores.listeners = [];
     ED47.Stores.isInitialized = false;
 
-    ED47.Stores.onNewStore = function(index, store, id) {
+    ED47.Stores.onNewStore = function (index, store, id) {
         var listeners = ED47.Stores.listeners;
         var listener = Enumerable.from(listeners).where("el => el.id == '" + id + "'").firstOrDefault();
 
@@ -61,7 +61,7 @@ if (window.Ext) {
     };
 
     //Looks up a store and listens until the store is available.
-    ED47.Stores.get = function(storeId, callback, scope) {
+    ED47.Stores.get = function (storeId, callback, scope) {
         ED47.Stores.initialize();
         var store = Ext.data.StoreManager.lookup(storeId);
         if (store) {
@@ -78,14 +78,14 @@ if (window.Ext) {
     };
 
 
-    ED47.Stores.initialize = function() {
+    ED47.Stores.initialize = function () {
         if (ED47.Stores.isInitialized) return;
         ED47.Stores.isInitialized = true;
         Ext.data.StoreManager.on("add", ED47.Stores.onNewStore);
     };
 
     //Set's up a ShareStore and triggers ready event when done.
-ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, deleteFunction, deleteConfirmation, preselectedRecordId, deleteConfirmationMessage) {
+    ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, deleteFunction, deleteConfirmation, preselectedRecordId, deleteConfirmationMessage) {
         ED47.views.Render.addEvents(id);
 
         var config = {
@@ -95,11 +95,11 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             initNewFunction: initNewFunction,
             deleteFunction: deleteFunction,
             deleteConfirmation: deleteConfirmation,
-        preselectedRecordId: preselectedRecordId,
-        deleteConfirmationMessage: deleteConfirmationMessage
+            preselectedRecordId: preselectedRecordId,
+            deleteConfirmationMessage: deleteConfirmationMessage
         };
 
-        var ready = function() {
+        var ready = function () {
             var store = new ED47.views.data.SharedStore(config);
             ED47.views.Render.fireEvent(id);
         };
@@ -326,9 +326,10 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                         return;
                     }
 
-                    Ext.each(records, function (record) {
-                        me.remove(record);
-                    });
+                    Ext.each(records,
+                        function (record) {
+                            me.remove(record);
+                        });
 
                     me.select(me, me.getAt(0));
                     me.selectMulti(me, [me.getAt(0)]);
@@ -344,12 +345,33 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                                 return;
                             }
 
-                            Ext.each(records, function (record) {
-                                me.remove(record);
-                            });
+                            if (callResult.data.ResultData.DeletedItems) {
+                                Ext.each(records, function (record) {
+                                    if (callResult.data.ResultData.DeletedItems['id' + record.getId()])
+                                        me.remove(record);
+                                });
+                            } else {
+                                Ext.each(records, function (record) {
+                                    me.remove(record);
+                                });
+                            }
 
-                            me.select(me, me.getAt(0));
-                            me.selectMulti(me, [me.getAt(0)]);
+                            if (callResult.data.ResultData.UpdatedItems) {
+                                Ext.each(records, function (record) {
+                                    var updatedItem = callResult.data.ResultData.UpdatedItems['id' + record.getId()];
+                                    if (updatedItem) {
+                                        var index = record.index || me.indexOf(record);
+                                        me.removeAt(index);
+                                        this.serverValue = Ext.applyIf(updatedItem, record.data);
+                                        this._updating = true;
+                                        me.insert(index, updatedItem);
+                                        this._updating = false;
+                                    }
+                                });
+                            }
+
+                            me.select(me);
+                            me.selectMulti(me, []);
                         });
                     }
                     if (callback) callback.call(this, (button == "yes"));
@@ -366,7 +388,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
     Ext.define("ED47.views.data.TreeStore", {
         extend: "Ext.data.TreeStore",
 
-        constructor: function(config) {
+        constructor: function (config) {
 
             var defaultConfig = {
                 model: config.model,
@@ -394,11 +416,11 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             this.on("select", this.onSelect);
         },
 
-        initNew: function(params) {
+        initNew: function (params) {
             var me = this;
             if (!this.initNewFunction) return;
 
-            this.initNewFunction(params, function(callResult) {
+            this.initNewFunction(params, function (callResult) {
                 var r = callResult.data.ResultData.Item;
                 me._updating = true;
                 me.insert(0, r);
@@ -407,9 +429,9 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 ED47.views.current.fireEvent("startedit");
             });
         },
-        select: function(sender, record) {
+        select: function (sender, record) {
             var view = this;
-            Ext.each(view.forms, function(form) {
+            Ext.each(view.forms, function (form) {
                 form.owner.setDisabled(false);
                 if (record)
                     form.loadRecord(record);
@@ -419,18 +441,18 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             });
             this.fireEvent("select", sender, record, this);
         },
-        onSelect: function(sender, record, context) {
+        onSelect: function (sender, record, context) {
             this.selectedRecord = record;
         },
 
-        setupAutoSave: function() {
+        setupAutoSave: function () {
             //Wire sending updates to server when store it updated
             this.on("update", this.onUpdate, this);
             this.on("add", this.onUpdate, this);
         },
 
         //Called when there is a update.
-        onUpdate: function(store, record, operation, modifiedFieldNames) {
+        onUpdate: function (store, record, operation, modifiedFieldNames) {
             if (this._updating) return;
 
 
@@ -448,9 +470,9 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 return;
             }
 
-            Ext.each(modifiedFieldNames, function(fiedName) {
-                Ext.each(view.forms, function(form) {
-                    Ext.each(form.getFields().items, function(field) {
+            Ext.each(modifiedFieldNames, function (fiedName) {
+                Ext.each(view.forms, function (form) {
+                    Ext.each(form.getFields().items, function (field) {
                         if (field.name == fiedName)
                             field.setDisabled(true);
                     });
@@ -462,15 +484,15 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 return;
             }
 
-            this.addUpdateFunction(record.data, function(callResult) {
+            this.addUpdateFunction(record.data, function (callResult) {
                 view.serverValue = callResult.data.ResultData.Item;
                 view._updating = true;
                 view.updateRecord(store, record, callResult);
                 view._updating = false;
 
-                Ext.each(modifiedFieldNames, function(fiedName) {
-                    Ext.each(view.forms, function(form) {
-                        Ext.each(form.getFields().items, function(field) {
+                Ext.each(modifiedFieldNames, function (fiedName) {
+                    Ext.each(view.forms, function (form) {
+                        Ext.each(form.getFields().items, function (field) {
                             if (field.name == fiedName)
                                 field.setDisabled(false);
                         });
@@ -481,7 +503,7 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
         },
 
         //Updates a record from a callResult.
-        updateRecord: function(store, record, callResult) {
+        updateRecord: function (store, record, callResult) {
             var index = record.index || store.indexOf(record);
 
             store.removeAt(index);
@@ -493,12 +515,12 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
             console.log("Updated record.");
         },
 
-        deleteRecord: function(record, callback) {
+        deleteRecord: function (record, callback) {
             var me = this;
             if (!this.deleteFunction) return;
 
             if (!this.deleteConfirmation) {
-                me.deleteFunction(record.data, function(callResult) {
+                me.deleteFunction(record.data, function (callResult) {
                     var r = callResult.data.ResultData.Item;
                     if (!r) {
                         Ext.Msg.alert('Delete Action not permited ', "You can't delete this item.");
@@ -510,9 +532,9 @@ ED47.Stores.setup = function (id, name, addUpdateFunction, initNewFunction, dele
                 });
                 if (callback) callback.call(this, true);
             } else {
-                Ext.Msg.confirm("Management", "Remove selected item?", function(button) {
+                Ext.Msg.confirm("Management", "Remove selected item?", function (button) {
                     if (button === "yes") {
-                        me.deleteFunction(record.data, function(callResult) {
+                        me.deleteFunction(record.data, function (callResult) {
                             var r = callResult.data.ResultData.Item;
                             if (!r) {
                                 Ext.Msg.alert('Delete Action not permited ', "You can't delete this item.");

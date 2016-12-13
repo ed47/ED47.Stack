@@ -9,24 +9,32 @@ using System.Web.Helpers;
 
 namespace ED47.BusinessAccessLayer
 {
+
+
+
     /// <summary>
     /// Class that manages access to the current context's Repository.
     /// </summary>
     public abstract class BaseUserContext
     {
-        public static Func<BaseUserContext> CreateDefaultContext { get; set; } 
+        public static void Debug(params object[] values)
+        {
+
+        }
+
+        public static Func<BaseUserContext> CreateDefaultContext { get; set; }
 
         public static string ApplicationUrl
         {
             get
             {
                 return ConfigurationManager.AppSettings["ApplicationUrl"];
-               
+
             }
         }
 
         protected const string InstanceKey = "ED47.GrcTool.BaseUserContext.Instance";
-      
+
         /// <summary>
         /// Retrieves a value from the context.
         /// </summary>
@@ -34,8 +42,8 @@ namespace ED47.BusinessAccessLayer
         /// <returns></returns>
         public static object Retrieve(string key)
         {
-            if(HttpContext.Current == null) return null;
-            
+            if (HttpContext.Current == null) return null;
+
             var val = HttpContext.Current.Items[key];
 
             return val;
@@ -51,7 +59,7 @@ namespace ED47.BusinessAccessLayer
 
         public virtual void StoreInCookie(string key, object value)
         {
-            var cookie = HttpContext.Current.Request.Cookies["ED47.UserContext" ] ?? new HttpCookie("ED47.UserContext");
+            var cookie = HttpContext.Current.Request.Cookies["ED47.UserContext"] ?? new HttpCookie("ED47.UserContext");
             var json = Json.Encode(value);
             cookie.Value = json;
             cookie.Expires = DateTime.Now.AddDays(1);
@@ -66,7 +74,7 @@ namespace ED47.BusinessAccessLayer
         public static void Store(string key, object value)
         {
             var items = ContextItemCollection.GetItems();
-            if (items  == null) return;
+            if (items == null) return;
 
             items[key] = value;
         }
@@ -86,25 +94,25 @@ namespace ED47.BusinessAccessLayer
         protected virtual string GetCurrentUserName()
         {
             if (HttpContext.Current == null || !HttpContext.Current.User.Identity.IsAuthenticated) return null;
-            
-            if(HttpContext.Current.Session != null && HttpContext.Current.Session["Username"] != null)
+
+            if (HttpContext.Current.Session != null && HttpContext.Current.Session["Username"] != null)
                 return HttpContext.Current.Session["Username"].ToString();
-            
+
             return HttpContext.Current.User.Identity.Name;
 
         }
 
         public virtual string UserName
-        { 
-            get 
-            { 
+        {
+            get
+            {
                 return GetCurrentUserName();
-            }   
+            }
         }
 
         protected abstract IRepository GetRepository();
-      
-      
+
+
 
         /// <summary>
         /// Gets the current context's Repository.
@@ -118,7 +126,7 @@ namespace ED47.BusinessAccessLayer
         {
             get
             {
-                return  new CacheItemPolicy {AbsoluteExpiration = DateTime.Now.AddMinutes(10)};
+                return new CacheItemPolicy { AbsoluteExpiration = DateTime.Now.AddMinutes(10) };
             }
         }
 
@@ -160,7 +168,7 @@ namespace ED47.BusinessAccessLayer
                     entity = Instance.Repository.Find<TDbEntity, TBusinessEntity>(el => el.Id == id, ignoreBusinessPredicate: ignoreBusinessPredicate);
                     if (entity == null)
                         return null;
-                        
+
                     cache.Add(new CacheItem(key, entity), DataCacheItemPolicy);
                 }
                 return entity;
@@ -181,12 +189,11 @@ namespace ED47.BusinessAccessLayer
 
 
         public static void StoreDynamicInstance(Type businessEntityType, IBusinessEntity value)
-
         {
             var prop = businessEntityType.GetProperty("Id");
             if (prop == null) return;
 
-            var key = businessEntityType.FullName + String.Format(".DynamicInstance?id={0}",prop.GetValue(value,null));
+            var key = businessEntityType.FullName + String.Format(".DynamicInstance?id={0}", prop.GetValue(value, null));
             lock (Lock.Get(key))
             {
                 Store(key, value);
@@ -242,7 +249,6 @@ namespace ED47.BusinessAccessLayer
 
 
         public static IBusinessEntity TryGetDynamicInstance(Type businessEntityType, int id)
-           
         {
             var key = businessEntityType.FullName + String.Format(".DynamicInstance?id={0}", id);
             lock (Lock.Get(key))
@@ -250,5 +256,8 @@ namespace ED47.BusinessAccessLayer
                 return Retrieve(key) as IBusinessEntity;
             }
         }
+
+
+
     }
 }

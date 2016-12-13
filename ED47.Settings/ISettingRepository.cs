@@ -4,7 +4,7 @@ namespace ED47.Settings
 {
     public interface ISettingRepository
     {
-        ISetting Get(string path, string name, string defaultValue = null);
+        ISetting Get(string path, string name, string defaultValue = null, bool ignoreCache = false);
         IEnumerable<ISetting> GetByPath(string path);
         IEnumerable<ISetting> GetAll();
         void Add(ISetting setting);
