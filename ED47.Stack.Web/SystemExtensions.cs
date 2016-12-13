@@ -32,6 +32,8 @@ public static class DatetimeExtensions
 }
 public static class StringExtensions
 {
+    public const string EmailWithNameRegex = "(.*<)?([^>]*)>?";
+
     public const string EmailRegex = @"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}"
             + @"\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\"
             + @".)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
@@ -73,11 +75,30 @@ public static class StringExtensions
         return IndexOfLastSpace(s, pos - 1);
     }
 
+    public static string GetEmail(this string e)
+    {
+        var r1 = new Regex(EmailWithNameRegex);
+        var m1 = r1.Match(e);
+        if (!m1.Success) return "";
+
+        return m1.Groups[2].Value;
+
+    }
+
     public static bool IsEmail(this string s)
     {
+        if (s == null)
+            return false;
 
+        var r1 = new Regex(EmailWithNameRegex);
+        var m1 = r1.Match(s);
+        if (!m1.Success) return false;
+
+        var email = m1.Groups[2].Value;
+
+        if(String.IsNullOrEmpty(email)) return false;
         var re = new Regex(EmailRegex);
-        if (re.IsMatch(s))
+        if (re.IsMatch(email))
             return (true);
 
         return (false);
