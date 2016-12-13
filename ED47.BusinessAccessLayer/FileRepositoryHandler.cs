@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using System.Web.Security;
 using ED47.BusinessAccessLayer.BusinessEntities;
 
 namespace ED47.BusinessAccessLayer
@@ -9,6 +10,18 @@ namespace ED47.BusinessAccessLayer
     /// </summary>
     public class FileRepositoryHandler : IHttpHandler
     {
+
+        public static Func<HttpContext, bool> IsAuthenticated;
+        static FileRepositoryHandler()
+        {
+            IsAuthenticated = _isAuthenticated;
+        }
+
+        private static bool _isAuthenticated(HttpContext context)
+        {
+            return context.User.Identity.IsAuthenticated;
+        }
+
         /// <summary>
         /// You will need to configure this handler in the web.config file of your 
         /// web and register it with IIS before being able to use it. For more information
@@ -58,12 +71,14 @@ namespace ED47.BusinessAccessLayer
                 return;
             }
 
-            if (file.LoginRequired && !context.User.Identity.IsAuthenticated)
+            if (file.LoginRequired && !IsAuthenticated(context))
             {
                 context.Response.StatusCode = 401;
                 context.Response.End();
                 return;
             }
+           
+            
 
             if (file.Guid.ToString().ToLowerInvariant() != token.Replace("{",string.Empty).Replace("}",string.Empty).ToLowerInvariant() )
             {
