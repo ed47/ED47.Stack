@@ -260,9 +260,14 @@ if (window.Ext) {
 
         //Updates a record from a callResult.
         updateRecord: function (store, record, callResult) {
-            var index = record.index || store.indexOf(record);
-            var isSelected = !store.selectedRecord || store.selectedRecord.id === record.id;
+            //this should be enough :
+            //Ext.apply(record.data, callResult.data.ResultData.Item);
+            //this.select(this, record);
 
+            // legacy code for better compatibility 
+            var index = record.index || store.indexOf(record);
+            if (index < 0) return;
+            var isSelected = !store.selectedRecord || store.selectedRecord.id === record.id;
             store.removeAt(index);
             this.serverValue = Ext.applyIf(callResult.data.ResultData.Item, record.data);
             this._updating = true;
