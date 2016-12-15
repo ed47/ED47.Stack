@@ -261,14 +261,17 @@ if (window.Ext) {
         //Updates a record from a callResult.
         updateRecord: function (store, record, callResult) {
             var index = record.index || store.indexOf(record);
+            var isSelected = store.selectedRecord.index === record.index;
 
             store.removeAt(index);
             this.serverValue = Ext.applyIf(callResult.data.ResultData.Item, record.data);
             this._updating = true;
             store.insert(index, callResult.data.ResultData.Item);
             this._updating = false;
-            this.select(this, store.getAt(index));
-            this.selectMulti(this, [store.getAt(index)]);
+            if (isSelected) {
+                this.select(this, store.getAt(index));
+                this.selectMulti(this, [store.getAt(index)]);
+            }
         },
 
         deleteRecord: function (record, callback) {
