@@ -249,8 +249,7 @@ namespace ED47.BusinessAccessLayer.EF
             where TBusinessEntity : IBusinessEntity
         {
             if (entity == null)
-                return String.Empty;
-
+                return string.Empty;
 
             if (String.IsNullOrWhiteSpace(isoLanguageCode) && Thread.CurrentThread.CurrentUICulture.Name == "zh-CHS")
             {
@@ -262,7 +261,6 @@ namespace ED47.BusinessAccessLayer.EF
                 isoLanguageCode = "zt";
             }
 
-
             if (isoLanguageCode == null)
                 isoLanguageCode = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 
@@ -271,18 +269,16 @@ namespace ED47.BusinessAccessLayer.EF
             var entityType = typeof(TBusinessEntity);
             var key = entityType.Name + "[" + entityType.GetProperty("Id", BindingFlags.Public | BindingFlags.Instance).GetValue(entity, null) + "]";
 
-            var cacheKey = String.Format("{0}?l={1}&p={2}", key, isoLanguageCode, propertyName);
+            var cacheKey = $"{key}?l={isoLanguageCode}&p={propertyName}";
 
             if (MemoryCache.Default.Contains(cacheKey))
                 return MemoryCache.Default[cacheKey].ToString();
 
             var translations = GetTranslations(isoLanguageCode, key, propertyName)
                 .ToList();
-            var translation = translations.Any() ? translations.First().Text : propertySelector.Compile().Invoke();
+            var translation = translations.Any() ? translations.First().Text 
+                : propertySelector.Compile().Invoke() ?? string.Empty;
             MemoryCache.Default.Set(cacheKey, translation, DateTime.Now.AddHours(12));
-#if DEBUG
-            //translation = "***" + translation;
-#endif
 
             return translation;
         }
