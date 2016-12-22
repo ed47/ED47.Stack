@@ -25,7 +25,7 @@ namespace ED47.Stack.Web
         {
             using(var zip = new ZipFile())
             {
-                zip.AddDirectory(HttpContext.Current.Server.MapPath(Multilingual.Multilingual.ResourceFilesPath), "Translations");
+                zip.AddDirectory(HttpContext.Current.Server.MapPath(Multilingual.Multilingual.GetResourceFilesPath()), "Translations");
                 zip.AddFiles(Template.Template.Templates.Select(el => el.Value), true, "Templates");
                 zip.Save(context.Response.OutputStream);
             }
