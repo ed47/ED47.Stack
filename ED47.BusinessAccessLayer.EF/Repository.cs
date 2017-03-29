@@ -464,6 +464,8 @@ namespace ED47.BusinessAccessLayer.EF
             if (!EventProxy.NotifyUpdate(businessEntity))
                 return;
 
+            originalEntity.InjectFrom(businessEntity);
+
             var dbEntity = originalEntity as BaseDbEntity;
             if (dbEntity != null)
             {
@@ -471,7 +473,6 @@ namespace ED47.BusinessAccessLayer.EF
                 dbEntity.UpdaterUsername = UserName;
             }
 
-            originalEntity.InjectFrom(businessEntity);
             originalEntity.WriteJsonData(businessEntity);
             Cryptography.EncryptProperties<TBusinessEntity>(originalEntity);
         }
