@@ -13,9 +13,9 @@ public static class DatetimeExtensions
         return value.Value.ToPeriod();
     }
 
-      public static string ToPeriod(this DateTime value)
+    public static string ToPeriod(this DateTime value)
     {
-        
+
         var dl = value;
         if (dl.Month >= 1 && dl.Month <= 3)
             return dl.Year + " Q1";
@@ -61,6 +61,13 @@ public static class StringExtensions
                    : s.Substring(0, Math.Max(s.IndexOfLastSpace(length), length)) + showMoreText;
     }
 
+    public static string CleanSpecialChars(this string s)
+    {
+        if (s == null) return "";
+        var r = new Regex(@"[^\w]");
+        return r.Replace(s, "").ToLower();
+    }
+
     public static int IndexOfLastSpace(this string s, int pos)
     {
         if (pos < 0)
@@ -96,7 +103,7 @@ public static class StringExtensions
 
         var email = m1.Groups[2].Value;
 
-        if(String.IsNullOrEmpty(email)) return false;
+        if (String.IsNullOrEmpty(email)) return false;
         var re = new Regex(EmailRegex);
         if (re.IsMatch(email))
             return (true);
