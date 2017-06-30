@@ -46,5 +46,23 @@ namespace ED47.BusinessAccessLayer
 
             return target;
         }
+
+        /// <summary>
+        /// Clean the data. For now, it only trims strings.
+        /// </summary>
+        /// <param name="whiteList"></param>
+        /// <returns></returns>
+        public ClientData CleanData(string[] whiteList = null)
+        {
+            var keys = whiteList ?? this.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                object value;
+                if (this.TryGetValue(key, out value) && value is string)
+                    this[key] = ((string)value).Trim();
+            }
+            return this;
+        }
+
     }
 }
