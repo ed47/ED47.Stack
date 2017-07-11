@@ -20,7 +20,7 @@ namespace ED47.Stack.Web.Multilingual
         {
             var splitPath = Key.Split('.');
 
-            lock (Dictionary.WriteLock)
+            lock (TranslationDictionary.WriteLock)
             {
                 var document = XDocument.Load(File.FileInfo.FullName);
                 var currentElement = document.Root;
@@ -51,7 +51,7 @@ namespace ED47.Stack.Web.Multilingual
         private void Save(object attributes = null)
         {
             var splitPath = Key.Split(new []{'.'}, StringSplitOptions.RemoveEmptyEntries);
-            lock (Dictionary.WriteLock)
+            lock (TranslationDictionary.WriteLock)
             {
                 var document = XDocument.Load(File.FileInfo.FullName);
                 var currentElement = document.Root;

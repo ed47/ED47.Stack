@@ -17,7 +17,7 @@ namespace ED47.Stack.Web.Multilingual
             TranslationFiles = new Dictionary<string, TranslationFile>();
         }
 
-        internal readonly object WriteLock = new object();
+        internal static readonly object WriteLock = new object();
 
         public TranslationFile DefaultTranslationFile { get; set; }
         public IDictionary<string, TranslationFile> TranslationFiles { get; set; }
