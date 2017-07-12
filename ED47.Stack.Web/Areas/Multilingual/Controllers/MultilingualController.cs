@@ -20,15 +20,21 @@ namespace ED47.Stack.Web.Areas.Multilingual.Controllers
         public ActionResult Translations(string root = null, string language = "en", string search = null)
         {
             var dict = Web.Multilingual.Multilingual.GetLanguage(language);
-            IEnumerable<ITranslationEntry> res = null;
+            IEnumerable<ITranslationEntry> res = dict.Values;
 
-            if (!String.IsNullOrWhiteSpace(root) && !String.IsNullOrWhiteSpace(search))
+            if (!String.IsNullOrWhiteSpace(root))
             {
-                search = search.ToLowerInvariant();
-                res = dict.Where(el => el.Key.StartsWith(root) && (el.Key.ToLowerInvariant().Contains(search) || el.Value.Value.ToLowerInvariant().Contains(search))).Select(el => el.Value);
+                root = root.ToLowerInvariant();
+                res = res.Where(el => el.Key.ToLowerInvariant().StartsWith(root));
             }
 
-            return PartialView("_Translations", res ?? dict.Values);
+            if (!String.IsNullOrWhiteSpace(search))
+            {
+                search = search.ToLowerInvariant();
+                res = res.Where(el => el.Key.ToLowerInvariant().Contains(search) || el.Value.ToLowerInvariant().Contains(search));
+            }
+
+            return PartialView("_Translations", res);
         }
 
         [HttpPost]
